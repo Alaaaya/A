@@ -1,13 +1,142 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My GitHub Page</title>
+    <title>تصميم بث مباشر</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #121212;
+            color: #fff;
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #f8b133;
+            padding: 10px 20px;
+        }
+
+        header .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        header input[type="search"] {
+            width: 40%;
+            padding: 8px;
+            border: none;
+            border-radius: 5px;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+            padding: 20px;
+        }
+
+        .card {
+            background-color: #1e1e1e;
+            border-radius: 10px;
+            overflow: hidden;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s;
+        }
+
+        .card:hover {
+            transform: scale(1.05);
+        }
+
+        .card img {
+            width: 100%;
+            height: auto;
+        }
+
+        .card p {
+            padding: 10px;
+            font-size: 1rem;
+        }
+
+        .card a {
+            display: block;
+            padding: 10px;
+            background-color: #f8b133;
+            color: #121212;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 10px auto;
+            width: 80%;
+            transition: background-color 0.3s;
+        }
+
+        .card a:hover {
+            background-color: #ffa94d;
+        }
+    </style>
 </head>
 <body>
-    <h1>Alaa الشيف علاء 😎
-        Welcome to My GitHub Website!</h1>
-    <p>This is a simple website hosted for free on GitHub Pages.</p>
+    <header>
+        <div class="logo">Pikbest</div>
+        <input type="search" placeholder="بحث بث مباشر جميل">
+    </header>
+
+    <div class="container">
+        <div class="card">
+            <img src="https://via.placeholder.com/300x150" alt="عنوان البث المباشر">
+            <p>بث مباشر 1</p>
+            <a href="https://example.com/stream1" target="_blank">مشاهدة البث</a>
+        </div>
+        <div class="card">
+            <img src="https://via.placeholder.com/300x150" alt="عنوان البث المباشر">
+            <p>بث مباشر 2</p>
+            <a href="https://example.com/stream2" target="_blank">مشاهدة البث</a>
+        </div>
+        <div class="card">
+            <img src="https://via.placeholder.com/300x150" alt="عنوان البث المباشر">
+            <p>بث مباشر 3</p>
+            <a href="https://example.com/stream3" target="_blank">مشاهدة البث</a>
+        </div>
+        <div class="card">
+            <img src="https://via.placeholder.com/300x150" alt="عنوان البث المباشر">
+            <p>بث مباشر 4</p>
+            <a href="https://example.com/stream4" target="_blank">مشاهدة البث</a>
+        </div>
+        <div class="card">
+            <img src="https://via.placeholder.com/300x150" alt="عنوان البث المباشر">
+            <p>بث مباشر 5</p>
+            <a href="https://example.com/stream5" target="_blank">مشاهدة البث</a>
+        </div>
+        <div class="card">
+            <img src="https://via.placeholder.com/300x150" alt="عنوان البث المباشر">
+            <p>بث مباشر 6</p>
+            <a href="https://example.com/stream6" target="_blank">مشاهدة البث</a>
+        </div>
+        <div class="card">
+            <img src="https://via.placeholder.com/300x150" alt="عنوان البث المباشر">
+            <p>بث مباشر 7</p>
+            <a href="https://example.com/stream7" target="_blank">مشاهدة البث</a>
+        </div>
+        <div class="card">
+            <img src="https://via.placeholder.com/300x150" alt="عنوان البث المباشر">
+            <p>بث مباشر 8</p>
+            <a href="https://example.com/stream8" target="_blank">مشاهدة البث</a>
+        </div>
+        <div class="card">
+            <img src="https://via.placeholder.com/300x150" alt="عنوان البث المباشر">
+            <p>بث مباشر 9</p>
+            <a href="https://example.com/stream9" target="_blank">مشاهدة البث</a>
+        </div>
+        <div class="card">
+            <img src="https://via.placeholder.com/300x150" alt="عنوان البث المباشر">
+            <p>بث مباشر 10</p>
+            <a href="https://example.com/stream10" target="_blank">مشاهدة البث</a>
+        </div>
+    </div>
 </body>
 </html>
