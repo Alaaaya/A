@@ -58,20 +58,6 @@
             padding: 5px;
             font-size: 0.9rem;
         }
-
-        .video-container {
-            margin: 20px auto;
-            text-align: center;
-        }
-
-        iframe {
-            width: 100%;
-            max-width: 800px;
-            height: 450px;
-            border: none;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
-        }
     </style>
 </head>
 <body>
@@ -81,31 +67,32 @@
 
     <div class="container">
         <div class="card">
-            <img src="https://logowik.com/content/uploads/images/al-jazeera-tv6503.jpg" alt="بث مباشر قناة الجزيرة" onclick="playStream('https://example.com/stream1')">
+            <img src="https://logowik.com/content/uploads/images/al-jazeera-tv6503.jpg" alt="بث مباشر قناة الجزيرة" onclick="openFullScreen('https://example.com/stream1')">
             <p>بث مباشر 1 - قناة الجزيرة</p>
         </div>
         <div class="card">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/5/5a/AlHADATH.png" alt="بث مباشر قناة الحدث" onclick="playStream('https://av.alarabiya.net/alarabiapublish/alhadath.smil/playlist.m3u8')">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/5/5a/AlHADATH.png" alt="بث مباشر قناة الحدث" onclick="openFullScreen('https://av.alarabiya.net/alarabiapublish/alhadath.smil/playlist.m3u8')">
             <p>بث مباشر 2 - قناة الحدث</p>
         </div>
         <div class="card">
-            <img src="https://seeklogo.com/images/A/al-arabiya-logo-E8E441B937-seeklogo.com.png" alt="بث مباشر قناة العربية" onclick="playStream('https://live.alarabiya.net/alarabiapublish/alarabiya.smil/playlist.m3u8')">
+            <img src="https://seeklogo.com/images/A/al-arabiya-logo-E8E441B937-seeklogo.com.png" alt="بث مباشر قناة العربية" onclick="openFullScreen('https://live.alarabiya.net/alarabiapublish/alarabiya.smil/playlist.m3u8')">
             <p>بث مباشر 3 - قناة العربية</p>
         </div>
         <div class="card">
-            <img src="https://s.shabakngy.com/wp-content/uploads/2021/03/%D8%AA%D8%B1%D8%AF%D8%AF-%D9%82%D9%86%D8%A7%D8%A9-%D8%AA%D9%84%D9%81%D8%B2%D9%8A%D9%88%D9%86-%D8%B3%D9%88%D8%B1%D9%8A%D8%A7-Syria-TV-%D8%A7%D9%84%D8%AC%D8%AF%D9%8A%D8%AF-2021.jpg" alt="بث مباشر قناة سوريا" onclick="playStream('https://svs.itworkscdn.net/syriatvlive/syriatv.smil/playlist_dvr.m3u8')">
+            <img src="https://s.shabakngy.com/wp-content/uploads/2021/03/%D8%AA%D8%B1%D8%AF%D8%AF-%D9%82%D9%86%D8%A7%D8%A9-%D8%AA%D9%84%D9%81%D8%B2%D9%8A%D9%88%D9%86-%D8%B3%D9%88%D8%B1%D9%8A%D8%A7-Syria-TV-%D8%A7%D9%84%D8%AC%D8%AF%D9%8A%D8%AF-2021.jpg" alt="بث مباشر قناة سوريا" onclick="openFullScreen('https://svs.itworkscdn.net/syriatvlive/syriatv.smil/playlist_dvr.m3u8')">
             <p>بث مباشر 4 - قناة سوريا</p>
         </div>
     </div>
 
-    <div class="video-container">
-        <iframe id="videoFrame" src="" allow="autoplay" allowfullscreen></iframe>
-    </div>
-
     <script>
-        function playStream(url) {
-            const videoFrame = document.getElementById('videoFrame');
-            videoFrame.src = url;
+        function openFullScreen(url) {
+            // افتح رابط البث في نافذة جديدة
+            const newWindow = window.open(url, '_blank');
+
+            // حاول الدخول في وضع ملء الشاشة إذا كان مدعومًا
+            if (newWindow) {
+                newWindow.document.body.requestFullscreen?.();
+            }
         }
     </script>
 </body>
