@@ -1,1 +1,172 @@
 <!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مشغل بث مباشر</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #121212;
+            color: #fff;
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f8b133;
+            padding: 10px 20px;
+        }
+
+        header .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+            padding: 20px;
+        }
+
+        .card {
+            background-color: #1e1e1e;
+            border-radius: 10px;
+            overflow: hidden;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s;
+        }
+
+        .card:hover {
+            transform: scale(1.05);
+        }
+
+        .card img {
+            width: 100%;
+            height: auto;
+            max-height: 100px;
+            object-fit: cover;
+            cursor: pointer;
+        }
+
+        .card p {
+            padding: 5px;
+            font-size: 0.9rem;
+        }
+
+        button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 10px 15px;
+            background-color: #f44336;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 1000;
+        }
+
+        button:hover {
+            background-color: #d32f2f;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">مشغل بث مباشر</div>
+    </header>
+
+    <div class="container" id="streamsContainer">
+        <!-- سيتم إنشاء البطاقات ديناميكيًا هنا -->
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <script>
+        // قائمة روابط البث
+        const streams = [
+            {
+                title: 'بث مباشر قناة الجزيرة',
+                url: 'https://example.com/stream1',
+                thumbnail: 'https://logowik.com/content/uploads/images/al-jazeera-tv6503.jpg'
+            },
+            {
+                title: 'بث مباشر قناة الحدث',
+                url: 'https://av.alarabiya.net/alarabiapublish/alhadath.smil/playlist.m3u8',
+                thumbnail: 'https://upload.wikimedia.org/wikipedia/commons/5/5a/AlHADATH.png'
+            },
+            {
+                title: 'بث مباشر قناة العربية',
+                url: 'https://live.alarabiya.net/alarabiapublish/alarabiya.smil/playlist.m3u8',
+                thumbnail: 'https://seeklogo.com/images/A/al-arabiya-logo-E8E441B937-seeklogo.com.png'
+            },
+            {
+                title: 'بث مباشر قناة سوريا',
+                url: 'https://svs.itworkscdn.net/syriatvlive/syriatv.smil/playlist_dvr.m3u8',
+                thumbnail: 'https://s.shabakngy.com/wp-content/uploads/2021/03/%D8%AA%D8%B1%D8%AF%D8%AF-%D9%82%D9%86%D8%A7%D8%A9-%D8%AA%D9%84%D9%81%D8%B2%D9%8A%D9%88%D9%86-%D8%B3%D9%88%D8%B1%D9%8A%D8%A7-Syria-TV-%D8%A7%D9%84%D8%AC%D8%AF%D9%8A%D8%AF-2021.jpg'
+            }
+        ];
+
+        const container = document.getElementById('streamsContainer');
+
+        // إنشاء البطاقات ديناميكيًا
+        streams.forEach(stream => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `
+                <img src="${stream.thumbnail}" alt="${stream.title}" onclick="playStream('${stream.url}', '${stream.title}')">
+                <p>${stream.title}</p>
+            `;
+            container.appendChild(card);
+        });
+
+        function playStream(url, title) {
+            // إنشاء عنصر فيديو
+            const video = document.createElement('video');
+            video.controls = true;
+            video.style.position = 'fixed';
+            video.style.top = '0';
+            video.style.left = '0';
+            video.style.width = '100%';
+            video.style.height = '100%';
+            video.style.zIndex = '999';
+            video.style.backgroundColor = 'black';
+            document.body.appendChild(video);
+
+            // زر إغلاق الفيديو
+            const closeButton = document.createElement('button');
+            closeButton.textContent = 'إغلاق';
+            closeButton.onclick = () => {
+                video.pause();
+                document.body.removeChild(video);
+                document.body.removeChild(closeButton);
+            };
+            document.body.appendChild(closeButton);
+
+            // إعداد HLS.js
+            try {
+                if (Hls.isSupported()) {
+                    const hls = new Hls();
+                    hls.loadSource(url);
+                    hls.attachMedia(video);
+                } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                    video.src = url;
+                } else {
+                    throw new Error('البث المباشر غير مدعوم.');
+                }
+            } catch (error) {
+                alert(`حدث خطأ: ${error.message}`);
+                closeButton.click(); // إغلاق الفيديو عند حدوث خطأ
+            }
+
+            // تشغيل الفيديو
+            video.play();
+        }
+    </script>
+</body>
+</html>
