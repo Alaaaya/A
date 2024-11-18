@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مشغل بث مباشر</title>
+    <title>مشغل بث مباشر متكامل</title>
     <style>
+        /* الأساسيات */
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -16,7 +17,7 @@
         header {
             display: flex;
             align-items: center;
-            justify-content: center;
+            justify-content: space-between;
             background-color: #f8b133;
             padding: 10px 20px;
         }
@@ -26,9 +27,23 @@
             font-weight: bold;
         }
 
+        header button {
+            background: #444;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        header button:hover {
+            background: #666;
+        }
+
+        /* التصميم الرئيسي */
         .container {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
             gap: 10px;
             padding: 20px;
         }
@@ -40,6 +55,7 @@
             text-align: center;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
             transition: transform 0.3s;
+            position: relative;
         }
 
         .card:hover {
@@ -49,124 +65,189 @@
         .card img {
             width: 100%;
             height: auto;
-            max-height: 100px;
+            max-height: 150px;
             object-fit: cover;
             cursor: pointer;
         }
 
         .card p {
-            padding: 5px;
-            font-size: 0.9rem;
+            padding: 10px;
+            font-size: 1rem;
         }
 
-        button {
+        .rating span {
+            font-size: 1.5rem;
+            color: gold;
+            cursor: pointer;
+            margin: 0 2px;
+        }
+
+        .signal-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
             position: absolute;
             top: 10px;
             right: 10px;
-            padding: 10px 15px;
+        }
+
+        video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 999;
+            background-color: black;
+        }
+
+        button.close-btn {
+            position: fixed;
+            top: 10px;
+            right: 10px;
             background-color: #f44336;
             color: white;
             border: none;
             border-radius: 5px;
+            padding: 10px 20px;
             cursor: pointer;
             z-index: 1000;
         }
 
-        button:hover {
+        button.close-btn:hover {
             background-color: #d32f2f;
+        }
+
+        input#searchBar {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 5px;
+        }
+
+        body.dark-mode {
+            background-color: #000;
+            color: #fff;
         }
     </style>
 </head>
 <body>
     <header>
         <div class="logo">مشغل بث مباشر</div>
+        <button onclick="toggleTheme()">تبديل الوضع</button>
     </header>
 
+    <input id="searchBar" onkeyup="filterStreams()" placeholder="ابحث عن قناة...">
+
     <div class="container" id="streamsContainer">
-        <!-- سيتم إنشاء البطاقات ديناميكيًا هنا -->
+        <!-- سيتم تحميل البثوص هنا -->
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <script>
-        // قائمة روابط البث
-        const streams = [
-            {
-                title: 'بث مباشر قناة الجزيرة',
-                url: 'https://example.com/stream1',
-                thumbnail: 'https://logowik.com/content/uploads/images/al-jazeera-tv6503.jpg'
-            },
-            {
-                title: 'بث مباشر قناة الحدث',
-                url: 'https://av.alarabiya.net/alarabiapublish/alhadath.smil/playlist.m3u8',
-                thumbnail: 'https://upload.wikimedia.org/wikipedia/commons/5/5a/AlHADATH.png'
-            },
-            {
-                title: 'بث مباشر قناة العربية',
-                url: 'https://live.alarabiya.net/alarabiapublish/alarabiya.smil/playlist.m3u8',
-                thumbnail: 'https://seeklogo.com/images/A/al-arabiya-logo-E8E441B937-seeklogo.com.png'
-            },
-            {
-                title: 'بث مباشر قناة سوريا',
-                url: 'https://svs.itworkscdn.net/syriatvlive/syriatv.smil/playlist_dvr.m3u8',
-                thumbnail: 'https://s.shabakngy.com/wp-content/uploads/2021/03/%D8%AA%D8%B1%D8%AF%D8%AF-%D9%82%D9%86%D8%A7%D8%A9-%D8%AA%D9%84%D9%81%D8%B2%D9%8A%D9%88%D9%86-%D8%B3%D9%88%D8%B1%D9%8A%D8%A7-Syria-TV-%D8%A7%D9%84%D8%AC%D8%AF%D9%8A%D8%AF-2021.jpg'
+        const streamsUrl = "https://example.com/streams.json"; // رابط لملف JSON أو API
+        const container = document.getElementById("streamsContainer");
+
+        // تحميل القنوات ديناميكيًا
+        async function loadStreams() {
+            try {
+                const response = await fetch(streamsUrl);
+                const streams = await response.json();
+                populateStreams(streams);
+            } catch (error) {
+                console.error("خطأ في تحميل القنوات:", error);
             }
-        ];
+        }
 
-        const container = document.getElementById('streamsContainer');
+        // إنشاء بطاقات البث
+        function populateStreams(streams) {
+            streams.forEach(stream => {
+                const card = document.createElement("div");
+                card.className = "card";
+                card.innerHTML = `
+                    <div class="signal-indicator"></div>
+                    <img src="${stream.thumbnail}" alt="${stream.title}" onclick="playStream('${stream.url}', '${stream.title}')">
+                    <p>${stream.title}</p>
+                    <div class="rating">
+                        <span onclick="rateStream(5)">★</span>
+                        <span onclick="rateStream(4)">★</span>
+                        <span onclick="rateStream(3)">★</span>
+                        <span onclick="rateStream(2)">★</span>
+                        <span onclick="rateStream(1)">★</span>
+                    </div>
+                `;
+                container.appendChild(card);
+                checkSignal(stream.url, card.querySelector(".signal-indicator"));
+            });
+        }
 
-        // إنشاء البطاقات ديناميكيًا
-        streams.forEach(stream => {
-            const card = document.createElement('div');
-            card.className = 'card';
-            card.innerHTML = `
-                <img src="${stream.thumbnail}" alt="${stream.title}" onclick="playStream('${stream.url}', '${stream.title}')">
-                <p>${stream.title}</p>
-            `;
-            container.appendChild(card);
-        });
+        // تصفية القنوات
+        function filterStreams() {
+            const query = document.getElementById("searchBar").value.toLowerCase();
+            const cards = document.querySelectorAll(".card");
+            cards.forEach(card => {
+                const title = card.querySelector("p").textContent.toLowerCase();
+                card.style.display = title.includes(query) ? "" : "none";
+            });
+        }
 
+        // تشغيل البث
         function playStream(url, title) {
-            // إنشاء عنصر فيديو
-            const video = document.createElement('video');
+            const video = document.createElement("video");
             video.controls = true;
-            video.style.position = 'fixed';
-            video.style.top = '0';
-            video.style.left = '0';
-            video.style.width = '100%';
-            video.style.height = '100%';
-            video.style.zIndex = '999';
-            video.style.backgroundColor = 'black';
+
+            // إعداد الفيديو
+            if (Hls.isSupported()) {
+                const hls = new Hls();
+                hls.loadSource(url);
+                hls.attachMedia(video);
+            } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
+                video.src = url;
+            } else {
+                alert("البث غير مدعوم.");
+                return;
+            }
+
             document.body.appendChild(video);
 
-            // زر إغلاق الفيديو
-            const closeButton = document.createElement('button');
-            closeButton.textContent = 'إغلاق';
+            // زر الإغلاق
+            const closeButton = document.createElement("button");
+            closeButton.className = "close-btn";
+            closeButton.textContent = "إغلاق";
             closeButton.onclick = () => {
                 video.pause();
-                document.body.removeChild(video);
-                document.body.removeChild(closeButton);
+                video.remove();
+                closeButton.remove();
             };
             document.body.appendChild(closeButton);
 
-            // إعداد HLS.js
-            try {
-                if (Hls.isSupported()) {
-                    const hls = new Hls();
-                    hls.loadSource(url);
-                    hls.attachMedia(video);
-                } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                    video.src = url;
-                } else {
-                    throw new Error('البث المباشر غير مدعوم.');
-                }
-            } catch (error) {
-                alert(`حدث خطأ: ${error.message}`);
-                closeButton.click(); // إغلاق الفيديو عند حدوث خطأ
-            }
-
-            // تشغيل الفيديو
             video.play();
         }
+
+        // تقييم القناة
+        function rateStream(rating) {
+            alert(`تم التقييم: ${rating} نجوم!`);
+        }
+
+        // فحص جودة البث
+        function checkSignal(url, indicator) {
+            fetch(url, { method: "HEAD" })
+                .then(response => {
+                    indicator.style.backgroundColor = response.ok ? "green" : "red";
+                })
+                .catch(() => {
+                    indicator.style.backgroundColor = "gray";
+                });
+        }
+
+        // تبديل الوضع الليلي
+        function toggleTheme() {
+            document.body.classList.toggle("dark-mode");
+        }
+
+        loadStreams();
     </script>
 </body>
 </html>
