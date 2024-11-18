@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مشغل بث مباشر</title>
+    <title>بث مباشر - علاء</title>
+    <link href="https://vjs.zencdn.net/8.3.0/video-js.css" rel="stylesheet">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -70,13 +71,12 @@
             height: 450px;
             border: none;
             border-radius: 10px;
-            background: black;
         }
     </style>
 </head>
 <body>
     <header>
-        <div class="logo">مشغل بث مباشر</div>
+        <div class="logo">Alaa علاء</div>
     </header>
 
     <div class="container">
@@ -99,27 +99,26 @@
     </div>
 
     <div class="video-container">
-        <video id="videoPlayer" controls></video>
+        <video id="videoPlayer" class="video-js vjs-default-skin" controls preload="auto" data-setup='{}'></video>
     </div>
 
+    <script src="https://vjs.zencdn.net/8.3.0/video.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <script>
         function playStream(url) {
-            const video = document.getElementById('videoPlayer');
+            const videoPlayer = document.getElementById('videoPlayer');
 
-            // إذا كان البث بتنسيق HLS ونحتاج إلى مكتبة hls.js
             if (Hls.isSupported()) {
                 const hls = new Hls();
                 hls.loadSource(url);
-                hls.attachMedia(video);
-            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                // للمتصفحات التي تدعم HLS بشكل طبيعي (مثل Safari)
-                video.src = url;
+                hls.attachMedia(videoPlayer);
+            } else if (videoPlayer.canPlayType('application/vnd.apple.mpegurl')) {
+                videoPlayer.src = url;
             } else {
-                alert('البث المباشر غير مدعوم في هذا المتصفح.');
+                alert('البث غير مدعوم على هذا المتصفح.');
             }
 
-            video.play();
+            videoPlayer.play();
         }
     </script>
 </body>
