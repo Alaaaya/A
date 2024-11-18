@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بث مباشر - علاء</title>
+    <title>مشغل بث مباشر</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -58,41 +58,68 @@
             padding: 5px;
             font-size: 0.9rem;
         }
+
+        .video-container {
+            margin: 20px auto;
+            text-align: center;
+        }
+
+        video {
+            width: 100%;
+            max-width: 800px;
+            height: 450px;
+            border: none;
+            border-radius: 10px;
+            background: black;
+        }
     </style>
 </head>
 <body>
     <header>
-        <div class="logo">Alaa علاء</div>
+        <div class="logo">مشغل بث مباشر</div>
     </header>
 
     <div class="container">
         <div class="card">
-            <img src="https://logowik.com/content/uploads/images/al-jazeera-tv6503.jpg" alt="بث مباشر قناة الجزيرة" onclick="openFullScreen('https://example.com/stream1')">
+            <img src="https://logowik.com/content/uploads/images/al-jazeera-tv6503.jpg" alt="بث مباشر قناة الجزيرة" onclick="playStream('https://example.com/stream1')">
             <p>بث مباشر 1 - قناة الجزيرة</p>
         </div>
         <div class="card">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/5/5a/AlHADATH.png" alt="بث مباشر قناة الحدث" onclick="openFullScreen('https://av.alarabiya.net/alarabiapublish/alhadath.smil/playlist.m3u8')">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/5/5a/AlHADATH.png" alt="بث مباشر قناة الحدث" onclick="playStream('https://av.alarabiya.net/alarabiapublish/alhadath.smil/playlist.m3u8')">
             <p>بث مباشر 2 - قناة الحدث</p>
         </div>
         <div class="card">
-            <img src="https://seeklogo.com/images/A/al-arabiya-logo-E8E441B937-seeklogo.com.png" alt="بث مباشر قناة العربية" onclick="openFullScreen('https://live.alarabiya.net/alarabiapublish/alarabiya.smil/playlist.m3u8')">
+            <img src="https://seeklogo.com/images/A/al-arabiya-logo-E8E441B937-seeklogo.com.png" alt="بث مباشر قناة العربية" onclick="playStream('https://live.alarabiya.net/alarabiapublish/alarabiya.smil/playlist.m3u8')">
             <p>بث مباشر 3 - قناة العربية</p>
         </div>
         <div class="card">
-            <img src="https://s.shabakngy.com/wp-content/uploads/2021/03/%D8%AA%D8%B1%D8%AF%D8%AF-%D9%82%D9%86%D8%A7%D8%A9-%D8%AA%D9%84%D9%81%D8%B2%D9%8A%D9%88%D9%86-%D8%B3%D9%88%D8%B1%D9%8A%D8%A7-Syria-TV-%D8%A7%D9%84%D8%AC%D8%AF%D9%8A%D8%AF-2021.jpg" alt="بث مباشر قناة سوريا" onclick="openFullScreen('https://svs.itworkscdn.net/syriatvlive/syriatv.smil/playlist_dvr.m3u8')">
+            <img src="https://s.shabakngy.com/wp-content/uploads/2021/03/%D8%AA%D8%B1%D8%AF%D8%AF-%D9%82%D9%86%D8%A7%D8%A9-%D8%AA%D9%84%D9%81%D8%B2%D9%8A%D9%88%D9%86-%D8%B3%D9%88%D8%B1%D9%8A%D8%A7-Syria-TV-%D8%A7%D9%84%D8%AC%D8%AF%D9%8A%D8%AF-2021.jpg" alt="بث مباشر قناة سوريا" onclick="playStream('https://svs.itworkscdn.net/syriatvlive/syriatv.smil/playlist_dvr.m3u8')">
             <p>بث مباشر 4 - قناة سوريا</p>
         </div>
     </div>
 
-    <script>
-        function openFullScreen(url) {
-            // افتح رابط البث في نافذة جديدة
-            const newWindow = window.open(url, '_blank');
+    <div class="video-container">
+        <video id="videoPlayer" controls></video>
+    </div>
 
-            // حاول الدخول في وضع ملء الشاشة إذا كان مدعومًا
-            if (newWindow) {
-                newWindow.document.body.requestFullscreen?.();
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <script>
+        function playStream(url) {
+            const video = document.getElementById('videoPlayer');
+
+            // إذا كان البث بتنسيق HLS ونحتاج إلى مكتبة hls.js
+            if (Hls.isSupported()) {
+                const hls = new Hls();
+                hls.loadSource(url);
+                hls.attachMedia(video);
+            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                // للمتصفحات التي تدعم HLS بشكل طبيعي (مثل Safari)
+                video.src = url;
+            } else {
+                alert('البث المباشر غير مدعوم في هذا المتصفح.');
             }
+
+            video.play();
         }
     </script>
 </body>
