@@ -60,17 +60,7 @@
         }
 
         .video-container {
-            margin: 20px auto;
-            text-align: center;
-        }
-
-        video {
-            width: 100%;
-            max-width: 800px;
-            height: 450px;
-            border: none;
-            border-radius: 10px;
-            background: black;
+            display: none; /* إخفاء مشغل الفيديو الأصلي */
         }
     </style>
 </head>
@@ -105,21 +95,39 @@
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <script>
         function playStream(url) {
-            const video = document.getElementById('videoPlayer');
+            // إنشاء عنصر فيديو جديد لتشغيله في وضع ملء الشاشة
+            const video = document.createElement('video');
+            video.style.display = 'none'; // لن يتم عرضه في الصفحة
+            video.controls = true; // إضافة أدوات التحكم
+            document.body.appendChild(video);
 
-            // إذا كان البث بتنسيق HLS ونحتاج إلى مكتبة hls.js
+            // إعداد HLS.js إذا كان البث بتنسيق HLS
             if (Hls.isSupported()) {
                 const hls = new Hls();
                 hls.loadSource(url);
                 hls.attachMedia(video);
             } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                // للمتصفحات التي تدعم HLS بشكل طبيعي (مثل Safari)
                 video.src = url;
             } else {
                 alert('البث المباشر غير مدعوم في هذا المتصفح.');
+                return;
             }
 
-            video.play();
+            // تشغيل الفيديو في وضع ملء الشاشة
+            video.play().then(() => {
+                if (video.requestFullscreen) {
+                    video.requestFullscreen();
+                } else if (video.webkitRequestFullscreen) { /* Safari */
+                    video.webkitRequestFullscreen();
+                } else if (video.msRequestFullscreen) { /* IE11 */
+                    video.msRequestFullscreen();
+                }
+            });
+
+            // إزالة الفيديو من DOM عند انتهاء البث
+            video.addEventListener('ended', () => {
+                document.body.removeChild(video);
+            });
         }
     </script>
 </body>
