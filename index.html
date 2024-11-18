@@ -1,1 +1,132 @@
-()
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بث مباشر - علاء</title>
+    <link href="https://vjs.zencdn.net/8.3.0/video-js.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #121212;
+            color: #fff;
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f8b133;
+            padding: 10px 20px;
+        }
+
+        header .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+            padding: 20px;
+        }
+
+        .card {
+            background-color: #1e1e1e;
+            border-radius: 10px;
+            overflow: hidden;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s;
+        }
+
+        .card:hover {
+            transform: scale(1.05);
+        }
+
+        .card img {
+            width: 100%;
+            height: auto;
+            max-height: 100px;
+            object-fit: cover;
+            cursor: pointer;
+        }
+
+        .card p {
+            padding: 5px;
+            font-size: 0.9rem;
+        }
+
+        .video-container {
+            margin: 20px auto;
+            text-align: center;
+        }
+
+        video {
+            width: 100%;
+            max-width: 800px;
+            height: 450px;
+            border: none;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">Alaa علاء</div>
+    </header>
+
+    <div class="container">
+        <!-- قناة الجزيرة -->
+        <div class="card">
+            <img src="https://logowik.com/content/uploads/images/al-jazeera-tv6503.jpg" alt="بث مباشر قناة الجزيرة" onclick="playStream('https://live-hls-web-aja.getaj.net/AJA/index.m3u8')">
+            <p>بث مباشر 1 - قناة الجزيرة</p>
+        </div>
+
+        <!-- قناة الحدث -->
+        <div class="card">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/5/5a/AlHADATH.png" alt="بث مباشر قناة الحدث" onclick="playStream('https://av.alarabiya.net/alarabiapublish/alhadath.smil/playlist.m3u8')">
+            <p>بث مباشر 2 - قناة الحدث</p>
+        </div>
+
+        <!-- قناة العربية -->
+        <div class="card">
+            <img src="https://seeklogo.com/images/A/al-arabiya-logo-E8E441B937-seeklogo.com.png" alt="بث مباشر قناة العربية" onclick="playStream('https://live.alarabiya.net/alarabiapublish/alarabiya.smil/playlist.m3u8')">
+            <p>بث مباشر 3 - قناة العربية</p>
+        </div>
+
+        <!-- قناة سوريا -->
+        <div class="card">
+            <img src="https://s.shabakngy.com/wp-content/uploads/2021/03/%D8%AA%D8%B1%D8%AF%D8%AF-%D9%82%D9%86%D8%A7%D8%A9-%D8%AA%D9%84%D9%81%D8%B2%D9%8A%D9%88%D9%86-%D8%B3%D9%88%D8%B1%D9%8A%D8%A7-Syria-TV-%D8%A7%D9%84%D8%AC%D8%AF%D9%8A%D8%AF-2021.jpg" alt="بث مباشر قناة سوريا" onclick="playStream('https://svs.itworkscdn.net/syriatvlive/syriatv.smil/playlist_dvr.m3u8')">
+            <p>بث مباشر 4 - قناة سوريا</p>
+        </div>
+    </div>
+
+    <div class="video-container">
+        <video id="videoPlayer" class="video-js vjs-default-skin" controls preload="auto" data-setup='{}'></video>
+    </div>
+
+    <script src="https://vjs.zencdn.net/8.3.0/video.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <script>
+        function playStream(url) {
+            const videoPlayer = document.getElementById('videoPlayer');
+
+            if (Hls.isSupported()) {
+                const hls = new Hls();
+                hls.loadSource(url);
+                hls.attachMedia(videoPlayer);
+            } else if (videoPlayer.canPlayType('application/vnd.apple.mpegurl')) {
+                videoPlayer.src = url;
+            } else {
+                alert('البث غير مدعوم على هذا المتصفح.');
+            }
+
+            videoPlayer.play();
+        }
+    </script>
+</body>
+</html>
