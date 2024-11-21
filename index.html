@@ -3,188 +3,169 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>البث المباشر والقنوات</title>
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <title>مشغل بث مباشر</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #121212; /* خلفية داكنة */
-            color: #fff; /* نص أبيض */
             margin: 0;
             padding: 0;
+            background-color: #121212;
+            color: #fff;
         }
 
         header {
-            text-align: center;
-            background: linear-gradient(to right, #f8b133, #ff7f00);
-            padding: 20px;
-            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f8b133;
+            padding: 10px 20px;
+        }
+
+        header .logo {
             font-size: 1.5rem;
             font-weight: bold;
         }
 
         .container {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
             padding: 20px;
         }
 
-        .channel-card {
+        .card {
             background-color: #1e1e1e;
             border-radius: 10px;
             overflow: hidden;
             text-align: center;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-            transition: transform 0.3s, box-shadow 0.3s;
+            transition: transform 0.3s;
         }
 
-        .channel-card:hover {
+        .card:hover {
             transform: scale(1.05);
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
         }
 
-        .channel-card img {
+        .card img {
             width: 100%;
-            height: 200px;
+            height: auto;
+            max-height: 100px;
             object-fit: cover;
-        }
-
-        .channel-card h3 {
-            padding: 10px;
-            font-size: 1.2rem;
-        }
-
-        .channel-card button {
-            padding: 10px 20px;
-            background-color: #ff7f00;
-            border: none;
-            color: white;
-            font-size: 1rem;
             cursor: pointer;
-            border-radius: 5px;
-            margin-bottom: 10px;
         }
 
-        .channel-card button:hover {
-            background-color: #f8b133;
+        .card p {
+            padding: 5px;
+            font-size: 0.9rem;
         }
 
-        /* مشغل الفيديو */
-        .video-player-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            display: none;
-        }
-
-        .video-player-container video {
-            width: 80%;
-            max-width: 900px;
-            border-radius: 10px;
-            outline: none;
-        }
-
-        .video-player-container button {
+        button {
             position: absolute;
-            top: 20px;
-            right: 20px;
+            top: 10px;
+            right: 10px;
             padding: 10px 15px;
             background-color: #f44336;
             color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 1.5rem;
+            z-index: 1000;
         }
 
-        .video-player-container button:hover {
+        button:hover {
             background-color: #d32f2f;
         }
     </style>
 </head>
 <body>
-    <header>البث المباشر والقنوات</header>
+    <header>
+        <div class="logo">مشغل بث مباشر</div>
+    </header>
 
-    <div class="container" id="channels">
-        <!-- سيتم إنشاء القنوات ديناميكيًا هنا -->
+    <div class="container" id="streamsContainer">
+        <!-- سيتم إنشاء البطاقات ديناميكيًا هنا -->
     </div>
 
-    <!-- مشغل الفيديو -->
-    <div class="video-player-container" id="videoPlayerContainer">
-        <video id="videoPlayer" controls></video>
-        <button onclick="closePlayer()">✖</button>
-    </div>
-
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <script>
-        // قائمة القنوات والبث المباشر
-        const channels = [
+        // قائمة روابط البث
+        const streams = [
             {
-                name: 'قناة الجزيرة',
-                url: 'https://live-hls-web-aja.getaj.net/AJA/index.m3u8',
+                title: 'بث مباشر قناة الجزيرة',
+                url: 'https://example.com/stream1',
                 thumbnail: 'https://logowik.com/content/uploads/images/al-jazeera-tv6503.jpg'
             },
             {
-                name: 'قناة الحدث',
+                title: 'بث مباشر قناة الحدث',
                 url: 'https://av.alarabiya.net/alarabiapublish/alhadath.smil/playlist.m3u8',
                 thumbnail: 'https://upload.wikimedia.org/wikipedia/commons/5/5a/AlHADATH.png'
             },
             {
-                name: 'قناة العربية',
+                title: 'بث مباشر قناة العربية',
                 url: 'https://live.alarabiya.net/alarabiapublish/alarabiya.smil/playlist.m3u8',
                 thumbnail: 'https://seeklogo.com/images/A/al-arabiya-logo-E8E441B937-seeklogo.com.png'
             },
             {
-                name: 'قناة سوريا',
+                title: 'بث مباشر قناة سوريا',
                 url: 'https://svs.itworkscdn.net/syriatvlive/syriatv.smil/playlist_dvr.m3u8',
                 thumbnail: 'https://s.shabakngy.com/wp-content/uploads/2021/03/%D8%AA%D8%B1%D8%AF%D8%AF-%D9%82%D9%86%D8%A7%D8%A9-%D8%AA%D9%84%D9%81%D8%B2%D9%8A%D9%88%D9%86-%D8%B3%D9%88%D8%B1%D9%8A%D8%A7-Syria-TV-%D8%A7%D9%84%D8%AC%D8%AF%D9%8A%D8%AF-2021.jpg'
             }
         ];
 
-        const channelsContainer = document.getElementById('channels');
-        const videoPlayerContainer = document.getElementById('videoPlayerContainer');
-        const videoPlayer = document.getElementById('videoPlayer');
+        const container = document.getElementById('streamsContainer');
 
-        // إنشاء بطاقات القنوات ديناميكيًا
-        channels.forEach(channel => {
-            const channelCard = document.createElement('div');
-            channelCard.classList.add('channel-card');
-            channelCard.innerHTML = `
-                <img src="${channel.thumbnail}" alt="${channel.name}">
-                <h3>${channel.name}</h3>
-                <button onclick="playChannel('${channel.url}')">مشاهدة البث</button>
+        // إنشاء البطاقات ديناميكيًا
+        streams.forEach(stream => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `
+                <img src="${stream.thumbnail}" alt="${stream.title}" onclick="playStream('${stream.url}', '${stream.title}')">
+                <p>${stream.title}</p>
             `;
-            channelsContainer.appendChild(channelCard);
+            container.appendChild(card);
         });
 
-        // تشغيل البث المباشر
-        function playChannel(url) {
-            if (Hls.isSupported()) {
-                const hls = new Hls();
-                hls.loadSource(url);
-                hls.attachMedia(videoPlayer);
-            } else if (videoPlayer.canPlayType('application/vnd.apple.mpegurl')) {
-                videoPlayer.src = url;
-            } else {
-                alert('المتصفح لا يدعم تشغيل هذا النوع من الفيديو');
-                return;
+        function playStream(url, title) {
+            // إنشاء عنصر فيديو
+            const video = document.createElement('video');
+            video.controls = true;
+            video.style.position = 'fixed';
+            video.style.top = '0';
+            video.style.left = '0';
+            video.style.width = '100%';
+            video.style.height = '100%';
+            video.style.zIndex = '999';
+            video.style.backgroundColor = 'black';
+            document.body.appendChild(video);
+
+            // زر إغلاق الفيديو
+            const closeButton = document.createElement('button');
+            closeButton.textContent = 'إغلاق';
+            closeButton.onclick = () => {
+                video.pause();
+                document.body.removeChild(video);
+                document.body.removeChild(closeButton);
+            };
+            document.body.appendChild(closeButton);
+
+            // إعداد HLS.js
+            try {
+                if (Hls.isSupported()) {
+                    const hls = new Hls();
+                    hls.loadSource(url);
+                    hls.attachMedia(video);
+                } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                    video.src = url;
+                } else {
+                    throw new Error('البث المباشر غير مدعوم.');
+                }
+            } catch (error) {
+                alert(`حدث خطأ: ${error.message}`);
+                closeButton.click(); // إغلاق الفيديو عند حدوث خطأ
             }
 
-            videoPlayerContainer.style.display = 'flex';
-            videoPlayer.play();
-        }
-
-        // إغلاق مشغل الفيديو
-        function closePlayer() {
-            videoPlayer.pause();
-            videoPlayerContainer.style.display = 'none';
+            // تشغيل الفيديو
+            video.play();
         }
     </script>
 </body>
