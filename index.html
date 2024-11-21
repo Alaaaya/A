@@ -136,6 +136,7 @@
             video.style.height = '100%';
             video.style.zIndex = '999';
             video.style.backgroundColor = 'black';
+            video.draggable = true;  // تمكين السحب
             document.body.appendChild(video);
 
             // زر إغلاق الفيديو
@@ -166,6 +167,13 @@
 
             // تشغيل الفيديو
             video.play();
+
+            // إضافة حدث السحب لإغلاق الفيديو عند السحب
+            video.addEventListener('dragend', () => {
+                video.pause();
+                document.body.removeChild(video);
+                document.body.removeChild(closeButton);
+            });
         }
     </script>
 </body>
