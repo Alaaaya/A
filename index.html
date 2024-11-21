@@ -9,22 +9,18 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #121212; /* خلفية داكنة */
-            color: #fff; /* نص أبيض */
+            background-color: #121212;
+            color: #fff;
         }
 
         header {
             display: flex;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(to right, #f8b133, #ff7f00); /* تدرج لوني */
+            background: linear-gradient(to right, #f8b133, #ff7f00);
             padding: 10px 20px;
-        }
-
-        header .logo {
             font-size: 1.5rem;
             font-weight: bold;
-            color: #fff; /* نص أبيض */
         }
 
         .container {
@@ -35,24 +31,22 @@
         }
 
         .card {
-            background-color: #1e1e1e; /* خلفية داكنة للبطاقة */
+            background-color: #1e1e1e;
             border-radius: 10px;
             overflow: hidden;
             text-align: center;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); /* ظل بسيط */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
             transition: transform 0.3s, box-shadow 0.3s;
         }
 
         .card:hover {
             transform: scale(1.05);
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.2); /* توهج عند التحويم */
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
         }
 
         .card img {
             width: 100%;
             height: auto;
-            max-height: 100px;
-            object-fit: cover;
             cursor: pointer;
         }
 
@@ -62,48 +56,56 @@
             color: #fff;
         }
 
-        button {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            padding: 10px 15px;
-            background-color: #f44336; /* لون أحمر */
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            z-index: 1000;
-            font-size: 1rem;
-            transition: background-color 0.3s;
-        }
-
-        button:hover {
-            background-color: #d32f2f;
-        }
-
-        /* تحسين الزر */
-        button:after {
-            content: '×'; /* رمز الإغلاق */
-            font-size: 1.2rem;
+        .video-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
         }
 
         video {
-            transition: opacity 0.3s ease-in-out; /* تأثير عند الإظهار */
+            width: 80%;
+            max-height: 80%;
+            border: 2px solid #fff;
+            border-radius: 10px;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: #f44336;
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            border-radius: 50%;
+            transition: background-color 0.3s;
+        }
+
+        .close-btn:hover {
+            background-color: #d32f2f;
         }
     </style>
 </head>
 <body>
     <header>
-        <div class="logo">مشغل بث مباشر</div>
+        <div>مشغل بث مباشر</div>
     </header>
 
     <div class="container" id="streamsContainer">
-        <!-- سيتم إنشاء البطاقات ديناميكيًا هنا -->
+        <!-- البطاقات ستتم إضافتها هنا ديناميكيًا -->
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <script>
-        // قائمة روابط البث
         const streams = [
             {
                 title: 'بث مباشر قناة الجزيرة',
@@ -129,60 +131,45 @@
 
         const container = document.getElementById('streamsContainer');
 
-        // إنشاء البطاقات ديناميكيًا
         streams.forEach(stream => {
             const card = document.createElement('div');
             card.className = 'card';
             card.innerHTML = `
-                <img src="${stream.thumbnail}" alt="${stream.title}" onclick="playStream('${stream.url}', '${stream.title}')">
+                <img src="${stream.thumbnail}" alt="${stream.title}" onclick="playStream('${stream.url}')">
                 <p>${stream.title}</p>
             `;
             container.appendChild(card);
         });
 
-        function playStream(url, title) {
-            // إنشاء عنصر فيديو
+        function playStream(url) {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'video-wrapper';
+
             const video = document.createElement('video');
             video.controls = true;
-            video.style.position = 'fixed';
-            video.style.top = '0';
-            video.style.left = '0';
-            video.style.width = '100%';
-            video.style.height = '100%';
-            video.style.zIndex = '999';
-            video.style.backgroundColor = 'black';
-            document.body.appendChild(video);
 
-            // زر إغلاق الفيديو
-            const closeButton = document.createElement('button');
-            closeButton.onclick = () => {
-                video.style.opacity = 0; // تأثير إخفاء الفيديو
-                setTimeout(() => {
-                    video.pause();
-                    document.body.removeChild(video);
-                    document.body.removeChild(closeButton);
-                }, 300); // انتظار تأثير الإخفاء
-            };
-            document.body.appendChild(closeButton);
-
-            // إعداد HLS.js
-            try {
-                if (Hls.isSupported()) {
-                    const hls = new Hls();
-                    hls.loadSource(url);
-                    hls.attachMedia(video);
-                } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                    video.src = url;
-                } else {
-                    throw new Error('البث المباشر غير مدعوم.');
-                }
-            } catch (error) {
-                alert(`حدث خطأ: ${error.message}`);
-                closeButton.click(); // إغلاق الفيديو عند حدوث خطأ
+            if (Hls.isSupported()) {
+                const hls = new Hls();
+                hls.loadSource(url);
+                hls.attachMedia(video);
+            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                video.src = url;
+            } else {
+                alert('المتصفح لا يدعم تشغيل هذا البث.');
+                return;
             }
 
-            // تشغيل الفيديو
-            video.style.opacity = 1; // عرض الفيديو
+            const closeButton = document.createElement('button');
+            closeButton.className = 'close-btn';
+            closeButton.innerText = '×';
+            closeButton.onclick = () => {
+                wrapper.remove();
+            };
+
+            wrapper.appendChild(video);
+            wrapper.appendChild(closeButton);
+            document.body.appendChild(wrapper);
+
             video.play();
         }
     </script>
