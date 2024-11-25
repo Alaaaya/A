@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Work Hours Calculator</title>
+    <title>Arbeitsstunden Rechner</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -11,7 +11,7 @@
             background-color: #f4f4f9;
         }
         .container {
-            max-width: 400px;
+            max-width: 600px;
             margin: 0 auto;
             background: #fff;
             padding: 20px;
@@ -19,6 +19,18 @@
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
         h1 {
+            text-align: center;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ccc;
+        }
+        th, td {
+            padding: 10px;
             text-align: center;
         }
         label {
@@ -55,28 +67,52 @@
 </head>
 <body>
     <div class="container">
-        <h1>Work Hours Calculator</h1>
-        <label for="start-time">Start Time:</label>
+        <h1>Arbeitsstunden Rechner</h1>
+        <label for="person-name">Name:</label>
+        <input type="text" id="person-name" placeholder="Name eingeben">
+
+        <label for="date">Datum:</label>
+        <input type="date" id="date">
+
+        <label for="start-time">Startzeit:</label>
         <input type="time" id="start-time">
 
-        <label for="end-time">End Time:</label>
+        <label for="end-time">Endzeit:</label>
         <input type="time" id="end-time">
 
-        <button onclick="calculateHours()">Calculate Hours</button>
+        <button onclick="addEntry()">Hinzufügen</button>
 
-        <div class="result" id="result"></div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Datum</th>
+                    <th>Tag</th>
+                    <th>Startzeit</th>
+                    <th>Endzeit</th>
+                    <th>Arbeitsstunden</th>
+                </tr>
+            </thead>
+            <tbody id="work-hours-table">
+                <!-- Entries will be added here dynamically -->
+            </tbody>
+        </table>
     </div>
 
     <script>
-        function calculateHours() {
+        function addEntry() {
+            const name = document.getElementById('person-name').value;
+            const dateInput = document.getElementById('date').value;
             const startTime = document.getElementById('start-time').value;
             const endTime = document.getElementById('end-time').value;
+            const table = document.getElementById('work-hours-table');
 
-            if (!startTime || !endTime) {
-                document.getElementById('result').textContent = "Please enter both start and end times.";
+            if (!name || !dateInput || !startTime || !endTime) {
+                alert("Bitte füllen Sie alle Felder aus.");
                 return;
             }
 
+            const date = new Date(dateInput);
             const start = new Date(`1970-01-01T${startTime}:00`);
             const end = new Date(`1970-01-01T${endTime}:00`);
 
@@ -86,7 +122,24 @@
                 diff += 24; // Adjust for times crossing midnight
             }
 
-            document.getElementById('result').textContent = `Total Hours: ${diff.toFixed(2)}`;
+            const dayNames = ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"];
+            const dayName = dayNames[date.getUTCDay()];
+
+            const newRow = table.insertRow();
+
+            newRow.innerHTML = `
+                <td>${name}</td>
+                <td>${date.toLocaleDateString("de-DE")}</td>
+                <td>${dayName}</td>
+                <td>${startTime}</td>
+                <td>${endTime}</td>
+                <td>${diff.toFixed(2)}</td>
+            `;
+
+            document.getElementById('person-name').value = "";
+            document.getElementById('date').value = "";
+            document.getElementById('start-time').value = "";
+            document.getElementById('end-time').value = "";
         }
     </script>
 </body>
