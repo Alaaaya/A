@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Work Hours Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f9;
+        }
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            margin-top: 20px;
+            width: 100%;
+            padding: 10px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Work Hours Calculator</h1>
+        <label for="start-time">Start Time:</label>
+        <input type="time" id="start-time">
+
+        <label for="end-time">End Time:</label>
+        <input type="time" id="end-time">
+
+        <button onclick="calculateHours()">Calculate Hours</button>
+
+        <div class="result" id="result"></div>
+    </div>
+
+    <script>
+        function calculateHours() {
+            const startTime = document.getElementById('start-time').value;
+            const endTime = document.getElementById('end-time').value;
+
+            if (!startTime || !endTime) {
+                document.getElementById('result').textContent = "Please enter both start and end times.";
+                return;
+            }
+
+            const start = new Date(`1970-01-01T${startTime}:00`);
+            const end = new Date(`1970-01-01T${endTime}:00`);
+
+            let diff = (end - start) / (1000 * 60 * 60); // Difference in hours
+
+            if (diff < 0) {
+                diff += 24; // Adjust for times crossing midnight
+            }
+
+            document.getElementById('result').textContent = `Total Hours: ${diff.toFixed(2)}`;
+        }
+    </script>
+</body>
+</html>
