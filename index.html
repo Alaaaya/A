@@ -57,11 +57,16 @@
         button:hover {
             background-color: #0056b3;
         }
-        .result {
-            margin-top: 20px;
-            text-align: center;
-            font-size: 1.2em;
-            font-weight: bold;
+        .delete-btn {
+            background-color: #FF0000;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .delete-btn:hover {
+            background-color: #cc0000;
         }
     </style>
 </head>
@@ -91,6 +96,7 @@
                     <th>Startzeit</th>
                     <th>Endzeit</th>
                     <th>Arbeitsstunden</th>
+                    <th>Aktion</th>
                 </tr>
             </thead>
             <tbody id="work-hours-table">
@@ -100,12 +106,17 @@
     </div>
 
     <script>
+        // Load entries from local storage
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedEntries = JSON.parse(localStorage.getItem('workHours')) || [];
+            savedEntries.forEach(entry => addRow(entry));
+        });
+
         function addEntry() {
             const name = document.getElementById('person-name').value;
             const dateInput = document.getElementById('date').value;
             const startTime = document.getElementById('start-time').value;
             const endTime = document.getElementById('end-time').value;
-            const table = document.getElementById('work-hours-table');
 
             if (!name || !dateInput || !startTime || !endTime) {
                 alert("Bitte füllen Sie alle Felder aus.");
@@ -125,21 +136,52 @@
             const dayNames = ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"];
             const dayName = dayNames[date.getUTCDay()];
 
-            const newRow = table.insertRow();
+            const entry = {
+                name,
+                date: date.toLocaleDateString("de-DE"),
+                day: dayName,
+                startTime,
+                endTime,
+                hours: diff.toFixed(2)
+            };
 
-            newRow.innerHTML = `
-                <td>${name}</td>
-                <td>${date.toLocaleDateString("de-DE")}</td>
-                <td>${dayName}</td>
-                <td>${startTime}</td>
-                <td>${endTime}</td>
-                <td>${diff.toFixed(2)}</td>
-            `;
+            addRow(entry);
+            saveEntry(entry);
 
             document.getElementById('person-name').value = "";
             document.getElementById('date').value = "";
             document.getElementById('start-time').value = "";
             document.getElementById('end-time').value = "";
+        }
+
+        function addRow(entry) {
+            const table = document.getElementById('work-hours-table');
+            const newRow = table.insertRow();
+
+            newRow.innerHTML = `
+                <td>${entry.name}</td>
+                <td>${entry.date}</td>
+                <td>${entry.day}</td>
+                <td>${entry.startTime}</td>
+                <td>${entry.endTime}</td>
+                <td>${entry.hours}</td>
+                <td><button class="delete-btn" onclick="deleteRow(this, '${entry.date}', '${entry.name}')">Löschen</button></td>
+            `;
+        }
+
+        function saveEntry(entry) {
+            const savedEntries = JSON.parse(localStorage.getItem('workHours')) || [];
+            savedEntries.push(entry);
+            localStorage.setItem('workHours', JSON.stringify(savedEntries));
+        }
+
+        function deleteRow(button, date, name) {
+            const row = button.parentElement.parentElement;
+            row.remove();
+
+            let savedEntries = JSON.parse(localStorage.getItem('workHours')) || [];
+            savedEntries = savedEntries.filter(entry => !(entry.date === date && entry.name === name));
+            localStorage.setItem('workHours', JSON.stringify(savedEntries));
         }
     </script>
 </body>
