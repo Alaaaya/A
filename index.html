@@ -13,15 +13,15 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
         }
         .container {
+            width: 90%;
             max-width: 600px;
             background: #ffffff;
             padding: 20px;
             border-radius: 15px;
             box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.1);
-            transform: perspective(1000px) rotateX(5deg);
         }
         h1 {
             text-align: center;
@@ -39,7 +39,6 @@
             margin-top: 5px;
             border: 1px solid #ccc;
             border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             font-size: 1rem;
         }
         button {
@@ -52,7 +51,6 @@
             border-radius: 8px;
             font-size: 1.1rem;
             font-weight: bold;
-            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
             cursor: pointer;
             transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
@@ -64,7 +62,7 @@
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            font-size: 0.9rem;
         }
         table, th, td {
             border: 1px solid #ccc;
@@ -76,7 +74,6 @@
         th {
             background: linear-gradient(135deg, #ff758c, #ff7eb3);
             color: white;
-            font-weight: bold;
         }
         .delete-btn {
             background-color: #ff4d4d;
@@ -85,22 +82,20 @@
             padding: 5px 10px;
             border-radius: 6px;
             cursor: pointer;
-            transition: transform 0.2s ease;
         }
         .delete-btn:hover {
             background-color: #cc0000;
-            transform: scale(1.1);
         }
         @media (max-width: 768px) {
-            .container {
-                padding: 15px;
-                transform: none;
-            }
             h1 {
                 font-size: 1.5rem;
             }
             input, select, button {
                 font-size: 0.9rem;
+                padding: 8px;
+            }
+            table {
+                font-size: 0.8rem;
             }
         }
     </style>
@@ -146,11 +141,6 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const savedEntries = JSON.parse(localStorage.getItem('workHours')) || [];
-            savedEntries.forEach(entry => addRow(entry));
-        });
-
         function addEntry() {
             const name = document.getElementById('person-name').value;
             const dateInput = document.getElementById('date').value;
@@ -187,12 +177,6 @@
             };
 
             addRow(entry);
-            saveEntry(entry);
-
-            document.getElementById('person-name').value = "";
-            document.getElementById('date').value = "";
-            document.getElementById('start-time').value = "";
-            document.getElementById('end-time').value = "";
         }
 
         function parseTime(time) {
@@ -212,23 +196,8 @@
                 <td>${entry.startTime}</td>
                 <td>${entry.endTime}</td>
                 <td>${entry.hours}</td>
-                <td><button class="delete-btn" onclick="deleteRow(this, '${entry.date}', '${entry.name}')">Löschen</button></td>
+                <td><button class="delete-btn" onclick="this.closest('tr').remove()">Löschen</button></td>
             `;
-        }
-
-        function saveEntry(entry) {
-            const savedEntries = JSON.parse(localStorage.getItem('workHours')) || [];
-            savedEntries.push(entry);
-            localStorage.setItem('workHours', JSON.stringify(savedEntries));
-        }
-
-        function deleteRow(button, date, name) {
-            const row = button.parentElement.parentElement;
-            row.remove();
-
-            let savedEntries = JSON.parse(localStorage.getItem('workHours')) || [];
-            savedEntries = savedEntries.filter(entry => !(entry.date === date && entry.name === name));
-            localStorage.setItem('workHours', JSON.stringify(savedEntries));
         }
     </script>
 </body>
