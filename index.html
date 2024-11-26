@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arbeitsstunden Rechner</title>
+    <title>Arbeitsstunden Rechner - 3D</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -14,31 +14,39 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
+            perspective: 1000px;
         }
+
         .container {
             width: 95%;
             max-width: 500px;
             background: #ffffff;
             padding: 20px;
             border-radius: 15px;
-            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.1);
-            transform: perspective(1000px) rotateX(0deg) rotateY(0deg);
-            transition: transform 0.5s ease, box-shadow 0.5s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transform: rotateX(10deg);
+            transition: transform 0.5s, box-shadow 0.5s;
         }
+
         .container:hover {
-            transform: perspective(1000px) rotateX(10deg) rotateY(-10deg);
-            box-shadow: 0 20px 30px rgba(0, 0, 0, 0.2), 0 10px 15px rgba(0, 0, 0, 0.1);
+            transform: rotateX(0deg) scale(1.05);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
         }
+
         h1 {
             text-align: center;
             margin-bottom: 20px;
-            font-size: 1.8rem;
+            font-size: 2rem;
+            color: #ff758c;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
         }
+
         label {
             display: block;
             margin-top: 10px;
             font-weight: bold;
         }
+
         input, select {
             width: 100%;
             padding: 10px;
@@ -46,12 +54,15 @@
             border: 1px solid #ccc;
             border-radius: 8px;
             font-size: 1rem;
-            transition: box-shadow 0.3s ease;
+            box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.1);
+            transition: box-shadow 0.3s;
         }
+
         input:focus, select:focus {
-            box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
+            box-shadow: inset 2px 2px 8px rgba(0, 0, 0, 0.2);
             outline: none;
         }
+
         button {
             margin-top: 20px;
             width: 100%;
@@ -63,67 +74,65 @@
             font-size: 1.1rem;
             font-weight: bold;
             cursor: pointer;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
         }
+
         button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
+            transform: translateY(-5px);
+            box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3);
         }
+
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
-        th, td {
-            text-align: left;
+
+        table th, table td {
             padding: 10px;
-            border-bottom: 1px solid #ddd;
+            text-align: center;
+            border: 1px solid #ddd;
+            background: linear-gradient(135deg, #fdfbfb, #ebedee);
+            color: #555;
         }
-        th {
+
+        table th {
             background: linear-gradient(135deg, #007BFF, #0056b3);
             color: white;
             font-weight: bold;
         }
-        td {
-            background: #f9f9f9;
-        }
-        td:hover {
-            background: #f1f1f1;
-        }
-        .animation {
-            animation: bounce 2s infinite ease-in-out;
-        }
 
-        @keyframes bounce {
-            0%, 100% {
-                transform: translateY(0);
-            }
-            50% {
-                transform: translateY(-10px);
-            }
+        table tr:hover {
+            background: rgba(0, 123, 255, 0.1);
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1 class="animation">Arbeitsstunden Rechner</h1>
-        <label for="name">Name:</label>
-        <select id="name">
-            <option value="">Wähle eine Person</option>
-            <option value="Person 1">Person 1</option>
-            <option value="Person 2">Person 2</option>
-        </select>
+        <h1>Arbeitsstunden Rechner</h1>
+        <form>
+            <label for="name">Name:</label>
+            <select id="name" name="name">
+                <option value="">Wähle eine Person</option>
+                <option value="person1">Person 1</option>
+                <option value="person2">Person 2</option>
+            </select>
 
-        <label for="date">Datum:</label>
-        <input type="date" id="date">
+            <label for="date">Datum:</label>
+            <input type="date" id="date" name="date">
 
-        <label for="start-time">Startzeit:</label>
-        <input type="time" id="start-time" placeholder="z.B. 09:00">
+            <label for="start">Startzeit:</label>
+            <input type="time" id="start" name="start">
 
-        <label for="end-time">Endzeit:</label>
-        <input type="time" id="end-time" placeholder="z.B. 17:00">
+            <label for="end">Endzeit:</label>
+            <input type="time" id="end" name="end">
 
-        <button onclick="addRow()">Hinzufügen</button>
+            <button type="button">Hinzufügen</button>
+        </form>
 
         <table>
             <thead>
@@ -134,52 +143,12 @@
                     <th>Startzeit</th>
                     <th>Endzeit</th>
                     <th>Arbeitsstunden</th>
-                    <th>Aktionen</th>
                 </tr>
             </thead>
-            <tbody id="table-body">
+            <tbody>
+                <!-- Dynamische Inhalte hier eingefügt -->
             </tbody>
         </table>
     </div>
-
-    <script>
-        function addRow() {
-            const name = document.getElementById('name').value;
-            const date = document.getElementById('date').value;
-            const startTime = document.getElementById('start-time').value;
-            const endTime = document.getElementById('end-time').value;
-
-            if (!name || !date || !startTime || !endTime) {
-                alert('Bitte alle Felder ausfüllen!');
-                return;
-            }
-
-            const start = new Date(`1970-01-01T${startTime}:00`);
-            const end = new Date(`1970-01-01T${endTime}:00`);
-            const hours = (end - start) / (1000 * 60 * 60);
-
-            if (hours <= 0) {
-                alert('Endzeit muss nach Startzeit liegen!');
-                return;
-            }
-
-            const tableBody = document.getElementById('table-body');
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${name}</td>
-                <td>${date}</td>
-                <td>${new Date(date).toLocaleDateString('de-DE', { weekday: 'long' })}</td>
-                <td>${startTime}</td>
-                <td>${endTime}</td>
-                <td>${hours.toFixed(2)}</td>
-                <td><button onclick="deleteRow(this)">Löschen</button></td>
-            `;
-            tableBody.appendChild(row);
-        }
-
-        function deleteRow(button) {
-            button.parentElement.parentElement.remove();
-        }
-    </script>
 </body>
 </html>
