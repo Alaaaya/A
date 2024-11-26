@@ -37,7 +37,7 @@
             display: block;
             margin-top: 10px;
         }
-        input {
+        input, select {
             width: 100%;
             padding: 8px;
             margin-top: 5px;
@@ -68,22 +68,40 @@
         .delete-btn:hover {
             background-color: #cc0000;
         }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 15px;
+            }
+            button {
+                font-size: 14px;
+                padding: 8px;
+            }
+            input, select {
+                font-size: 14px;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Arbeitsstunden Rechner</h1>
-        <label for="person-name">Name:</label>
-        <input type="text" id="person-name" placeholder="Name eingeben">
+        <label for="person-select">Person auswählen:</label>
+        <select id="person-select">
+            <option value="">-- Wählen Sie eine Person --</option>
+            <option value="Person 1">Person 1</option>
+            <option value="Person 2">Person 2</option>
+            <option value="Person 3">Person 3</option>
+        </select>
 
         <label for="date">Datum:</label>
         <input type="date" id="date">
 
-        <label for="start-time">Startzeit:</label>
-        <input type="time" id="start-time">
+        <label for="start-time">Startzeit (hh:mm):</label>
+        <input type="text" id="start-time" placeholder="z.B. 08:30">
 
-        <label for="end-time">Endzeit:</label>
-        <input type="time" id="end-time">
+        <label for="end-time">Endzeit (hh:mm):</label>
+        <input type="text" id="end-time" placeholder="z.B. 16:45">
 
         <button onclick="addEntry()">Hinzufügen</button>
 
@@ -113,7 +131,7 @@
         });
 
         function addEntry() {
-            const name = document.getElementById('person-name').value;
+            const name = document.getElementById('person-select').value;
             const dateInput = document.getElementById('date').value;
             const startTime = document.getElementById('start-time').value;
             const endTime = document.getElementById('end-time').value;
@@ -124,8 +142,13 @@
             }
 
             const date = new Date(dateInput);
-            const start = new Date(`1970-01-01T${startTime}:00`);
-            const end = new Date(`1970-01-01T${endTime}:00`);
+            const start = parseTime(startTime);
+            const end = parseTime(endTime);
+
+            if (!start || !end) {
+                alert("Ungültige Zeitangabe. Bitte geben Sie die Zeit im Format hh:mm ein.");
+                return;
+            }
 
             let diff = (end - start) / (1000 * 60 * 60); // Difference in hours
 
@@ -148,10 +171,18 @@
             addRow(entry);
             saveEntry(entry);
 
-            document.getElementById('person-name').value = "";
+            document.getElementById('person-select').value = "";
             document.getElementById('date').value = "";
             document.getElementById('start-time').value = "";
             document.getElementById('end-time').value = "";
+        }
+
+        function parseTime(timeStr) {
+            const [hours, minutes] = timeStr.split(':').map(Number);
+            if (isNaN(hours) || isNaN(minutes)) {
+                return null;
+            }
+            return new Date(`1970-01-01T${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:00`);
         }
 
         function addRow(entry) {
