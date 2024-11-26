@@ -18,32 +18,39 @@
         .container {
             width: 95%;
             max-width: 500px;
-            background: linear-gradient(145deg, #ffffff, #f0f0f0);
+            background: #ffffff;
             padding: 20px;
             border-radius: 15px;
-            box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.2), -5px -5px 15px rgba(255, 255, 255, 0.5);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.1);
+            transform: perspective(1000px) rotateX(0deg) rotateY(0deg);
+            transition: transform 0.5s ease, box-shadow 0.5s ease;
+        }
+        .container:hover {
+            transform: perspective(1000px) rotateX(10deg) rotateY(-10deg);
+            box-shadow: 0 20px 30px rgba(0, 0, 0, 0.2), 0 10px 15px rgba(0, 0, 0, 0.1);
         }
         h1 {
             text-align: center;
             margin-bottom: 20px;
             font-size: 1.8rem;
-            color: #ff4d6d;
         }
         label {
             display: block;
             margin-top: 10px;
             font-weight: bold;
-            color: #444;
         }
         input, select {
             width: 100%;
             padding: 10px;
             margin-top: 5px;
-            border: none;
+            border: 1px solid #ccc;
             border-radius: 8px;
             font-size: 1rem;
-            background: linear-gradient(145deg, #f5f5f5, #e0e0e0);
-            box-shadow: inset 5px 5px 10px rgba(0, 0, 0, 0.1), inset -5px -5px 10px rgba(255, 255, 255, 0.7);
+            transition: box-shadow 0.3s ease;
+        }
+        input:focus, select:focus {
+            box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
+            outline: none;
         }
         button {
             margin-top: 20px;
@@ -66,10 +73,6 @@
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
-            background: linear-gradient(145deg, #ffffff, #f0f0f0);
-            box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.1), -5px -5px 15px rgba(255, 255, 255, 0.5);
-            border-radius: 10px;
-            overflow: hidden;
         }
         th, td {
             text-align: left;
@@ -77,53 +80,64 @@
             border-bottom: 1px solid #ddd;
         }
         th {
-            background: #ff4d6d;
+            background: linear-gradient(135deg, #007BFF, #0056b3);
             color: white;
             font-weight: bold;
         }
         td {
-            background: linear-gradient(145deg, #f9f9f9, #e6e6e6);
+            background: #f9f9f9;
         }
-        tr:hover td {
-            background: #ffe6e6;
+        td:hover {
+            background: #f1f1f1;
+        }
+        .animation {
+            animation: bounce 2s infinite ease-in-out;
+        }
+
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Arbeitsstunden Rechner</h1>
-        <form id="workForm">
-            <label for="name">Name:</label>
-            <select id="name" name="name">
-                <option value="">Wähle eine Person</option>
-                <option value="Person 1">Person 1</option>
-                <option value="Person 2">Person 2</option>
-            </select>
+        <h1 class="animation">Arbeitsstunden Rechner</h1>
+        <label for="name">Name:</label>
+        <select id="name">
+            <option value="">Wähle eine Person</option>
+            <option value="Person 1">Person 1</option>
+            <option value="Person 2">Person 2</option>
+        </select>
 
-            <label for="date">Datum:</label>
-            <input type="date" id="date" name="date">
+        <label for="date">Datum:</label>
+        <input type="date" id="date">
 
-            <label for="start">Startzeit:</label>
-            <input type="time" id="start" name="start" placeholder="z.B. 09:00">
+        <label for="start-time">Startzeit:</label>
+        <input type="time" id="start-time" placeholder="z.B. 09:00">
 
-            <label for="end">Endzeit:</label>
-            <input type="time" id="end" name="end" placeholder="z.B. 17:00">
+        <label for="end-time">Endzeit:</label>
+        <input type="time" id="end-time" placeholder="z.B. 17:00">
 
-            <button type="button" onclick="addRow()">Hinzufügen</button>
-        </form>
+        <button onclick="addRow()">Hinzufügen</button>
 
         <table>
             <thead>
                 <tr>
                     <th>Name</th>
                     <th>Datum</th>
+                    <th>Tag</th>
                     <th>Startzeit</th>
                     <th>Endzeit</th>
                     <th>Arbeitsstunden</th>
+                    <th>Aktionen</th>
                 </tr>
             </thead>
-            <tbody id="workTableBody">
-                <!-- Rows will be added here dynamically -->
+            <tbody id="table-body">
             </tbody>
         </table>
     </div>
@@ -132,30 +146,39 @@
         function addRow() {
             const name = document.getElementById('name').value;
             const date = document.getElementById('date').value;
-            const start = document.getElementById('start').value;
-            const end = document.getElementById('end').value;
+            const startTime = document.getElementById('start-time').value;
+            const endTime = document.getElementById('end-time').value;
 
-            if (!name || !date || !start || !end) {
+            if (!name || !date || !startTime || !endTime) {
                 alert('Bitte alle Felder ausfüllen!');
                 return;
             }
 
-            const startHour = parseFloat(start.split(':')[0]) + parseFloat(start.split(':')[1]) / 60;
-            const endHour = parseFloat(end.split(':')[0]) + parseFloat(end.split(':')[1]) / 60;
-            const hoursWorked = (endHour - startHour).toFixed(2);
+            const start = new Date(`1970-01-01T${startTime}:00`);
+            const end = new Date(`1970-01-01T${endTime}:00`);
+            const hours = (end - start) / (1000 * 60 * 60);
 
-            const tableBody = document.getElementById('workTableBody');
+            if (hours <= 0) {
+                alert('Endzeit muss nach Startzeit liegen!');
+                return;
+            }
+
+            const tableBody = document.getElementById('table-body');
             const row = document.createElement('tr');
-
             row.innerHTML = `
                 <td>${name}</td>
                 <td>${date}</td>
-                <td>${start}</td>
-                <td>${end}</td>
-                <td>${hoursWorked}</td>
+                <td>${new Date(date).toLocaleDateString('de-DE', { weekday: 'long' })}</td>
+                <td>${startTime}</td>
+                <td>${endTime}</td>
+                <td>${hours.toFixed(2)}</td>
+                <td><button onclick="deleteRow(this)">Löschen</button></td>
             `;
-
             tableBody.appendChild(row);
+        }
+
+        function deleteRow(button) {
+            button.parentElement.parentElement.remove();
         }
     </script>
 </body>
