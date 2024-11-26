@@ -7,24 +7,64 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: #f4f4f9;
+            margin: 0;
+            background: linear-gradient(135deg, #ff7eb3, #ff758c);
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
         .container {
             max-width: 600px;
-            margin: 0 auto;
-            background: #fff;
+            background: #ffffff;
             padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 15px;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.1);
+            transform: perspective(1000px) rotateX(5deg);
         }
         h1 {
             text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            font-size: 1rem;
+        }
+        button {
+            margin-top: 20px;
+            width: 100%;
+            padding: 10px;
+            background: linear-gradient(135deg, #007BFF, #0056b3);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
         }
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
         table, th, td {
             border: 1px solid #ccc;
@@ -33,52 +73,34 @@
             padding: 10px;
             text-align: center;
         }
-        label {
-            display: block;
-            margin-top: 10px;
-        }
-        input, select {
-            width: 100%;
-            padding: 8px;
-            margin-top: 5px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        button {
-            margin-top: 20px;
-            width: 100%;
-            padding: 10px;
-            background-color: #007BFF;
+        th {
+            background: linear-gradient(135deg, #ff758c, #ff7eb3);
             color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #0056b3;
+            font-weight: bold;
         }
         .delete-btn {
-            background-color: #FF0000;
+            background-color: #ff4d4d;
             color: white;
             border: none;
             padding: 5px 10px;
-            border-radius: 4px;
+            border-radius: 6px;
             cursor: pointer;
+            transition: transform 0.2s ease;
         }
         .delete-btn:hover {
             background-color: #cc0000;
+            transform: scale(1.1);
         }
-
-        @media (max-width: 600px) {
+        @media (max-width: 768px) {
             .container {
                 padding: 15px;
+                transform: none;
             }
-            button {
-                font-size: 14px;
-                padding: 8px;
+            h1 {
+                font-size: 1.5rem;
             }
-            input, select {
-                font-size: 14px;
+            input, select, button {
+                font-size: 0.9rem;
             }
         }
     </style>
@@ -86,9 +108,9 @@
 <body>
     <div class="container">
         <h1>Arbeitsstunden Rechner</h1>
-        <label for="person-select">Person auswählen:</label>
-        <select id="person-select">
-            <option value="">-- Wählen Sie eine Person --</option>
+        <label for="person-name">Name:</label>
+        <select id="person-name">
+            <option value="" disabled selected>Wähle eine Person</option>
             <option value="Person 1">Person 1</option>
             <option value="Person 2">Person 2</option>
             <option value="Person 3">Person 3</option>
@@ -97,11 +119,11 @@
         <label for="date">Datum:</label>
         <input type="date" id="date">
 
-        <label for="start-time">Startzeit (hh:mm):</label>
-        <input type="text" id="start-time" placeholder="z.B. 08:30">
+        <label for="start-time">Startzeit:</label>
+        <input type="text" id="start-time" placeholder="z.B. 09:00">
 
-        <label for="end-time">Endzeit (hh:mm):</label>
-        <input type="text" id="end-time" placeholder="z.B. 16:45">
+        <label for="end-time">Endzeit:</label>
+        <input type="text" id="end-time" placeholder="z.B. 17:00">
 
         <button onclick="addEntry()">Hinzufügen</button>
 
@@ -118,20 +140,19 @@
                 </tr>
             </thead>
             <tbody id="work-hours-table">
-                <!-- Entries will be added here dynamically -->
+                <!-- Einträge werden hier dynamisch hinzugefügt -->
             </tbody>
         </table>
     </div>
 
     <script>
-        // Load entries from local storage
         document.addEventListener('DOMContentLoaded', () => {
             const savedEntries = JSON.parse(localStorage.getItem('workHours')) || [];
             savedEntries.forEach(entry => addRow(entry));
         });
 
         function addEntry() {
-            const name = document.getElementById('person-select').value;
+            const name = document.getElementById('person-name').value;
             const dateInput = document.getElementById('date').value;
             const startTime = document.getElementById('start-time').value;
             const endTime = document.getElementById('end-time').value;
@@ -145,16 +166,13 @@
             const start = parseTime(startTime);
             const end = parseTime(endTime);
 
-            if (!start || !end) {
-                alert("Ungültige Zeitangabe. Bitte geben Sie die Zeit im Format hh:mm ein.");
+            if (start === null || end === null) {
+                alert("Ungültige Zeitformat. Bitte z.B. 09:00 verwenden.");
                 return;
             }
 
-            let diff = (end - start) / (1000 * 60 * 60); // Difference in hours
-
-            if (diff < 0) {
-                diff += 24; // Adjust for times crossing midnight
-            }
+            let diff = (end - start) / (1000 * 60 * 60);
+            if (diff < 0) diff += 24;
 
             const dayNames = ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"];
             const dayName = dayNames[date.getUTCDay()];
@@ -171,18 +189,16 @@
             addRow(entry);
             saveEntry(entry);
 
-            document.getElementById('person-select').value = "";
+            document.getElementById('person-name').value = "";
             document.getElementById('date').value = "";
             document.getElementById('start-time').value = "";
             document.getElementById('end-time').value = "";
         }
 
-        function parseTime(timeStr) {
-            const [hours, minutes] = timeStr.split(':').map(Number);
-            if (isNaN(hours) || isNaN(minutes)) {
-                return null;
-            }
-            return new Date(`1970-01-01T${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:00`);
+        function parseTime(time) {
+            const [hours, minutes] = time.split(':').map(Number);
+            if (isNaN(hours) || isNaN(minutes)) return null;
+            return new Date(1970, 0, 1, hours, minutes);
         }
 
         function addRow(entry) {
