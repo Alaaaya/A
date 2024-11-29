@@ -8,13 +8,14 @@
         body {
             font-family: Arial, sans-serif;
             margin: 0;
-            background: linear-gradient(135deg, #FFD700, #000000); /* أصفر وأسود */
+            background: radial-gradient(circle at top, #FFD700, #000000); /* أصفر دائري إلى أسود */
             color: #fff;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             padding: 10px;
+            background-attachment: fixed; /* ثبات الخلفية */
         }
 
         .container {
@@ -24,8 +25,8 @@
             padding: 20px;
             border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); /* ظل أقوى */
-            backdrop-filter: blur(25px); /* ضبابية عالية */
-            -webkit-backdrop-filter: blur(25px);
+            backdrop-filter: blur(20px); /* ضبابية عالية */
+            -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.2); /* حد شفاف */
             transition: transform 0.5s, box-shadow 0.5s;
         }
@@ -58,14 +59,14 @@
             border: 1px solid rgba(255, 255, 255, 0.2); /* حد شفاف */
             border-radius: 8px;
             font-size: 0.9rem;
-            background: rgba(255, 255, 255, 0.2); /* زجاجي */
+            background: rgba(255, 255, 255, 0.1); /* زجاجي */
             color: #fff;
             box-shadow: inset 2px 2px 10px rgba(0, 0, 0, 0.3); /* ظل داخلي */
             transition: background 0.3s, box-shadow 0.3s;
         }
 
         input:focus, select:focus {
-            background: rgba(255, 255, 255, 0.3); /* زيادة الشفافية */
+            background: rgba(255, 255, 255, 0.2); /* زيادة الشفافية */
             box-shadow: inset 2px 2px 15px rgba(0, 0, 0, 0.5);
             outline: none;
         }
