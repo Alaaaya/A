@@ -8,39 +8,38 @@
         body {
             font-family: Arial, sans-serif;
             margin: 0;
-            background: linear-gradient(135deg, #ff7eb3, #ff758c);
+            background: linear-gradient(135deg, rgba(255, 127, 179, 0.8), rgba(255, 117, 140, 0.8));
             color: #333;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            perspective: 1000px;
+            padding: 10px; /* ضمان التباعد في الشاشات الصغيرة */
         }
 
         .container {
-            width: 95%;
-            max-width: 500px;
-            background: rgba(255, 255, 255, 0.1); /* شفافية الخلفية */
-            padding: 20px;
+            width: 100%;
+            max-width: 400px; /* تصغير الحجم للشاشات الصغيرة */
+            background: rgba(255, 255, 255, 0.2); /* خلفية أكثر شفافية */
+            padding: 15px; /* تقليل الحواف لتناسب الهواتف */
             border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            transform: rotateX(10deg);
+            backdrop-filter: blur(15px); /* زيادة الضبابية */
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
             transition: transform 0.5s, box-shadow 0.5s;
-            backdrop-filter: blur(10px); /* تأثير الضبابية */
-            -webkit-backdrop-filter: blur(10px); /* دعم المتصفحات القديمة */
-            border: 1px solid rgba(255, 255, 255, 0.3); /* حدود زجاجية خفيفة */
         }
 
         .container:hover {
-            transform: rotateX(0deg) scale(1.05);
+            transform: scale(1.03); /* تحسين التأثير عند المرور */
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
         }
 
         h1 {
             text-align: center;
-            margin-bottom: 20px;
-            font-size: 2rem;
-            color: #fff; /* النص بالأبيض ليتماشى مع الخلفية */
+            margin-bottom: 15px;
+            font-size: 1.8rem; /* تصغير حجم العنوان */
+            color: #fff;
             text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
         }
 
@@ -48,17 +47,18 @@
             display: block;
             margin-top: 10px;
             font-weight: bold;
-            color: #fff; /* لون النص الأبيض */
+            color: #fff;
+            font-size: 0.9rem; /* تصغير حجم النص */
         }
 
         input, select {
             width: 100%;
-            padding: 10px;
+            padding: 8px; /* تصغير الحواف */
             margin-top: 5px;
-            border: 1px solid rgba(255, 255, 255, 0.4); /* حدود شفافة */
+            border: 1px solid rgba(255, 255, 255, 0.4);
             border-radius: 8px;
-            font-size: 1rem;
-            background: rgba(255, 255, 255, 0.2); /* خلفية شفافة قليلاً */
+            font-size: 0.9rem; /* تصغير النص ليتناسب */
+            background: rgba(255, 255, 255, 0.2);
             color: #fff;
             box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.1);
             transition: box-shadow 0.3s, background 0.3s;
@@ -67,18 +67,18 @@
         input:focus, select:focus {
             box-shadow: inset 2px 2px 8px rgba(0, 0, 0, 0.2);
             outline: none;
-            background: rgba(255, 255, 255, 0.3); /* زيادة شفافية الخلفية عند التفاعل */
+            background: rgba(255, 255, 255, 0.3);
         }
 
         button {
-            margin-top: 20px;
+            margin-top: 15px;
             width: 100%;
-            padding: 10px;
+            padding: 8px;
             background: linear-gradient(135deg, #007BFF, #0056b3);
             color: white;
             border: none;
             border-radius: 8px;
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: bold;
             cursor: pointer;
             transition: transform 0.3s, box-shadow 0.3s;
@@ -93,18 +93,19 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
+            margin-top: 15px;
             border-radius: 10px;
             overflow: hidden;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
 
         table th, table td {
-            padding: 10px;
+            padding: 8px;
             text-align: center;
-            border: 1px solid #ddd;
-            background: rgba(255, 255, 255, 0.2); /* خلفية شفافة */
-            color: #fff; /* نص أبيض */
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            font-size: 0.9rem; /* تصغير النص */
         }
 
         table th {
@@ -114,7 +115,23 @@
         }
 
         table tr:hover {
-            background: rgba(0, 123, 255, 0.2); /* تأثير عند المرور */
+            background: rgba(0, 123, 255, 0.2);
+        }
+
+        @media (max-width: 400px) {
+            h1 {
+                font-size: 1.5rem; /* تصغير العنوان أكثر للشاشات الصغيرة */
+            }
+            label {
+                font-size: 0.8rem; /* تصغير النصوص */
+            }
+            input, select, button {
+                font-size: 0.8rem; /* تقليل الحجم */
+            }
+            table th, table td {
+                font-size: 0.8rem;
+                padding: 6px;
+            }
         }
     </style>
 </head>
