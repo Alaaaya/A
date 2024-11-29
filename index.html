@@ -3,45 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arbeitsstunden Rechner - Glassmorphism</title>
+    <title>Arbeitsstunden Rechner - 3D</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 0;
-            background: radial-gradient(circle at top, #FFD700, #000000); /* أصفر دائري إلى أسود */
-            color: #fff;
+            background: url('6067CD2C-CCC4-4F2F-AF19-5C140B3E4644.jpeg') no-repeat center center/cover;
+            color: #333;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            padding: 10px;
-            background-attachment: fixed; /* ثبات الخلفية */
+            backdrop-filter: blur(5px);
         }
 
         .container {
-            width: 100%;
-            max-width: 400px;
-            background: rgba(255, 255, 255, 0.1); /* خلفية شفافة */
+            width: 95%;
+            max-width: 500px;
+            background: rgba(255, 255, 255, 0.1);
             padding: 20px;
             border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); /* ظل أقوى */
-            backdrop-filter: blur(20px); /* ضبابية عالية */
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.2); /* حد شفاف */
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transform: rotateX(10deg);
             transition: transform 0.5s, box-shadow 0.5s;
+            backdrop-filter: blur(10px);
         }
 
         .container:hover {
-            transform: scale(1.05); /* تكبير طفيف عند المرور */
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7); /* ظل أكثر وضوحًا */
+            transform: rotateX(0deg) scale(1.05);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
         }
 
         h1 {
             text-align: center;
-            margin-bottom: 15px;
-            font-size: 1.8rem;
-            color: #FFD700; /* أصفر */
-            text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5); /* ظل للنص */
+            margin-bottom: 20px;
+            font-size: 2rem;
+            color: #fff;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
         }
 
         label {
@@ -49,90 +47,71 @@
             margin-top: 10px;
             font-weight: bold;
             color: #fff;
-            font-size: 0.9rem;
         }
 
         input, select {
             width: 100%;
             padding: 10px;
             margin-top: 5px;
-            border: 1px solid rgba(255, 255, 255, 0.2); /* حد شفاف */
+            border: 1px solid #ccc;
             border-radius: 8px;
-            font-size: 0.9rem;
-            background: rgba(255, 255, 255, 0.1); /* زجاجي */
+            font-size: 1rem;
+            box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.1);
+            transition: box-shadow 0.3s;
+            background: rgba(255, 255, 255, 0.2);
             color: #fff;
-            box-shadow: inset 2px 2px 10px rgba(0, 0, 0, 0.3); /* ظل داخلي */
-            transition: background 0.3s, box-shadow 0.3s;
         }
 
         input:focus, select:focus {
-            background: rgba(255, 255, 255, 0.2); /* زيادة الشفافية */
-            box-shadow: inset 2px 2px 15px rgba(0, 0, 0, 0.5);
+            box-shadow: inset 2px 2px 8px rgba(0, 0, 0, 0.2);
             outline: none;
         }
 
         button {
-            margin-top: 15px;
+            margin-top: 20px;
             width: 100%;
             padding: 10px;
-            background: linear-gradient(135deg, #FFD700, #000000); /* أصفر إلى أسود */
+            background: linear-gradient(135deg, #007BFF, #0056b3);
             color: white;
             border: none;
             border-radius: 8px;
-            font-size: 1rem;
+            font-size: 1.1rem;
             font-weight: bold;
             cursor: pointer;
             transition: transform 0.3s, box-shadow 0.3s;
-            box-shadow: 2px 2px 15px rgba(0, 0, 0, 0.5); /* ظل بارز */
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
         }
 
         button:hover {
             transform: translateY(-5px);
-            box-shadow: 5px 5px 20px rgba(0, 0, 0, 0.7);
+            box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3);
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 15px;
+            margin-top: 20px;
             border-radius: 10px;
             overflow: hidden;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
 
         table th, table td {
             padding: 10px;
             text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            background: rgba(255, 255, 255, 0.1); /* زجاجي */
+            border: 1px solid #ddd;
+            background: rgba(255, 255, 255, 0.2);
             color: #fff;
-            font-size: 0.9rem;
         }
 
         table th {
-            background: linear-gradient(135deg, #FFD700, #000000); /* أصفر إلى أسود */
+            background: rgba(0, 123, 255, 0.8);
             color: white;
             font-weight: bold;
         }
 
         table tr:hover {
-            background: rgba(255, 215, 0, 0.2); /* لمسة أصفر عند المرور */
-        }
-
-        @media (max-width: 400px) {
-            h1 {
-                font-size: 1.5rem;
-            }
-            label {
-                font-size: 0.8rem;
-            }
-            input, select, button {
-                font-size: 0.8rem;
-            }
-            table th, table td {
-                font-size: 0.8rem;
-                padding: 6px;
-            }
+            background: rgba(255, 255, 255, 0.1);
         }
     </style>
 </head>
