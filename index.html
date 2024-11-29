@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arbeitsstunden Rechner - 3D</title>
+    <title>Arbeitsstunden Rechner - Glassmorphism</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -20,12 +20,15 @@
         .container {
             width: 95%;
             max-width: 500px;
-            background: #ffffff;
+            background: rgba(255, 255, 255, 0.1); /* شفافية الخلفية */
             padding: 20px;
             border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
             transform: rotateX(10deg);
             transition: transform 0.5s, box-shadow 0.5s;
+            backdrop-filter: blur(10px); /* تأثير الضبابية */
+            -webkit-backdrop-filter: blur(10px); /* دعم المتصفحات القديمة */
+            border: 1px solid rgba(255, 255, 255, 0.3); /* حدود زجاجية خفيفة */
         }
 
         .container:hover {
@@ -37,7 +40,7 @@
             text-align: center;
             margin-bottom: 20px;
             font-size: 2rem;
-            color: #ff758c;
+            color: #fff; /* النص بالأبيض ليتماشى مع الخلفية */
             text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
         }
 
@@ -45,22 +48,26 @@
             display: block;
             margin-top: 10px;
             font-weight: bold;
+            color: #fff; /* لون النص الأبيض */
         }
 
         input, select {
             width: 100%;
             padding: 10px;
             margin-top: 5px;
-            border: 1px solid #ccc;
+            border: 1px solid rgba(255, 255, 255, 0.4); /* حدود شفافة */
             border-radius: 8px;
             font-size: 1rem;
+            background: rgba(255, 255, 255, 0.2); /* خلفية شفافة قليلاً */
+            color: #fff;
             box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.1);
-            transition: box-shadow 0.3s;
+            transition: box-shadow 0.3s, background 0.3s;
         }
 
         input:focus, select:focus {
             box-shadow: inset 2px 2px 8px rgba(0, 0, 0, 0.2);
             outline: none;
+            background: rgba(255, 255, 255, 0.3); /* زيادة شفافية الخلفية عند التفاعل */
         }
 
         button {
@@ -96,8 +103,8 @@
             padding: 10px;
             text-align: center;
             border: 1px solid #ddd;
-            background: linear-gradient(135deg, #fdfbfb, #ebedee);
-            color: #555;
+            background: rgba(255, 255, 255, 0.2); /* خلفية شفافة */
+            color: #fff; /* نص أبيض */
         }
 
         table th {
@@ -107,7 +114,7 @@
         }
 
         table tr:hover {
-            background: rgba(0, 123, 255, 0.1);
+            background: rgba(0, 123, 255, 0.2); /* تأثير عند المرور */
         }
     </style>
 </head>
