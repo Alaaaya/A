@@ -28,9 +28,9 @@
 
         .container {
             display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            justify-content: center;
+            flex-wrap: wrap; /* يجعل البطاقات تنتقل للسطر التالي عند امتلاء العرض */
+            justify-content: center; /* يوسّط البطاقات أفقيًا */
+            gap: 20px; /* يضيف مسافة بين البطاقات */
             padding: 20px;
         }
 
@@ -41,7 +41,7 @@
             text-align: center;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
             transition: transform 0.3s;
-            width: 200px;
+            width: 200px; /* عرض ثابت للبطاقة */
         }
 
         .card:hover {
@@ -51,14 +51,15 @@
         .card img {
             width: 100%;
             height: auto;
-            max-height: 120px;
+            max-height: 150px;
             object-fit: cover;
             cursor: pointer;
         }
 
         .card p {
+            margin: 0;
             padding: 10px;
-            font-size: 1rem;
+            font-size: 0.9rem;
         }
 
         button {
