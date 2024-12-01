@@ -3,159 +3,164 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مشغل بث مباشر</title>
+    <title>قائمة القنوات المباشرة</title>
     <style>
-        /* تصميم الجسم */
+        /* تنسيق الجسم */
         body {
-            font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background: linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(255, 204, 0, 0.8));
+            font-family: Arial, sans-serif;
+            background: linear-gradient(45deg, #000000, #1a1a1a);
             color: #fff;
+            height: 100vh;
             overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
-        header {
+        /* خلفية متوهجة ومتحركة */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255, 204, 0, 0.3), transparent 70%);
+            animation: glow 5s infinite alternate;
+            z-index: -1;
+        }
+
+        @keyframes glow {
+            0% {
+                transform: scale(1);
+                opacity: 0.8;
+            }
+            100% {
+                transform: scale(1.2);
+                opacity: 1;
+            }
+        }
+
+        /* الحاوية الأساسية */
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            padding: 20px;
+            width: 300px;
+            height: 450px;
+            overflow-y: auto;
+        }
+
+        .container h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            color: #f8c332;
+        }
+
+        /* القنوات */
+        .channel {
             display: flex;
             align-items: center;
-            justify-content: center;
-            background-color: rgba(0, 0, 0, 0.8);
-            padding: 10px 20px;
-            border-bottom: 2px solid rgba(255, 223, 0, 0.5);
-            backdrop-filter: blur(5px);
-        }
-
-        header .logo {
-            font-size: 1.2rem;
-            font-weight: bold;
-            text-shadow: 1px 1px 10px rgba(255, 255, 0, 0.7);
-        }
-
-        .container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            gap: 20px;
-            padding: 40px;
-            position: relative;
-        }
-
-        .card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 10px;
+            margin-bottom: 10px;
+            background: rgba(255, 255, 255, 0.15);
             border-radius: 10px;
-            overflow: hidden;
-            text-align: center;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
-            transition: transform 0.3s, box-shadow 0.3s;
-            animation: float 5s ease-in-out infinite;
-        }
-
-        .card:hover {
-            transform: scale(1.05);
-            box-shadow: 0 6px 20px rgba(255, 223, 0, 0.5);
-        }
-
-        .card img {
-            width: 100%;
-            height: auto;
-            max-height: 100px;
-            object-fit: cover;
+            transition: transform 0.3s, background 0.3s;
             cursor: pointer;
         }
 
-        .card p {
-            padding: 5px;
-            font-size: 0.8rem;
+        .channel:hover {
+            transform: scale(1.05);
+            background: rgba(255, 255, 255, 0.25);
         }
 
-        @keyframes float {
-            0% {
-                transform: translateY(0);
-            }
-            50% {
-                transform: translateY(-15px);
-            }
-            100% {
-                transform: translateY(0);
-            }
+        .channel img {
+            width: 50px;
+            height: 50px;
+            border-radius: 5px;
+            margin-left: 10px;
+        }
+
+        .channel p {
+            margin: 0;
+            font-size: 1rem;
+        }
+
+        /* الفيديو */
+        video {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            height: auto;
+            z-index: 1000;
+            background: black;
+            border: 3px solid #f8c332;
+            border-radius: 10px;
         }
 
         button {
-            position: absolute;
+            position: fixed;
             top: 10px;
             right: 10px;
-            padding: 10px 15px;
-            background-color: #f44336;
+            padding: 10px 20px;
+            background: #f44336;
             color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            z-index: 1000;
+            z-index: 1001;
         }
 
         button:hover {
-            background-color: #d32f2f;
+            background: #d32f2f;
         }
     </style>
 </head>
 <body>
-    <header>
-        <div class="logo">مشغل بث مباشر</div>
-    </header>
-
-    <div class="container" id="streamsContainer">
-        <!-- سيتم إنشاء البطاقات ديناميكيًا هنا -->
+    <div class="container">
+        <h1>قنوات تلفزيونية مباشرة</h1>
+        <div class="channel" onclick="playStream('https://live-hls-web-aja.getaj.net/AJA/index.m3u8')">
+            <img src="https://logowik.com/content/uploads/images/al-jazeera-tv6503.jpg" alt="الجزيرة">
+            <p>الجزيرة</p>
+        </div>
+        <div class="channel" onclick="playStream('https://av.alarabiya.net/alarabiapublish/alarabiya.smil/playlist.m3u8')">
+            <img src="https://seeklogo.com/images/A/al-arabiya-logo-E8E441B937-seeklogo.com.png" alt="العربية">
+            <p>العربية</p>
+        </div>
+        <div class="channel" onclick="playStream('https://av.alarabiya.net/alarabiapublish/alhadath.smil/playlist.m3u8')">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/5/5a/AlHADATH.png" alt="الحدث">
+            <p>الحدث</p>
+        </div>
+        <div class="channel" onclick="playStream('https://svs.itworkscdn.net/syriatvlive/syriatv.smil/playlist_dvr.m3u8')">
+            <img src="https://s.shabakngy.com/wp-content/uploads/2021/03/%D8%AA%D8%B1%D8%AF%D8%AF-%D9%82%D9%86%D8%A7%D8%A9-%D8%AA%D9%84%D9%81%D8%B2%D9%8A%D9%88%D9%86-%D8%B3%D9%88%D8%B1%D9%8A%D8%A7-Syria-TV-%D8%A7%D9%84%D8%AC%D8%AF%D9%8A%D8%AF-2021.jpg" alt="تلفزيون سوريا">
+            <p>تلفزيون سوريا</p>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <script>
-        const streams = [
-            {
-                title: 'بث مباشر قناة الجزيرة',
-                url: 'https://live-hls-web-aja.getaj.net/AJA/index.m3u8',
-                thumbnail: 'https://logowik.com/content/uploads/images/al-jazeera-tv6503.jpg'
-            },
-            {
-                title: 'بث مباشر قناة الحدث',
-                url: 'https://av.alarabiya.net/alarabiapublish/alhadath.smil/playlist.m3u8',
-                thumbnail: 'https://upload.wikimedia.org/wikipedia/commons/5/5a/AlHADATH.png'
-            },
-            {
-                title: 'بث مباشر قناة العربية',
-                url: 'https://live.alarabiya.net/alarabiapublish/alarabiya.smil/playlist.m3u8',
-                thumbnail: 'https://seeklogo.com/images/A/al-arabiya-logo-E8E441B937-seeklogo.com.png'
-            },
-            {
-                title: 'بث مباشر قناة سوريا',
-                url: 'https://svs.itworkscdn.net/syriatvlive/syriatv.smil/playlist_dvr.m3u8',
-                thumbnail: 'https://s.shabakngy.com/wp-content/uploads/2021/03/%D8%AA%D8%B1%D8%AF%D8%AF-%D9%82%D9%86%D8%A7%D8%A9-%D8%AA%D9%84%D9%81%D8%B2%D9%8A%D9%88%D9%86-%D8%B3%D9%88%D8%B1%D9%8A%D8%A7-Syria-TV-%D8%A7%D9%84%D8%AC%D8%AF%D9%8A%D8%AF-2021.jpg'
-            }
-        ];
-
-        const container = document.getElementById('streamsContainer');
-
-        streams.forEach(stream => {
-            const card = document.createElement('div');
-            card.className = 'card';
-            card.innerHTML = `
-                <img src="${stream.thumbnail}" alt="${stream.title}" onclick="playStream('${stream.url}', '${stream.title}')">
-                <p>${stream.title}</p>
-            `;
-            container.appendChild(card);
-        });
-
-        function playStream(url, title) {
+        function playStream(url) {
             const video = document.createElement('video');
             video.controls = true;
-            video.style.position = 'fixed';
-            video.style.top = '0';
-            video.style.left = '0';
-            video.style.width = '100%';
-            video.style.height = '100%';
-            video.style.zIndex = '999';
-            video.style.backgroundColor = 'black';
-            video.draggable = true;
+            video.autoplay = true;
+
+            if (Hls.isSupported()) {
+                const hls = new Hls();
+                hls.loadSource(url);
+                hls.attachMedia(video);
+            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                video.src = url;
+            } else {
+                alert('البث المباشر غير مدعوم على هذا المتصفح.');
+                return;
+            }
 
             document.body.appendChild(video);
 
@@ -163,27 +168,10 @@
             closeButton.textContent = 'إغلاق';
             closeButton.onclick = () => {
                 video.pause();
-                document.body.removeChild(video);
-                document.body.removeChild(closeButton);
+                video.remove();
+                closeButton.remove();
             };
             document.body.appendChild(closeButton);
-
-            try {
-                if (Hls.isSupported()) {
-                    const hls = new Hls();
-                    hls.loadSource(url);
-                    hls.attachMedia(video);
-                } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                    video.src = url;
-                } else {
-                    throw new Error('البث المباشر غير مدعوم.');
-                }
-            } catch (error) {
-                alert(`حدث خطأ: ${error.message}`);
-                closeButton.click();
-            }
-
-            video.play();
         }
     </script>
 </body>
