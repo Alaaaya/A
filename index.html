@@ -5,21 +5,54 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>مشغل بث مباشر</title>
     <style>
+        /* تصميم الجسم */
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.9), rgba(255, 223, 0, 0.7));
-            backdrop-filter: blur(10px);
+            background: linear-gradient(135deg, #000000, #ffcc00);
+            overflow: hidden;
             color: #fff;
+        }
+
+        /* الخلفية المتحركة */
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 204, 0, 0.2), rgba(0, 0, 0, 0.8));
+            animation: animateBackground 10s infinite linear;
+            transform-origin: center;
+            z-index: -2;
+        }
+
+        @keyframes animateBackground {
+            0% {
+                transform: translate(-50%, -50%) rotate(0deg) scale(1.1);
+            }
+            100% {
+                transform: translate(-50%, -50%) rotate(360deg) scale(1.1);
+            }
+        }
+
+        /* تأثير الزجاج */
+        .glass-effect {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 10px rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
         }
 
         header {
             display: flex;
             align-items: center;
             justify-content: center;
-            background-color: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(5px);
+            background-color: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
             padding: 10px 20px;
             border-bottom: 2px solid rgba(255, 223, 0, 0.5);
         }
@@ -27,7 +60,7 @@
         header .logo {
             font-size: 1.2rem;
             font-weight: bold;
-            text-shadow: 1px 1px 5px #ffd700;
+            text-shadow: 1px 1px 15px rgba(255, 255, 0, 0.8);
         }
 
         .container {
@@ -38,7 +71,7 @@
         }
 
         .card {
-            background: rgba(0, 0, 0, 0.6);
+            background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 10px;
@@ -50,7 +83,7 @@
 
         .card:hover {
             transform: scale(1.05);
-            box-shadow: 0 6px 10px rgba(255, 223, 0, 0.5);
+            box-shadow: 0 6px 20px rgba(255, 223, 0, 0.5);
         }
 
         .card img {
@@ -122,7 +155,7 @@
 
         streams.forEach(stream => {
             const card = document.createElement('div');
-            card.className = 'card';
+            card.className = 'card glass-effect';
             card.innerHTML = `
                 <img src="${stream.thumbnail}" alt="${stream.title}" onclick="playStream('${stream.url}', '${stream.title}')">
                 <p>${stream.title}</p>
@@ -140,12 +173,12 @@
             video.style.height = '100%';
             video.style.zIndex = '999';
             video.style.backgroundColor = 'black';
-            video.draggable = true; 
+            video.draggable = true;
 
             document.body.appendChild(video);
 
             const closeButton = document.createElement('button');
-            closeButton.textContent = 'إغلاق';
+            closeButton.textContent = 'الله حيو';
             closeButton.onclick = () => {
                 video.pause();
                 document.body.removeChild(video);
