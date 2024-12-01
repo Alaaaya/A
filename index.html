@@ -10,64 +10,70 @@
             margin: 0;
             padding: 0;
             font-family: Arial, sans-serif;
-            background-color: #000; /* الخلفية سوداء بالكامل */
+            background-color: #000; /* خلفية سوداء */
             color: #fff;
-            height: 100vh;
-            overflow: hidden;
             display: flex;
             justify-content: center;
             align-items: center;
+            height: 100vh;
         }
 
         /* الحاوية الأساسية */
         .container {
+            width: 80%;
+            max-width: 800px;
             background: rgba(255, 255, 255, 0.1); /* تأثير الزجاج */
             backdrop-filter: blur(15px);
             border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            padding: 20px;
-            width: 300px;
-            height: 450px;
-            overflow-y: auto;
+            overflow: hidden;
         }
 
-        .container h1 {
+        /* العنوان */
+        .header {
+            background-color: #f8c332;
+            padding: 15px;
             text-align: center;
-            margin-bottom: 20px;
             font-size: 1.5rem;
-            color: #f8c332;
+            color: #000;
         }
 
-        /* القنوات */
+        /* القائمة */
+        .channel-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            overflow-y: auto;
+            max-height: 500px; /* ضبط ارتفاع القائمة */
+        }
+
+        /* عناصر القائمة */
         .channel {
             display: flex;
             align-items: center;
             padding: 10px;
-            margin-bottom: 10px;
-            background: rgba(255, 255, 255, 0.15);
-            border-radius: 10px;
-            transition: transform 0.3s, background 0.3s;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
             cursor: pointer;
+            transition: background 0.3s;
         }
 
         .channel:hover {
-            transform: scale(1.05);
-            background: rgba(255, 255, 255, 0.25);
+            background: rgba(255, 255, 255, 0.2);
         }
 
         .channel img {
-            width: 50px;
-            height: 50px;
-            border-radius: 5px;
-            margin-left: 10px;
+            width: 60px;
+            height: 60px;
+            border-radius: 10px;
+            margin-left: 15px;
         }
 
         .channel p {
             margin: 0;
-            font-size: 1rem;
+            font-size: 1.2rem;
         }
 
-        /* الفيديو */
+        /* فيديو البث */
         video {
             position: fixed;
             top: 50%;
@@ -101,23 +107,25 @@
 </head>
 <body>
     <div class="container">
-        <h1>قنوات تلفزيونية مباشرة</h1>
-        <div class="channel" onclick="playStream('https://live-hls-web-aja.getaj.net/AJA/index.m3u8')">
-            <img src="https://logowik.com/content/uploads/images/al-jazeera-tv6503.jpg" alt="الجزيرة">
-            <p>الجزيرة</p>
-        </div>
-        <div class="channel" onclick="playStream('https://av.alarabiya.net/alarabiapublish/alarabiya.smil/playlist.m3u8')">
-            <img src="https://seeklogo.com/images/A/al-arabiya-logo-E8E441B937-seeklogo.com.png" alt="العربية">
-            <p>العربية</p>
-        </div>
-        <div class="channel" onclick="playStream('https://av.alarabiya.net/alarabiapublish/alhadath.smil/playlist.m3u8')">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/5/5a/AlHADATH.png" alt="الحدث">
-            <p>الحدث</p>
-        </div>
-        <div class="channel" onclick="playStream('https://svs.itworkscdn.net/syriatvlive/syriatv.smil/playlist_dvr.m3u8')">
-            <img src="https://s.shabakngy.com/wp-content/uploads/2021/03/%D8%AA%D8%B1%D8%AF%D8%AF-%D9%82%D9%86%D8%A7%D8%A9-%D8%AA%D9%84%D9%81%D8%B2%D9%8A%D9%88%D9%86-%D8%B3%D9%88%D8%B1%D9%8A%D8%A7-Syria-TV-%D8%A7%D9%84%D8%AC%D8%AF%D9%8A%D8%AF-2021.jpg" alt="تلفزيون سوريا">
-            <p>تلفزيون سوريا</p>
-        </div>
+        <div class="header">قنوات تلفزيونية مباشرة</div>
+        <ul class="channel-list">
+            <li class="channel" onclick="playStream('https://live-hls-web-aja.getaj.net/AJA/index.m3u8')">
+                <img src="https://logowik.com/content/uploads/images/al-jazeera-tv6503.jpg" alt="الجزيرة">
+                <p>الجزيرة</p>
+            </li>
+            <li class="channel" onclick="playStream('https://av.alarabiya.net/alarabiapublish/alarabiya.smil/playlist.m3u8')">
+                <img src="https://seeklogo.com/images/A/al-arabiya-logo-E8E441B937-seeklogo.com.png" alt="العربية">
+                <p>العربية</p>
+            </li>
+            <li class="channel" onclick="playStream('https://av.alarabiya.net/alarabiapublish/alhadath.smil/playlist.m3u8')">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/5/5a/AlHADATH.png" alt="الحدث">
+                <p>الحدث</p>
+            </li>
+            <li class="channel" onclick="playStream('https://svs.itworkscdn.net/syriatvlive/syriatv.smil/playlist_dvr.m3u8')">
+                <img src="https://s.shabakngy.com/wp-content/uploads/2021/03/%D8%AA%D8%B1%D8%AF%D8%AF-%D9%82%D9%86%D8%A7%D8%A9-%D8%AA%D9%84%D9%81%D8%B2%D9%8A%D9%88%D9%86-%D8%B3%D9%88%D8%B1%D9%8A%D8%A7-Syria-TV-%D8%A7%D9%84%D8%AC%D8%AF%D9%8A%D8%AF-2021.jpg" alt="تلفزيون سوريا">
+                <p>تلفزيون سوريا</p>
+            </li>
+        </ul>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
