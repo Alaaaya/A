@@ -11,7 +11,6 @@
             padding: 0;
             background: url('https://source.unsplash.com/random/1920x1080?nature') no-repeat center center/cover;
             color: #fff;
-            overflow: hidden;
         }
 
         header {
@@ -34,10 +33,24 @@
 
         .container {
             display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
+            flex-wrap: nowrap; /* تعطيل الانتقال للسطر التالي */
+            overflow-x: auto; /* تمكين التمرير الأفقي */
             gap: 20px;
             padding: 20px;
+            scroll-behavior: smooth; /* حركة تمرير سلسة */
+        }
+
+        .container::-webkit-scrollbar {
+            height: 10px; /* حجم شريط التمرير */
+        }
+
+        .container::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3); /* لون شريط التمرير */
+            border-radius: 10px;
+        }
+
+        .container::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2); /* خلفية مسار شريط التمرير */
         }
 
         .card {
@@ -50,7 +63,8 @@
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
             overflow: hidden;
             text-align: center;
-            width: 200px;
+            width: 200px; /* عرض البطاقة */
+            flex-shrink: 0; /* تعطيل تغيير الحجم لتبقى البطاقات بنفس العرض */
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
