@@ -10,78 +10,45 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background: linear-gradient(135deg, #000000, #ffcc00);
-            overflow: hidden;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(255, 204, 0, 0.8));
             color: #fff;
-        }
-
-        /* الخلفية المتحركة */
-        body::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255, 204, 0, 0.2), rgba(0, 0, 0, 0.8));
-            animation: animateBackground 20s infinite linear;
-            transform-origin: center;
-            z-index: -2;
-        }
-
-        @keyframes animateBackground {
-            0% {
-                transform: translate(-10%, -10%) rotate(0deg) scale(1.05);
-            }
-            50% {
-                transform: translate(-5%, -5%) rotate(180deg) scale(1.03);
-            }
-            100% {
-                transform: translate(-10%, -10%) rotate(360deg) scale(1.05);
-            }
-        }
-
-        /* تأثير الزجاج */
-        .glass-effect {
-            background: rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(10px);
-            box-shadow: 0 4px 10px rgba(255, 255, 255, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 10px;
+            overflow: hidden;
         }
 
         header {
             display: flex;
             align-items: center;
             justify-content: center;
-            background-color: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(10px);
+            background-color: rgba(0, 0, 0, 0.8);
             padding: 10px 20px;
             border-bottom: 2px solid rgba(255, 223, 0, 0.5);
+            backdrop-filter: blur(5px);
         }
 
         header .logo {
             font-size: 1.2rem;
             font-weight: bold;
-            text-shadow: 1px 1px 15px rgba(255, 255, 0, 0.8);
+            text-shadow: 1px 1px 10px rgba(255, 255, 0, 0.7);
         }
 
         .container {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            gap: 10px;
-            padding: 20px;
+            gap: 20px;
+            padding: 40px;
+            position: relative;
         }
 
         .card {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 10px;
             overflow: hidden;
             text-align: center;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
             transition: transform 0.3s, box-shadow 0.3s;
+            animation: float 5s ease-in-out infinite;
         }
 
         .card:hover {
@@ -92,7 +59,7 @@
         .card img {
             width: 100%;
             height: auto;
-            max-height: 80px;
+            max-height: 100px;
             object-fit: cover;
             cursor: pointer;
         }
@@ -100,6 +67,18 @@
         .card p {
             padding: 5px;
             font-size: 0.8rem;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-15px);
+            }
+            100% {
+                transform: translateY(0);
+            }
         }
 
         button {
@@ -158,7 +137,7 @@
 
         streams.forEach(stream => {
             const card = document.createElement('div');
-            card.className = 'card glass-effect';
+            card.className = 'card';
             card.innerHTML = `
                 <img src="${stream.thumbnail}" alt="${stream.title}" onclick="playStream('${stream.url}', '${stream.title}')">
                 <p>${stream.title}</p>
