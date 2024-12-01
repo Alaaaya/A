@@ -27,9 +27,10 @@
         }
 
         .container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
             padding: 20px;
         }
 
@@ -40,6 +41,7 @@
             text-align: center;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
             transition: transform 0.3s;
+            width: 200px;
         }
 
         .card:hover {
@@ -49,14 +51,14 @@
         .card img {
             width: 100%;
             height: auto;
-            max-height: 100px;
+            max-height: 120px;
             object-fit: cover;
             cursor: pointer;
         }
 
         .card p {
-            padding: 5px;
-            font-size: 0.9rem;
+            padding: 10px;
+            font-size: 1rem;
         }
 
         button {
