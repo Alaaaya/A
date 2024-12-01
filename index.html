@@ -24,17 +24,20 @@
             width: 200%;
             height: 200%;
             background: radial-gradient(circle, rgba(255, 204, 0, 0.2), rgba(0, 0, 0, 0.8));
-            animation: animateBackground 10s infinite linear;
+            animation: animateBackground 20s infinite linear;
             transform-origin: center;
             z-index: -2;
         }
 
         @keyframes animateBackground {
             0% {
-                transform: translate(-50%, -50%) rotate(0deg) scale(1.1);
+                transform: translate(-10%, -10%) rotate(0deg) scale(1.05);
+            }
+            50% {
+                transform: translate(-5%, -5%) rotate(180deg) scale(1.03);
             }
             100% {
-                transform: translate(-50%, -50%) rotate(360deg) scale(1.1);
+                transform: translate(-10%, -10%) rotate(360deg) scale(1.05);
             }
         }
 
@@ -178,7 +181,7 @@
             document.body.appendChild(video);
 
             const closeButton = document.createElement('button');
-            closeButton.textContent = 'الله حيو';
+            closeButton.textContent = 'إغلاق';
             closeButton.onclick = () => {
                 video.pause();
                 document.body.removeChild(video);
