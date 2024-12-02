@@ -163,11 +163,13 @@
 
         function playStream(index, event) {
             // إذا كانت نفس القناة وتم الضغط عليها مرتين خلال وقت قصير
-            if (currentChannelIndex === index && clickTimeout !== null) {
-                clearTimeout(clickTimeout); // إلغاء العداد في حالة الضغط المزدوج
-                videoElement.requestFullscreen(); // التبديل إلى ملء الشاشة
-                clickTimeout = null; // إعادة ضبط العداد
-                return;
+            if (currentChannelIndex === index) {
+                if (clickTimeout !== null) {
+                    clearTimeout(clickTimeout); // إلغاء العداد في حالة الضغط المزدوج
+                    videoElement.requestFullscreen(); // التبديل إلى ملء الشاشة
+                    clickTimeout = null; // إعادة ضبط العداد
+                    return;
+                }
             }
 
             // تعيين القناة الحالية
