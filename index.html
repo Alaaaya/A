@@ -36,7 +36,7 @@
 
         /* القائمة */
         .channel-list {
-            width: 100%; /* القائمة تأخذ العرض بالكامل */
+            width: 40%; /* القائمة تأخذ نسبة من العرض */
             max-height: 100%;
             overflow-y: auto;
             list-style: none;
@@ -84,6 +84,12 @@
             background: #000;
             z-index: 10;
         }
+
+        /* نمط الفيديو بالعرض */
+        .landscape-mode {
+            width: 100%;
+            height: 100%;
+        }
     </style>
 </head>
 <body>
@@ -121,12 +127,13 @@
         const videoElement = document.getElementById('videoPlayer');
         const channelList = document.getElementById('channelList');
         let currentChannelIndex = 0;
-        let doubleClickTimeout;
 
         // تشغيل القناة
         function playStream(index) {
             currentChannelIndex = index;
             videoElement.style.display = 'block'; // عرض الفيديو
+            videoElement.classList.add('landscape-mode'); // تشغيل بوضعية العرض فقط
+
             if (Hls.isSupported()) {
                 const hls = new Hls();
                 hls.loadSource(channels[index].url);
@@ -137,6 +144,13 @@
                 alert('البث المباشر غير مدعوم على هذا المتصفح.');
                 return;
             }
+        }
+
+        // إخفاء الفيديو
+        function hideVideo() {
+            videoElement.style.display = 'none'; // إخفاء الفيديو
+            videoElement.pause(); // إيقاف الفيديو
+            videoElement.classList.remove('landscape-mode'); // إزالة الوضعية
         }
 
         // التنقل بين القنوات
@@ -150,17 +164,10 @@
                     if (currentChannelIndex > 0) currentChannelIndex--;
                     break;
                 case 'Enter': // إدخال
-                    if (doubleClickTimeout) {
-                        toggleFullscreen(); // ملء الشاشة عند الضغط مرتين
-                    } else {
-                        doubleClickTimeout = setTimeout(() => {
-                            playStream(currentChannelIndex); // تشغيل القناة
-                            doubleClickTimeout = null;
-                        }, 300); // الانتظار لمعرفة إذا كانت نقرة مزدوجة
-                    }
+                    playStream(currentChannelIndex); // تشغيل القناة
                     break;
                 case 'Backspace': // الرجوع
-                    videoElement.style.display = 'none'; // إخفاء الفيديو
+                    hideVideo(); // إخفاء الفيديو
                     break;
                 default:
                     return;
@@ -179,17 +186,6 @@
                     channel.classList.remove('highlight');
                 }
             });
-        }
-
-        // ملء الشاشة
-        function toggleFullscreen() {
-            if (videoElement.requestFullscreen) {
-                videoElement.requestFullscreen();
-            } else if (videoElement.webkitRequestFullscreen) {
-                videoElement.webkitRequestFullscreen();
-            } else if (videoElement.msRequestFullscreen) {
-                videoElement.msRequestFullscreen();
-            }
         }
 
         // استماع لأحداث الريموت
