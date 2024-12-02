@@ -91,19 +91,19 @@
 <body>
     <div class="container">
         <ul class="channel-list" id="channelList">
-            <li class="channel" id="channel0" tabindex="0">
+            <li class="channel" id="channel0" tabindex="0" data-index="0">
                 <img src="https://logowik.com/content/uploads/images/al-jazeera-tv6503.jpg" alt="الجزيرة">
                 <p>الجزيرة</p>
             </li>
-            <li class="channel" id="channel1" tabindex="0">
+            <li class="channel" id="channel1" tabindex="0" data-index="1">
                 <img src="https://seeklogo.com/images/A/al-arabiya-logo-E8E441B937-seeklogo.com.png" alt="العربية">
                 <p>العربية</p>
             </li>
-            <li class="channel" id="channel2" tabindex="0">
+            <li class="channel" id="channel2" tabindex="0" data-index="2">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/5/5a/AlHADATH.png" alt="الحدث">
                 <p>الحدث</p>
             </li>
-            <li class="channel" id="channel3" tabindex="0">
+            <li class="channel" id="channel3" tabindex="0" data-index="3">
                 <img src="https://s.shabakngy.com/wp-content/uploads/2021/03/%D8%AA%D8%B1%D8%AF%D8%AF-%D9%82%D9%86%D8%A7%D8%A9-%D8%AA%D9%84%D9%81%D8%B2%D9%8A%D9%88%D9%86-%D8%B3%D9%88%D8%B1%D9%8A%D8%A7-Syria-TV-%D8%A7%D9%84%D8%AC%D8%AF%D9%8A%D8%AF-2021.jpg" alt="تلفزيون سوريا">
                 <p>تلفزيون سوريا</p>
             </li>
@@ -163,8 +163,14 @@
             }
 
             // تمييز القناة الحالية
-            channels.forEach((channel, index) => {
-                if (index === currentChannelIndex) {
+            highlightChannel(currentChannelIndex);
+        }
+
+        // تسليط الضوء على قناة معينة
+        function highlightChannel(index) {
+            const channels = document.querySelectorAll('.channel');
+            channels.forEach((channel, i) => {
+                if (i === index) {
                     channel.classList.add('highlight');
                     channel.focus();
                 } else {
@@ -173,13 +179,28 @@
             });
         }
 
+        // التنقل باللمس على الهاتف
+        function handleTouch(event) {
+            const touchedElement = event.target.closest('.channel');
+            if (touchedElement) {
+                const index = parseInt(touchedElement.dataset.index, 10);
+                highlightChannel(index);
+                playStream(index);
+            }
+        }
+
+        // إضافة أحداث اللمس لكل عنصر
+        document.querySelectorAll('.channel').forEach(channel => {
+            channel.addEventListener('click', handleTouch);
+        });
+
         // استماع لأحداث لوحة المفاتيح
         document.addEventListener('keydown', navigateChannels);
 
         // تعيين القناة الأولى كمختارة عند التحميل
         window.onload = () => {
-            document.querySelectorAll('.channel')[0].classList.add('highlight');
-            playStream(0); // بدء تشغيل أول قناة افتراضياً
+            highlightChannel(0); // تمييز أول قناة
+            playStream(0); // تشغيل أول قناة افتراضياً
         };
     </script>
 </body>
