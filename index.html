@@ -96,8 +96,13 @@
             border-radius: 10px;
         }
 
-        button {
+        .button-group {
             margin-top: 15px;
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
             padding: 10px 20px;
             background: #f44336;
             color: white;
@@ -108,6 +113,14 @@
 
         button:hover {
             background: #d32f2f;
+        }
+
+        .btn-secondary {
+            background: #4CAF50;
+        }
+
+        .btn-secondary:hover {
+            background: #388E3C;
         }
     </style>
 </head>
@@ -137,6 +150,9 @@
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <script>
         function playStream(url) {
+            // إخفاء القائمة
+            document.querySelector('.container').style.display = 'none';
+
             const container = document.createElement('div');
             container.classList.add('video-container');
 
@@ -155,14 +171,29 @@
                 return;
             }
 
+            const buttonGroup = document.createElement('div');
+            buttonGroup.classList.add('button-group');
+
             const closeButton = document.createElement('button');
             closeButton.textContent = 'إغلاق';
             closeButton.onclick = () => {
                 container.remove();
+                document.querySelector('.container').style.display = 'block';
             };
 
+            const channelsButton = document.createElement('button');
+            channelsButton.textContent = 'قائمة القنوات';
+            channelsButton.classList.add('btn-secondary');
+            channelsButton.onclick = () => {
+                container.remove();
+                document.querySelector('.container').style.display = 'block';
+            };
+
+            buttonGroup.appendChild(closeButton);
+            buttonGroup.appendChild(channelsButton);
+
             container.appendChild(video);
-            container.appendChild(closeButton);
+            container.appendChild(buttonGroup);
             document.body.appendChild(container);
         }
     </script>
