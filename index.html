@@ -16,6 +16,7 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
+            overflow: hidden; /* منع التمرير */
         }
 
         /* الحاوية الأساسية */
@@ -35,7 +36,7 @@
 
         /* القائمة */
         .channel-list {
-            width: 40%;
+            width: 100%; /* القائمة تأخذ العرض بالكامل */
             max-height: 100%;
             overflow-y: auto;
             list-style: none;
@@ -73,18 +74,15 @@
         }
 
         /* الفيديو */
-        video {
-            width: 60%;
-            height: 100%;
-            background: #000;
-            border-radius: 0 15px 15px 0;
-        }
-
-        /* تحسين وضع ملء الشاشة */
-        :fullscreen video {
+        #videoPlayer {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
-            height: auto;
-            max-height: 100vh;
+            height: 100%;
+            display: none; /* إخفاء الفيديو افتراضياً */
+            background: #000;
+            z-index: 10;
         }
     </style>
 </head>
@@ -108,7 +106,7 @@
                 <p>تلفزيون سوريا</p>
             </li>
         </ul>
-        <video id="videoPlayer" controls autoplay></video>
+        <video id="videoPlayer" controls></video>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
@@ -120,14 +118,15 @@
             { name: "تلفزيون سوريا", url: "https://svs.itworkscdn.net/syriatvlive/syriatv.smil/playlist_dvr.m3u8" }
         ];
 
-        let videoElement = document.getElementById('videoPlayer');
-        let channelList = document.getElementById('channelList');
+        const videoElement = document.getElementById('videoPlayer');
+        const channelList = document.getElementById('channelList');
         let currentChannelIndex = 0;
+        let doubleClickTimeout;
 
-        // بدء تشغيل قناة
+        // تشغيل القناة
         function playStream(index) {
             currentChannelIndex = index;
-
+            videoElement.style.display = 'block'; // عرض الفيديو
             if (Hls.isSupported()) {
                 const hls = new Hls();
                 hls.loadSource(channels[index].url);
@@ -140,33 +139,36 @@
             }
         }
 
-        // تنقل باستخدام الريموت
+        // التنقل بين القنوات
         function navigateChannels(event) {
             const channels = document.querySelectorAll('.channel');
-
             switch (event.key) {
                 case 'ArrowDown': // السهم للأسفل
-                    if (currentChannelIndex < channels.length - 1) {
-                        currentChannelIndex++;
-                    }
+                    if (currentChannelIndex < channels.length - 1) currentChannelIndex++;
                     break;
                 case 'ArrowUp': // السهم للأعلى
-                    if (currentChannelIndex > 0) {
-                        currentChannelIndex--;
+                    if (currentChannelIndex > 0) currentChannelIndex--;
+                    break;
+                case 'Enter': // إدخال
+                    if (doubleClickTimeout) {
+                        toggleFullscreen(); // ملء الشاشة عند الضغط مرتين
+                    } else {
+                        doubleClickTimeout = setTimeout(() => {
+                            playStream(currentChannelIndex); // تشغيل القناة
+                            doubleClickTimeout = null;
+                        }, 300); // الانتظار لمعرفة إذا كانت نقرة مزدوجة
                     }
                     break;
-                case 'Enter': // زر الإدخال
-                    playStream(currentChannelIndex);
+                case 'Backspace': // الرجوع
+                    videoElement.style.display = 'none'; // إخفاء الفيديو
                     break;
                 default:
                     return;
             }
-
-            // تمييز القناة الحالية
             highlightChannel(currentChannelIndex);
         }
 
-        // تسليط الضوء على قناة معينة
+        // تمييز القناة الحالية
         function highlightChannel(index) {
             const channels = document.querySelectorAll('.channel');
             channels.forEach((channel, i) => {
@@ -179,28 +181,23 @@
             });
         }
 
-        // التنقل باللمس على الهاتف
-        function handleTouch(event) {
-            const touchedElement = event.target.closest('.channel');
-            if (touchedElement) {
-                const index = parseInt(touchedElement.dataset.index, 10);
-                highlightChannel(index);
-                playStream(index);
+        // ملء الشاشة
+        function toggleFullscreen() {
+            if (videoElement.requestFullscreen) {
+                videoElement.requestFullscreen();
+            } else if (videoElement.webkitRequestFullscreen) {
+                videoElement.webkitRequestFullscreen();
+            } else if (videoElement.msRequestFullscreen) {
+                videoElement.msRequestFullscreen();
             }
         }
 
-        // إضافة أحداث اللمس لكل عنصر
-        document.querySelectorAll('.channel').forEach(channel => {
-            channel.addEventListener('click', handleTouch);
-        });
-
-        // استماع لأحداث لوحة المفاتيح
+        // استماع لأحداث الريموت
         document.addEventListener('keydown', navigateChannels);
 
-        // تعيين القناة الأولى كمختارة عند التحميل
+        // تشغيل أول قناة افتراضياً
         window.onload = () => {
-            highlightChannel(0); // تمييز أول قناة
-            playStream(0); // تشغيل أول قناة افتراضياً
+            highlightChannel(0);
         };
     </script>
 </body>
