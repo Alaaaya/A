@@ -72,6 +72,22 @@
             margin: 0;
             font-size: 1.2rem;
         }
+
+        /* تنسيق الفيديو */
+        video {
+            width: 100%;
+            height: auto;
+            max-height: 90vh; /* لا يتجاوز 90% من ارتفاع الشاشة */
+            border: none;
+            background: #000;
+        }
+
+        /* تحسين وضع ملء الشاشة */
+        :fullscreen video {
+            width: 100%;
+            height: auto;
+            max-height: 100vh;
+        }
     </style>
 </head>
 <body>
