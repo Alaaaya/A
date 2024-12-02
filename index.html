@@ -25,7 +25,7 @@
             align-items: flex-start;
             width: 90%;
             max-width: 1200px;
-            height: 90vh; /* جعل الحاوية تأخذ معظم الشاشة */
+            height: 90vh;
             background: rgba(255, 255, 255, 0.1); /* تأثير الزجاج */
             backdrop-filter: blur(15px);
             border-radius: 15px;
@@ -35,9 +35,9 @@
 
         /* القائمة */
         .channel-list {
-            width: 40%; /* عرض القائمة 40% من الحاوية */
-            max-height: 100%; /* ضمان أن القائمة تأخذ الارتفاع الكامل */
-            overflow-y: auto; /* شريط تمرير عند الحاجة */
+            width: 40%;
+            max-height: 100%;
+            overflow-y: auto;
             list-style: none;
             margin: 0;
             padding: 0;
@@ -54,8 +54,10 @@
             transition: background 0.3s;
         }
 
-        .channel:hover {
-            background: rgba(255, 255, 255, 0.2);
+        .channel:focus,
+        .channel.highlight {
+            background: rgba(255, 255, 255, 0.3); /* تمييز العنصر */
+            outline: none;
         }
 
         .channel img {
@@ -72,8 +74,8 @@
 
         /* الفيديو */
         video {
-            width: 60%; /* الفيديو يأخذ 60% من الحاوية */
-            height: 100%; /* الفيديو يأخذ الارتفاع الكامل */
+            width: 60%;
+            height: 100%;
             background: #000;
             border-radius: 0 15px 15px 0;
         }
@@ -84,42 +86,24 @@
             height: auto;
             max-height: 100vh;
         }
-
-        /* استجابة للأجهزة الصغيرة */
-        @media (max-width: 600px) {
-            .container {
-                flex-direction: column; /* ترتيب العناصر عمودياً */
-                height: auto; /* السماح للارتفاع بالتكيف */
-            }
-
-            .channel-list {
-                width: 100%; /* القائمة تأخذ العرض الكامل */
-                max-height: 40%; /* ارتفاع القائمة مناسب للهاتف */
-            }
-
-            video {
-                width: 100%; /* الفيديو يأخذ العرض الكامل */
-                max-height: 60%; /* ضبط الارتفاع حسب المحتوى */
-            }
-        }
     </style>
 </head>
 <body>
     <div class="container">
         <ul class="channel-list" id="channelList">
-            <li class="channel" id="channel0" onclick="playStream(0, event)">
+            <li class="channel" id="channel0" tabindex="0">
                 <img src="https://logowik.com/content/uploads/images/al-jazeera-tv6503.jpg" alt="الجزيرة">
                 <p>الجزيرة</p>
             </li>
-            <li class="channel" id="channel1" onclick="playStream(1, event)">
+            <li class="channel" id="channel1" tabindex="0">
                 <img src="https://seeklogo.com/images/A/al-arabiya-logo-E8E441B937-seeklogo.com.png" alt="العربية">
                 <p>العربية</p>
             </li>
-            <li class="channel" id="channel2" onclick="playStream(2, event)">
+            <li class="channel" id="channel2" tabindex="0">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/5/5a/AlHADATH.png" alt="الحدث">
                 <p>الحدث</p>
             </li>
-            <li class="channel" id="channel3" onclick="playStream(3, event)">
+            <li class="channel" id="channel3" tabindex="0">
                 <img src="https://s.shabakngy.com/wp-content/uploads/2021/03/%D8%AA%D8%B1%D8%AF%D8%AF-%D9%82%D9%86%D8%A7%D8%A9-%D8%AA%D9%84%D9%81%D8%B2%D9%8A%D9%88%D9%86-%D8%B3%D9%88%D8%B1%D9%8A%D8%A7-Syria-TV-%D8%A7%D9%84%D8%AC%D8%AF%D9%8A%D8%AF-2021.jpg" alt="تلفزيون سوريا">
                 <p>تلفزيون سوريا</p>
             </li>
@@ -137,9 +121,11 @@
         ];
 
         let videoElement = document.getElementById('videoPlayer');
-        let currentChannelIndex = null;
+        let channelList = document.getElementById('channelList');
+        let currentChannelIndex = 0;
 
-        function playStream(index, event) {
+        // بدء تشغيل قناة
+        function playStream(index) {
             currentChannelIndex = index;
 
             if (Hls.isSupported()) {
@@ -153,6 +139,48 @@
                 return;
             }
         }
+
+        // تنقل باستخدام الريموت
+        function navigateChannels(event) {
+            const channels = document.querySelectorAll('.channel');
+
+            switch (event.key) {
+                case 'ArrowDown': // السهم للأسفل
+                    if (currentChannelIndex < channels.length - 1) {
+                        currentChannelIndex++;
+                    }
+                    break;
+                case 'ArrowUp': // السهم للأعلى
+                    if (currentChannelIndex > 0) {
+                        currentChannelIndex--;
+                    }
+                    break;
+                case 'Enter': // زر الإدخال
+                    playStream(currentChannelIndex);
+                    break;
+                default:
+                    return;
+            }
+
+            // تمييز القناة الحالية
+            channels.forEach((channel, index) => {
+                if (index === currentChannelIndex) {
+                    channel.classList.add('highlight');
+                    channel.focus();
+                } else {
+                    channel.classList.remove('highlight');
+                }
+            });
+        }
+
+        // استماع لأحداث لوحة المفاتيح
+        document.addEventListener('keydown', navigateChannels);
+
+        // تعيين القناة الأولى كمختارة عند التحميل
+        window.onload = () => {
+            document.querySelectorAll('.channel')[0].classList.add('highlight');
+            playStream(0); // بدء تشغيل أول قناة افتراضياً
+        };
     </script>
 </body>
 </html>
