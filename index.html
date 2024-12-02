@@ -96,13 +96,6 @@
             margin-top: 10px;
         }
 
-        /* أزرار التحكم بالصوت */
-        .volume-controls {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 10px;
-        }
-
         /* استجابة للأجهزة الصغيرة */
         @media (max-width: 600px) {
             .container {
@@ -124,36 +117,31 @@
     <div class="container">
         <div class="header">قنوات تلفزيونية مباشرة</div>
         <ul class="channel-list" id="channelList">
-            <li class="channel" id="channel0" onclick="playStream(0)">
+            <li class="channel" id="channel0" onclick="playStream(0, event)">
                 <img src="https://logowik.com/content/uploads/images/al-jazeera-tv6503.jpg" alt="الجزيرة">
                 <p>الجزيرة</p>
             </li>
-            <li class="channel" id="channel1" onclick="playStream(1)">
+            <li class="channel" id="channel1" onclick="playStream(1, event)">
                 <img src="https://seeklogo.com/images/A/al-arabiya-logo-E8E441B937-seeklogo.com.png" alt="العربية">
                 <p>العربية</p>
             </li>
-            <li class="channel" id="channel2" onclick="playStream(2)">
+            <li class="channel" id="channel2" onclick="playStream(2, event)">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/5/5a/AlHADATH.png" alt="الحدث">
                 <p>الحدث</p>
             </li>
-            <li class="channel" id="channel3" onclick="playStream(3)">
+            <li class="channel" id="channel3" onclick="playStream(3, event)">
                 <img src="https://s.shabakngy.com/wp-content/uploads/2021/03/%D8%AA%D8%B1%D8%AF%D8%AF-%D9%82%D9%86%D8%A7%D8%A9-%D8%AA%D9%84%D9%81%D8%B2%D9%8A%D9%88%D9%86-%D8%B3%D9%88%D8%B1%D9%8A%D8%A7-Syria-TV-%D8%A7%D9%84%D8%AC%D8%AF%D9%8A%D8%AF-2021.jpg" alt="تلفزيون سوريا">
                 <p>تلفزيون سوريا</p>
             </li>
-            <li class="channel" id="channel4" onclick="playStream(4)">
+            <li class="channel" id="channel4" onclick="playStream(4, event)">
                 <img src="https://example.com/bbc-arabic.png" alt="BBC Arabic">
                 <p>BBC Arabic</p>
             </li>
-            <li class="channel" id="channel5" onclick="playStream(5)">
+            <li class="channel" id="channel5" onclick="playStream(5, event)">
                 <img src="https://example.com/france24.png" alt="France 24">
                 <p>France 24</p>
             </li>
         </ul>
-        <div class="volume-controls">
-            <button onclick="increaseVolume()">زيادة الصوت</button>
-            <button onclick="decreaseVolume()">خفض الصوت</button>
-            <button onclick="toggleMute()">كتم الصوت</button>
-        </div>
         <input type="range" id="progressBar" min="0" max="100" value="0" step="0.1" onchange="seekVideo()">
     </div>
 
@@ -171,14 +159,18 @@
         let videoElement = null;
         let currentChannelIndex = null;
         let progressBar = document.getElementById('progressBar');
-        let channelList = document.getElementById('channelList');
+        let clickTimeout = null; // لتحديد الزمن بين الضغطات
 
-        function playStream(index) {
-            // إذا كانت القناة الحالية هي نفسها القناة التي يتم الضغط عليها مرتين
-            if (currentChannelIndex === index && videoElement && document.fullscreenElement) {
-                return; // إذا كانت القناة تعمل في وضع ملء الشاشة بالفعل، فلا نعيد تحميل الفيديو
+        function playStream(index, event) {
+            // منع الإجراء إذا كانت القناة نفسها تم الضغط عليها مرتين
+            if (currentChannelIndex === index && clickTimeout !== null) {
+                clearTimeout(clickTimeout); // إذا كانت هناك محاولة ثانية، ألغِ التوقيت
+                videoElement.requestFullscreen(); // التبديل إلى ملء الشاشة
+                clickTimeout = null; // إعادة ضبط العداد
+                return;
             }
 
+            // تعيين القناة الحالية
             currentChannelIndex = index;
 
             if (!videoElement) {
@@ -203,33 +195,10 @@
                 videoElement.src = channels[index].url;
             }
 
-            videoElement.addEventListener('click', function () {
-                if (document.fullscreenElement) {
-                    document.exitFullscreen();
-                } else {
-                    videoElement.requestFullscreen();
-                }
-            });
-
-            updateProgressBar();
-        }
-
-        function increaseVolume() {
-            videoElement.volume = Math.min(videoElement.volume + 0.1, 1);
-        }
-
-        function decreaseVolume() {
-            videoElement.volume = Math.max(videoElement.volume - 0.1, 0);
-        }
-
-        function toggleMute() {
-            videoElement.muted = !videoElement.muted;
-        }
-
-        function updateProgressBar() {
-            videoElement.addEventListener('timeupdate', () => {
-                progressBar.value = (videoElement.currentTime / videoElement.duration) * 100;
-            });
+            // إضافة العداد الزمني للضغطات المزدوجة
+            clickTimeout = setTimeout(function () {
+                clickTimeout = null; // إذا لم يكن الضغط مزدوجاً، قم بإيقاف العداد
+            }, 500); // الانتظار نصف ثانية (500 مللي ثانية)
         }
 
         function seekVideo() {
