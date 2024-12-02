@@ -92,20 +92,24 @@
     <div class="container">
         <ul class="channel-list" id="channelList">
             <li class="channel" id="channel0" tabindex="0" data-index="0">
-                <img src="https://logowik.com/content/uploads/images/al-jazeera-tv6503.jpg" alt="الجزيرة">
-                <p>الجزيرة</p>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/a/aa/%D8%B4%D8%B9%D8%A7%D8%B1_%D9%82%D9%86%D8%A7%D8%A9_%D8%AD%D9%84%D8%A8_%D8%A7%D9%84%D9%8A%D9%88%D9%85.jpg" alt="حلب اليوم">
+                <p>حلب اليوم</p>
             </li>
             <li class="channel" id="channel1" tabindex="0" data-index="1">
-                <img src="https://seeklogo.com/images/A/al-arabiya-logo-E8E441B937-seeklogo.com.png" alt="العربية">
-                <p>العربية</p>
+                <img src="https://altbah1aloula.com/wp-content/uploads/2024/07/%D8%AA%D8%B1%D8%AF%D8%AF-%D9%82%D9%86%D8%A7%D8%A9-%D8%B1%D9%88%D8%AC%D8%A7%D9%81%D8%A7-%D8%A7%D9%84%D8%A5%D8%AE%D8%A8%D8%A7%D8%B1%D9%8A%D8%A9-e1721037716578.webp" alt="روج آفا">
+                <p>روج آفا</p>
             </li>
             <li class="channel" id="channel2" tabindex="0" data-index="2">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/5/5a/AlHADATH.png" alt="الحدث">
-                <p>الحدث</p>
+                <img src="https://www.alaraby.com/themes/custom/arabytv/logo-print.png" alt="تلفزيون العربي">
+                <p>تلفزيون العربي</p>
             </li>
             <li class="channel" id="channel3" tabindex="0" data-index="3">
-                <img src="https://s.shabakngy.com/wp-content/uploads/2021/03/%D8%AA%D8%B1%D8%AF%D8%AF-%D9%82%D9%86%D8%A7%D8%A9-%D8%AA%D9%84%D9%81%D8%B2%D9%8A%D9%88%D9%86-%D8%B3%D9%88%D8%B1%D9%8A%D8%A7-Syria-TV-%D8%A7%D9%84%D8%AC%D8%AF%D9%8A%D8%AF-2021.jpg" alt="تلفزيون سوريا">
-                <p>تلفزيون سوريا</p>
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRT56fM1Fp5Rh1s82aY8yzCGr7kjEQNy437BQ&s" alt="روناهي">
+                <p>روناهي</p>
+            </li>
+            <li class="channel" id="channel4" tabindex="0" data-index="4">
+                <img src="https://yt3.googleusercontent.com/6wh3wbMTas_FiOfcuyU-a-PSL62aeOzoNM-MDyJiUIr8HfINr_kqQlMvgYpjdi5hkVJMR7oo=s900-c-k-c0x00ffffff-no-rj" alt="سكاي نيوز عربية">
+                <p>سكاي نيوز عربية</p>
             </li>
         </ul>
         <video id="videoPlayer" controls autoplay></video>
@@ -114,10 +118,11 @@
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <script>
         const channels = [
-            { name: "الجزيرة", url: "https://live-hls-web-aja.getaj.net/AJA/index.m3u8" },
-            { name: "العربية", url: "https://av.alarabiya.net/alarabiapublish/alarabiya.smil/playlist.m3u8" },
-            { name: "الحدث", url: "https://av.alarabiya.net/alarabiapublish/alhadath.smil/playlist.m3u8" },
-            { name: "تلفزيون سوريا", url: "https://svs.itworkscdn.net/syriatvlive/syriatv.smil/playlist_dvr.m3u8" }
+            { name: "حلب اليوم", url: "https://usher.ttvnw.net/api/channel/hls/halabtodaytvlive.m3u8" },
+            { name: "روج آفا", url: "https://rojava-tv.akamaized.net/hls/rojava-tv.m3u8" },
+            { name: "تلفزيون العربي", url: "https://alarabyta.cdn.octivid.com/alaraby/smil:alaraby.stream.smil/chunklist.m3u8" },
+            { name: "روناهي", url: "https://ronahi-tv.akamaized.net/hls/ronahi-tv.m3u8" },
+            { name: "سكاي نيوز عربية", url: "https://stream.skynewsarabia.com/hls/sna.m3u8" }
         ];
 
         const videoElement = document.getElementById('videoPlayer');
@@ -179,41 +184,4 @@
                     channel.classList.add('highlight');
                     channel.focus();
                 } else {
-                    channel.classList.remove('highlight');
-                }
-            });
-        }
-
-        // الدخول في وضع ملء الشاشة
-        function enterFullScreen() {
-            if (videoElement.requestFullscreen) {
-                videoElement.requestFullscreen();
-            } else if (videoElement.webkitRequestFullscreen) { /* Safari */
-                videoElement.webkitRequestFullscreen();
-            } else if (videoElement.msRequestFullscreen) { /* IE11 */
-                videoElement.msRequestFullscreen();
-            }
-        }
-
-        // الخروج من وضع ملء الشاشة
-        function exitFullScreen() {
-            if (document.exitFullscreen) {
-                document.exitFullscreen();
-            } else if (document.webkitExitFullscreen) { /* Safari */
-                document.webkitExitFullscreen();
-            } else if (document.msExitFullscreen) { /* IE11 */
-                document.msExitFullscreen();
-            }
-        }
-
-        // استماع لأحداث لوحة المفاتيح
-        document.addEventListener('keydown', handleKeyControl);
-
-        // تعيين القناة الأولى كمختارة عند التحميل
-        window.onload = () => {
-            highlightChannel(0);
-            playStream(0);
-        };
-    </script>
-</body>
-</html>
+                    channel
