@@ -5,35 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>قائمة القنوات المباشرة</title>
     <style>
+        /* تنسيق الجسم */
         body {
             margin: 0;
             padding: 0;
             font-family: Arial, sans-serif;
-            background-color: #000;
+            background-color: #000; /* خلفية سوداء */
             color: #fff;
-            height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
+            height: 100vh;
         }
 
+        /* الحاوية الأساسية */
         .container {
-            width: 100%;
+            width: 80%;
             max-width: 800px;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.1); /* تأثير الزجاج */
             backdrop-filter: blur(15px);
             border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
             overflow: hidden;
-            display: none; /* مخفية بشكل افتراضي */
-            flex-direction: column;
-            position: fixed;
-            z-index: 10;
-            top: 10%;
-            left: 50%;
-            transform: translate(-50%, 0);
         }
 
+        /* العنوان */
         .header {
             background-color: #f8c332;
             padding: 15px;
@@ -42,15 +38,17 @@
             color: #000;
         }
 
+        /* القائمة */
         .channel-list {
             list-style: none;
             margin: 0;
             padding: 0;
             overflow-y: auto;
-            max-height: 500px;
-            flex-grow: 1;
+            max-height: 500px; /* ضبط ارتفاع القائمة */
+            display: block;
         }
 
+        /* عناصر القائمة */
         .channel {
             display: flex;
             align-items: center;
@@ -76,49 +74,56 @@
             font-size: 1.2rem;
         }
 
+        /* تنسيق الفيديو */
         video {
             width: 100%;
-            height: 100%;
+            height: auto;
+            max-height: 90vh; /* لا يتجاوز 90% من ارتفاع الشاشة */
+            border: none;
             background: #000;
-            cursor: pointer;
         }
 
+        /* تحسين وضع ملء الشاشة */
         :fullscreen video {
             width: 100%;
-            height: 100%;
+            height: auto;
+            max-height: 100vh;
         }
 
-        .control-buttons {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
+        /* شريط التقدم */
+        #progressBar {
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        /* أزرار التحكم بالصوت */
+        .volume-controls {
             display: flex;
-            gap: 20px;
+            justify-content: space-between;
+            margin-top: 10px;
         }
 
-        .control-button {
-            background-color: #f8c332;
-            border: none;
-            padding: 10px 20px;
-            font-size: 1rem;
-            color: #000;
-            cursor: pointer;
-            border-radius: 5px;
-            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
-        }
+        /* استجابة للأجهزة الصغيرة */
+        @media (max-width: 600px) {
+            .container {
+                width: 90%;
+            }
 
-        .control-button:hover {
-            background-color: #ffc107;
+            .channel img {
+                width: 50px;
+                height: 50px;
+            }
+
+            video {
+                height: 60vh; /* تكبير الفيديو ليظهر بشكل أفضل على الهواتف */
+            }
         }
     </style>
 </head>
 <body>
-    <video id="videoPlayer" controls autoplay></video>
-
-    <div class="container" id="channelList">
+    <div class="container">
         <div class="header">قنوات تلفزيونية مباشرة</div>
-        <ul class="channel-list">
+        <ul class="channel-list" id="channelList">
             <li class="channel" onclick="playStream(0)">
                 <img src="https://logowik.com/content/uploads/images/al-jazeera-tv6503.jpg" alt="الجزيرة">
                 <p>الجزيرة</p>
@@ -135,13 +140,21 @@
                 <img src="https://s.shabakngy.com/wp-content/uploads/2021/03/%D8%AA%D8%B1%D8%AF%D8%AF-%D9%82%D9%86%D8%A7%D8%A9-%D8%AA%D9%84%D9%81%D8%B2%D9%8A%D9%88%D9%86-%D8%B3%D9%88%D8%B1%D9%8A%D8%A7-Syria-TV-%D8%A7%D9%84%D8%AC%D8%AF%D9%8A%D8%AF-2021.jpg" alt="تلفزيون سوريا">
                 <p>تلفزيون سوريا</p>
             </li>
+            <li class="channel" onclick="playStream(4)">
+                <img src="https://example.com/bbc-arabic.png" alt="BBC Arabic">
+                <p>BBC Arabic</p>
+            </li>
+            <li class="channel" onclick="playStream(5)">
+                <img src="https://example.com/france24.png" alt="France 24">
+                <p>France 24</p>
+            </li>
         </ul>
-    </div>
-
-    <div class="control-buttons">
-        <button class="control-button" onclick="changeChannel(-1)">القناة السابقة</button>
-        <button class="control-button" onclick="changeChannel(1)">القناة التالية</button>
-        <button class="control-button" onclick="toggleChannelList()">عرض القائمة</button>
+        <div class="volume-controls">
+            <button onclick="increaseVolume()">زيادة الصوت</button>
+            <button onclick="decreaseVolume()">خفض الصوت</button>
+            <button onclick="toggleMute()">كتم الصوت</button>
+        </div>
+        <input type="range" id="progressBar" min="0" max="100" value="0" step="0.1" onchange="seekVideo()">
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
@@ -150,53 +163,89 @@
             { name: "الجزيرة", url: "https://live-hls-web-aja.getaj.net/AJA/index.m3u8" },
             { name: "العربية", url: "https://av.alarabiya.net/alarabiapublish/alarabiya.smil/playlist.m3u8" },
             { name: "الحدث", url: "https://av.alarabiya.net/alarabiapublish/alhadath.smil/playlist.m3u8" },
-            { name: "تلفزيون سوريا", url: "https://svs.itworkscdn.net/syriatvlive/syriatv.smil/playlist_dvr.m3u8" }
+            { name: "تلفزيون سوريا", url: "https://svs.itworkscdn.net/syriatvlive/syriatv.smil/playlist_dvr.m3u8" },
+            { name: "BBC Arabic", url: "https://example.com/bbc-arabic.m3u8" },
+            { name: "France 24", url: "https://example.com/france24.m3u8" }
         ];
 
+        let videoElement = null;
         let currentChannelIndex = 0;
-        const videoPlayer = document.getElementById("videoPlayer");
-        const channelList = document.getElementById("channelList");
+        let progressBar = document.getElementById('progressBar');
+        let channelList = document.getElementById('channelList');
 
         function playStream(index) {
             currentChannelIndex = index;
 
-            if (Hls.isSupported()) {
-                const hls = new Hls();
-                hls.loadSource(channels[index].url);
-                hls.attachMedia(videoPlayer);
-            } else if (videoPlayer.canPlayType('application/vnd.apple.mpegurl')) {
-                videoPlayer.src = channels[index].url;
+            if (!videoElement) {
+                videoElement = document.createElement('video');
+                videoElement.controls = true;
+                videoElement.autoplay = true;
+                videoElement.style.width = '100%';
+
+                if (Hls.isSupported()) {
+                    const hls = new Hls();
+                    hls.loadSource(channels[index].url);
+                    hls.attachMedia(videoElement);
+                } else if (videoElement.canPlayType('application/vnd.apple.mpegurl')) {
+                    videoElement.src = channels[index].url;
+                } else {
+                    alert('البث المباشر غير مدعوم على هذا المتصفح.');
+                    return;
+                }
+
+                document.body.appendChild(videoElement);
+                videoElement.requestFullscreen();
+                document.addEventListener('keydown', handleKeyDown);
+                document.addEventListener('fullscreenchange', handleFullscreenChange);
             } else {
-                alert('البث المباشر غير مدعوم على هذا المتصفح.');
-                return;
+                videoElement.src = channels[index].url;
             }
 
-            // إخفاء القائمة إذا كانت مفتوحة
-            channelList.style.display = "none";
-            videoPlayer.style.display = "block";
-            videoPlayer.play();
+            updateProgressBar();
         }
 
-        function toggleChannelList() {
-            if (channelList.style.display === "none") {
-                channelList.style.display = "flex";
-            } else {
-                channelList.style.display = "none";
+        function handleKeyDown(event) {
+            if (event.key === 'ArrowUp') {
+                currentChannelIndex = (currentChannelIndex + 1) % channels.length;
+                playStream(currentChannelIndex);
+            } else if (event.key === 'ArrowDown') {
+                currentChannelIndex = (currentChannelIndex - 1 + channels.length) % channels.length;
+                playStream(currentChannelIndex);
             }
         }
 
-        function changeChannel(direction) {
-            currentChannelIndex = (currentChannelIndex + direction + channels.length) % channels.length;
-            playStream(currentChannelIndex);
+        function handleFullscreenChange() {
+            if (document.fullscreenElement) {
+                channelList.style.display = 'none';
+            } else {
+                channelList.style.display = 'block';
+            }
         }
 
-        // فتح القائمة عند الضغط في وضع ملء الشاشة
-        videoPlayer.addEventListener("click", () => {
-            toggleChannelList();
-        });
+        function increaseVolume() {
+            videoElement.volume = Math.min(videoElement.volume + 0.1, 1);
+        }
 
-        // تشغيل القناة الأولى افتراضياً
-        playStream(0);
+        function decreaseVolume() {
+            videoElement.volume = Math.max(videoElement.volume - 0.1, 0);
+        }
+
+        function toggleMute() {
+            videoElement.muted = !videoElement.muted;
+        }
+
+        function updateProgressBar() {
+            videoElement.addEventListener('timeupdate', () => {
+                progressBar.value = (videoElement.currentTime / videoElement.duration) * 100;
+            });
+        }
+
+        function seekVideo() {
+            videoElement.currentTime = (progressBar.value / 100) * videoElement.duration;
+        }
+
+        // تشغيل القناة الأولى عند تحميل الصفحة
+        window.onload = () => playStream(0);
     </script>
 </body>
 </html>
