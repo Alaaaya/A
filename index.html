@@ -5,66 +5,70 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>قائمة القنوات المباشرة</title>
     <style>
-        /* تنسيق الجسم */
         body {
             margin: 0;
             padding: 0;
             font-family: Arial, sans-serif;
-            background-color: #000; /* خلفية سوداء */
+            background-color: #000;
             color: #fff;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
+            justify-content: center;
             height: 100vh;
         }
 
-        /* الحاوية الأساسية */
         .container {
-            display: flex;
-            flex-direction: row-reverse; /* القائمة على اليمين */
-            align-items: flex-start;
             width: 90%;
             max-width: 1200px;
-            height: 90vh;
-            background: rgba(255, 255, 255, 0.1); /* تأثير الزجاج */
+            background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(15px);
             border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
             overflow: hidden;
+            text-align: center;
         }
 
-        /* القائمة */
-        .channel-list {
-            width: 40%;
-            max-height: 100%;
-            overflow-y: auto;
-            list-style: none;
-            margin: 0;
-            padding: 0;
-            background-color: rgba(255, 255, 255, 0.1);
+        .video-container {
+            width: 100%;
+            position: relative;
         }
 
-        /* عناصر القائمة */
-        .channel {
+        video {
+            width: 100%;
+            height: 60vh;
+            background: #000;
+        }
+
+        .controls {
             display: flex;
+            justify-content: space-around;
             align-items: center;
             padding: 10px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-            cursor: pointer;
-            transition: background 0.3s;
+            background: rgba(0, 0, 0, 0.8);
         }
 
-        .channel:focus,
-        .channel.highlight {
-            background: rgba(255, 255, 255, 0.3); /* تمييز العنصر */
-            outline: none;
+        .channel-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 10px 0;
+        }
+
+        .channel {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 10px;
+            cursor: pointer;
+            transition: transform 0.3s;
         }
 
         .channel img {
-            width: 50px;
-            height: 50px;
+            width: 100px;
+            height: 100px;
             border-radius: 10px;
-            margin-left: 15px;
+            margin-bottom: 5px;
         }
 
         .channel p {
@@ -72,70 +76,90 @@
             font-size: 1rem;
         }
 
-        /* الفيديو */
-        video {
-            width: 60%;
-            height: 100%;
-            background: #000;
-            border-radius: 0 15px 15px 0;
+        .channel:hover {
+            transform: scale(1.1);
         }
 
-        /* تحسين وضع ملء الشاشة */
-        :fullscreen video {
-            width: 100%;
-            height: auto;
-            max-height: 100vh;
+        button {
+            background-color: #444;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s;
         }
+
+        button:hover {
+            background-color: #666;
+        }
+
     </style>
 </head>
 <body>
     <div class="container">
-        <ul class="channel-list" id="channelList">
-            <li class="channel" id="channel0" tabindex="0" data-index="0">
-                <img src="https://logowik.com/content/uploads/images/al-jazeera-tv6503.jpg" alt="الجزيرة">
-                <p>الجزيرة</p>
-            </li>
-            <li class="channel" id="channel1" tabindex="0" data-index="1">
-                <img src="https://seeklogo.com/images/A/al-arabiya-logo-E8E441B937-seeklogo.com.png" alt="العربية">
-                <p>العربية</p>
-            </li>
-            <li class="channel" id="channel2" tabindex="0" data-index="2">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/5/5a/AlHADATH.png" alt="الحدث">
-                <p>الحدث</p>
-            </li>
-            <li class="channel" id="channel3" tabindex="0" data-index="3">
-                <img src="https://s.shabakngy.com/wp-content/uploads/2021/03/%D8%AA%D8%B1%D8%AF%D8%AF-%D9%82%D9%86%D8%A7%D8%A9-%D8%AA%D9%84%D9%81%D8%B2%D9%8A%D9%88%D9%86-%D8%B3%D9%88%D8%B1%D9%8A%D8%A7-Syria-TV-%D8%A7%D9%84%D8%AC%D8%AF%D9%8A%D8%AF-2021.jpg" alt="تلفزيون سوريا">
-                <p>تلفزيون سوريا</p>
-            </li>
-            <li class="channel" id="channel4" tabindex="0" data-index="4">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/a/aa/%D8%B4%D8%B9%D8%A7%D8%B1_%D9%82%D9%86%D8%A7%D8%A9_%D8%AD%D9%84%D8%A8_%D8%A7%D9%84%D9%8A%D9%88%D9%85.jpg" alt="حلب اليوم">
-                <p>حلب اليوم</p>
-            </li>
-            <li class="channel" id="channel5" tabindex="0" data-index="5">
-                <img src="https://altbah1aloula.com/wp-content/uploads/2024/07/%D8%AA%D8%B1%D8%AF%D8%AF-%D9%82%D9%86%D8%A7%D8%A9-%D8%B1%D9%88%D8%AC%D8%A7%D9%81%D8%A7-%D8%A7%D9%84%D8%A5%D8%AE%D8%A8%D8%A7%D8%B1%D9%8A%D8%A9-e1721037716578.webp" alt="روج افا">
-                <p>روج افا</p>
-            </li>
-            <li class="channel" id="channel6" tabindex="0" data-index="6">
-                <img src="https://www.alaraby.com/themes/custom/arabytv/logo-print.png" alt="تلفزيون العربي">
-                <p>تلفزيون العربي</p>
-            </li>
-            <li class="channel" id="channel7" tabindex="0" data-index="7">
-                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRT56fM1Fp5Rh1s82aY8yzCGr7kjEQNy437BQ&s" alt="روناهي">
-                <p>روناهي</p>
-            </li>
-            <li class="channel" id="channel8" tabindex="0" data-index="8">
-                <img src="https://yt3.googleusercontent.com/6wh3wbMTas_FiOfcuyU-a-PSL62aeOzoNM-MDyJiUIr8HfINr_kqQlMvgYpjdi5hkVJMR7oo=s900-c-k-c0x00ffffff-no-rj" alt="سكاي نيوز عربية">
-                <p>سكاي نيوز عربية</p>
-            </li>
-        </ul>
-        <video id="videoPlayer" controls autoplay></video>
+        <div class="video-container">
+            <video id="videoPlayer" controls autoplay></video>
+        </div>
+
+        <div class="controls">
+            <button onclick="previousChannel()">السابق</button>
+            <button onclick="nextChannel()">التالي</button>
+        </div>
+
+        <div class="channel-list" id="channelList">
+            <!-- سيتم ملء القنوات ديناميكيًا هنا -->
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <script>
         const channels = [
-            { name: "الجزيرة", url: "https://live-hls-web-aja.getaj.net/AJA/index.m3u8" },
-            { name: "العربية", url: "https://av.alarabiya.net/alarabiapublish/alarabiya.smil/playlist.m3u8" },
-            { name: "الحدث", url: "https://av.alarabiya.net/alarabiapublish/alhadath.smil/playlist.m3u8" },
-            { name: "تلفزيون سوريا", url: "https://svs.itworkscdn.net/syriatvlive/syriatv.smil/playlist_dvr.m3u8" },
-            { name: "حلب اليوم", url: "https://usher.ttvnw.net/api/channel/hls/halabtodaytvlive.m3u8?acmb=eyJBcHBWZXJzaW9uIjoiNWYxZjhiZTYtOTY3Mi00ZDc1LWE1MGQtMTg3ZTUyZjI0ZTM3In0%3D&allow_source=true&browser_family=safari&browser_version=16.0&cdm=fp&fast_b
+            { name: "الجزيرة", url: "https://live-hls-web-aja.getaj.net/AJA/index.m3u8", logo: "https://logowik.com/content/uploads/images/al-jazeera-tv6503.jpg" },
+            { name: "العربية", url: "https://av.alarabiya.net/alarabiapublish/alarabiya.smil/playlist.m3u8", logo: "https://seeklogo.com/images/A/al-arabiya-logo-E8E441B937-seeklogo.com.png" },
+            { name: "الحدث", url: "https://av.alarabiya.net/alarabiapublish/alhadath.smil/playlist.m3u8", logo: "https://upload.wikimedia.org/wikipedia/commons/5/5a/AlHADATH.png" },
+            { name: "تلفزيون سوريا", url: "https://svs.itworkscdn.net/syriatvlive/syriatv.smil/playlist_dvr.m3u8", logo: "https://s.shabakngy.com/wp-content/uploads/2021/03/%D8%AA%D8%B1%D8%AF%D8%AF-%D9%82%D9%86%D8%A7%D8%A9-%D8%AA%D9%84%D9%81%D8%B2%D9%8A%D9%88%D9%86-%D8%B3%D9%88%D8%B1%D9%8A%D8%A7-Syria-TV-%D8%A7%D9%84%D8%AC%D8%AF%D9%8A%D8%AF-2021.jpg" },
+            { name: "حلب اليوم", url: "https://usher.ttvnw.net/api/channel/hls/halabtodaytvlive.m3u8", logo: "https://upload.wikimedia.org/wikipedia/commons/a/aa/%D8%B4%D8%B9%D8%A7%D8%B1_%D9%82%D9%86%D8%A7%D8%A9_%D8%AD%D9%84%D8%A8_%D8%A7%D9%84%D9%8A%D9%88%D9%85.jpg" },
+            { name: "روج آفا", url: "https://rojava-tv.akamaized.net/hls/rojava-tv.m3u8", logo: "https://altbah1aloula.com/wp-content/uploads/2024/07/%D8%AA%D8%B1%D8%AF%D8%AF-%D9%82%D9%86%D8%A7%D8%A9-%D8%B1%D9%88%D8%AC%D8%A7%D9%81%D8%A7-%D8%A7%D9%84%D8%A5%D8%AE%D8%A8%D8%A7%D8%B1%D9%8A%D8%A9-e1721037716578.webp" },
+            { name: "تلفزيون العربي", url: "https://alarabyta.cdn.octivid.com/alaraby/smil:alaraby.stream.smil/chunklist.m3u8", logo: "https://www.alaraby.com/themes/custom/arabytv/logo-print.png" },
+            { name: "روناهي", url: "https://ronahi-tv.akamaized.net/hls/ronahi-tv.m3u8", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRT56fM1Fp5Rh1s82aY8yzCGr7kjEQNy437BQ&s" },
+            { name: "سكاي نيوز عربية", url: "https://stream.skynewsarabia.com/hls/sna.m3u8", logo: "https://yt3.googleusercontent.com/6wh3wbMTas_FiOfcuyU-a-PSL62aeOzoNM-MDyJiUIr8HfINr_kqQlMvgYpjdi5hkVJMR7oo=s900-c-k-c0x00ffffff-no-rj" }
+        ];
+
+        const videoElement = document.getElementById('videoPlayer');
+        const channelListElement = document.getElementById('channelList');
+        let currentChannelIndex = 0;
+
+        // تشغيل القناة
+        function playStream(index) {
+            currentChannelIndex = index;
+            const channel = channels[index];
+
+            if (Hls.isSupported()) {
+                const hls = new Hls();
+                hls.loadSource(channel.url);
+                hls.attachMedia(videoElement);
+            } else if (videoElement.canPlayType('application/vnd.apple.mpegurl')) {
+                videoElement.src = channel.url;
+            } else {
+                alert('البث المباشر غير مدعوم على هذا المتصفح.');
+            }
+        }
+
+        // عرض قائمة القنوات
+        function loadChannels() {
+            channels.forEach((channel, index) => {
+                const channelElement = document.createElement('div');
+                channelElement.className = 'channel';
+                channelElement.innerHTML = `
+                    <img src="${channel.logo}" alt="${channel.name}">
+                    <p>${channel.name}</p>
+                `;
+                channelElement.addEventListener('click', () => playStream(index));
+                channelListElement.appendChild(channelElement);
+            });
+        }
+
+        // التنقل بين القنوات
+        function next
