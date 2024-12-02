@@ -21,10 +21,11 @@
         /* الحاوية الأساسية */
         .container {
             display: flex;
-            flex-direction: row-reverse; /* لجعل القائمة تظهر على اليمين */
-            align-items: flex-start; /* محاذاة الفيديو والقائمة من الأعلى */
+            flex-direction: row-reverse; /* القائمة على اليمين */
+            align-items: flex-start;
             width: 90%;
             max-width: 1200px;
+            height: 90vh; /* جعل الحاوية تأخذ معظم الشاشة */
             background: rgba(255, 255, 255, 0.1); /* تأثير الزجاج */
             backdrop-filter: blur(15px);
             border-radius: 15px;
@@ -34,14 +35,13 @@
 
         /* القائمة */
         .channel-list {
-            width: 200px; /* عرض ثابت للقائمة */
-            max-height: 90vh; /* الحد الأقصى لارتفاع القائمة */
-            overflow-y: auto; /* تمكين التمرير العمودي عند الحاجة */
+            width: 30%; /* عرض القائمة 30% من الحاوية */
+            max-height: 100%; /* ضمان أن القائمة تأخذ الارتفاع الكامل */
+            overflow-y: auto; /* شريط تمرير عند الحاجة */
             list-style: none;
             margin: 0;
             padding: 0;
             background-color: rgba(255, 255, 255, 0.1);
-            z-index: 10; /* ضمان ظهور القائمة فوق الفيديو */
         }
 
         /* عناصر القائمة */
@@ -59,22 +59,23 @@
         }
 
         .channel img {
-            width: 60px;
-            height: 60px;
+            width: 50px;
+            height: 50px;
             border-radius: 10px;
             margin-left: 15px;
         }
 
         .channel p {
             margin: 0;
-            font-size: 1.2rem;
+            font-size: 1rem;
         }
 
-        /* تنسيق الفيديو */
+        /* الفيديو */
         video {
-            flex: 1; /* الفيديو يأخذ المساحة المتبقية */
-            max-height: 90vh; /* الحد الأقصى للارتفاع */
+            width: 70%; /* الفيديو يأخذ 70% من الحاوية */
+            height: 100%; /* الفيديو يأخذ الارتفاع الكامل */
             background: #000;
+            border-radius: 0 15px 15px 0;
         }
 
         /* تحسين وضع ملء الشاشة */
@@ -87,16 +88,18 @@
         /* استجابة للأجهزة الصغيرة */
         @media (max-width: 600px) {
             .container {
-                flex-direction: column; /* ترتيب الفيديو والقائمة عمودياً */
+                flex-direction: column; /* ترتيب العناصر عمودياً */
+                height: auto; /* السماح للارتفاع بالتكيف */
             }
 
             .channel-list {
-                width: 100%; /* جعل القائمة تأخذ العرض الكامل */
-                max-height: 200px; /* تقليل ارتفاع القائمة على الشاشات الصغيرة */
+                width: 100%; /* القائمة تأخذ العرض الكامل */
+                max-height: 200px; /* تقليل ارتفاع القائمة */
             }
 
             video {
-                height: 60vh; /* تكبير الفيديو ليظهر بشكل أفضل على الهواتف */
+                width: 100%; /* الفيديو يأخذ العرض الكامل */
+                height: auto; /* ضبط الارتفاع حسب المحتوى */
             }
         }
     </style>
