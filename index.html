@@ -140,4 +140,36 @@
             { name: "تلفزيون سوريا", url: "https://svs.itworkscdn.net/syriatvlive/syriatv.smil/playlist_dvr.m3u8" },
             { name: "حلب اليوم", url: "https://usher.ttvnw.net/api/channel/hls/halabtodaytvlive.m3u8" },
             { name: "روج آفا", url: "https://rojava-tv.akamaized.net/hls/rojava-tv.m3u8" },
-            { name: "تلفزيون العربي", url: "https://alarabyta.cdn.octivid.com/alaraby/smil:alaraby.stream.smil/chunklist
+            { name: "تلفزيون العربي", url: "https://alarabyta.cdn.octivid.com/alaraby/smil:alaraby.stream.smil/chunklist.m3u8" },
+            { name: "روناهي", url: "https://ronahi.tv/hls/live.m3u8" },
+            { name: "سكاي نيوز عربية", url: "https://hls.skynewsarabia.com/hls/live/skynewsar.m3u8" }
+        ];
+
+        const videoPlayer = document.getElementById('videoPlayer');
+        const channelList = document.getElementById('channelList');
+
+        // Load selected channel
+        function loadChannel(channelIndex) {
+            const channel = channels[channelIndex];
+            if (Hls.isSupported()) {
+                const hls = new Hls();
+                hls.loadSource(channel.url);
+                hls.attachMedia(videoPlayer);
+            } else if (videoPlayer.canPlayType('application/vnd.apple.mpegurl')) {
+                videoPlayer.src = channel.url;
+            }
+        }
+
+        // Event listener for each channel
+        channelList.addEventListener('click', (event) => {
+            const channelIndex = event.target.closest('.channel')?.dataset.index;
+            if (channelIndex !== undefined) {
+                loadChannel(channelIndex);
+            }
+        });
+
+        // Load first channel by default
+        loadChannel(0);
+    </script>
+</body>
+</html>
