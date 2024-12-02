@@ -9,17 +9,13 @@
             font-family: Arial, sans-serif;
             background-color: #000;
             color: white;
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            height: 100vh;
             margin: 0;
+            display: flex;
+            height: 100vh;
         }
         .container {
             display: flex;
-            flex-direction: row-reverse;
             width: 100%;
-            height: 100%;
         }
         #videoPlayer {
             flex: 1;
@@ -29,21 +25,28 @@
         }
         .channel-list {
             width: 250px;
-            overflow-y: auto;
-            padding: 10px;
             background-color: #333;
-            height: 100%;
+            padding: 10px;
+            overflow-y: auto;
             color: white;
             text-align: center;
         }
         .channel {
             cursor: pointer;
             margin: 15px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         .channel img {
             width: 100px;
             height: 100px;
+            object-fit: contain;
             margin-bottom: 10px;
+        }
+        .channel p {
+            margin: 0;
+            font-size: 14px;
         }
     </style>
 </head>
@@ -55,44 +58,42 @@
 
     <!-- قائمة القنوات على اليمين -->
     <div class="channel-list">
-        <ul>
-            <li class="channel" tabindex="0" data-index="0">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Al_Jazeera_Arabic_logo.svg/1200px-Al_Jazeera_Arabic_logo.svg.png" alt="الجزيرة">
-                <p>الجزيرة</p>
-            </li>
-            <li class="channel" tabindex="0" data-index="1">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Al-Arabiya_Logo_2019.svg/2560px-Al-Arabiya_Logo_2019.svg.png" alt="العربية">
-                <p>العربية</p>
-            </li>
-            <li class="channel" tabindex="0" data-index="2">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Al_Arabiya_Al_Hadath_logo.svg/1200px-Al_Arabiya_Al_Hadath_logo.svg.png" alt="الحدث">
-                <p>الحدث</p>
-            </li>
-            <li class="channel" tabindex="0" data-index="3">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/Syrian_TV_logo.svg/1280px-Syrian_TV_logo.svg.png" alt="تلفزيون سوريا">
-                <p>تلفزيون سوريا</p>
-            </li>
-            <li class="channel" tabindex="0" data-index="4">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Al_Jazeera_Arabic_logo.svg/1200px-Al_Jazeera_Arabic_logo.svg.png" alt="حلب اليوم">
-                <p>حلب اليوم</p>
-            </li>
-            <li class="channel" tabindex="0" data-index="5">
-                <img src="https://example.com/rojava-logo.webp" alt="روج آفا">
-                <p>روج آفا</p>
-            </li>
-            <li class="channel" tabindex="0" data-index="6">
-                <img src="https://www.alaraby.com/themes/custom/arabytv/logo-print.png" alt="تلفزيون العربي">
-                <p>تلفزيون العربي</p>
-            </li>
-            <li class="channel" tabindex="0" data-index="7">
-                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRT56fM1Fp5Rh1s82aY8yzCGr7kjEQNy437BQ&s" alt="روناهي">
-                <p>روناهي</p>
-            </li>
-            <li class="channel" tabindex="0" data-index="8">
-                <img src="https://yt3.googleusercontent.com/6wh3wbMTas_FiOfcuyU-a-PSL62aeOzoNM-MDyJiUIr8HfINr_kqQlMvgYpjdi5hkVJMR7oo=s900-c-k-c0x00ffffff-no-rj" alt="سكاي نيوز عربية">
-                <p>سكاي نيوز عربية</p>
-            </li>
-        </ul>
+        <div class="channel" tabindex="0" data-index="0">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Al_Jazeera_Arabic_logo.svg/1200px-Al_Jazeera_Arabic_logo.svg.png" alt="الجزيرة">
+            <p>الجزيرة</p>
+        </div>
+        <div class="channel" tabindex="0" data-index="1">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Al-Arabiya_Logo_2019.svg/2560px-Al-Arabiya_Logo_2019.svg.png" alt="العربية">
+            <p>العربية</p>
+        </div>
+        <div class="channel" tabindex="0" data-index="2">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Al_Arabiya_Al_Hadath_logo.svg/1200px-Al_Arabiya_Al_Hadath_logo.svg.png" alt="الحدث">
+            <p>الحدث</p>
+        </div>
+        <div class="channel" tabindex="0" data-index="3">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/Syrian_TV_logo.svg/1280px-Syrian_TV_logo.svg.png" alt="تلفزيون سوريا">
+            <p>تلفزيون سوريا</p>
+        </div>
+        <div class="channel" tabindex="0" data-index="4">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Al_Jazeera_Arabic_logo.svg/1200px-Al_Jazeera_Arabic_logo.svg.png" alt="حلب اليوم">
+            <p>حلب اليوم</p>
+        </div>
+        <div class="channel" tabindex="0" data-index="5">
+            <img src="https://example.com/rojava-logo.webp" alt="روج آفا">
+            <p>روج آفا</p>
+        </div>
+        <div class="channel" tabindex="0" data-index="6">
+            <img src="https://www.alaraby.com/themes/custom/arabytv/logo-print.png" alt="تلفزيون العربي">
+            <p>تلفزيون العربي</p>
+        </div>
+        <div class="channel" tabindex="0" data-index="7">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRT56fM1Fp5Rh1s82aY8yzCGr7kjEQNy437BQ&s" alt="روناهي">
+            <p>روناهي</p>
+        </div>
+        <div class="channel" tabindex="0" data-index="8">
+            <img src="https://yt3.googleusercontent.com/6wh3wbMTas_FiOfcuyU-a-PSL62aeOzoNM-MDyJiUIr8HfINr_kqQlMvgYpjdi5hkVJMR7oo=s900-c-k-c0x00ffffff-no-rj" alt="سكاي نيوز عربية">
+            <p>سكاي نيوز عربية</p>
+        </div>
     </div>
 </div>
 
@@ -137,15 +138,17 @@
     let currentChannelIndex = 0;
     loadChannel(currentChannelIndex);
 
-    // Add keydown event for remote control (arrows)
+    // Handling keydown for arrow keys
     document.addEventListener('keydown', (e) => {
-        if (e.key === "ArrowRight") {
-            currentChannelIndex = (currentChannelIndex + 1) % channels.length;
-            loadChannel(currentChannelIndex);
-        } else if (e.key === "ArrowLeft") {
+        if (e.key === "ArrowUp") {
+            // Navigate up in the list
             currentChannelIndex = (currentChannelIndex - 1 + channels.length) % channels.length;
             loadChannel(currentChannelIndex);
-        } else if (e.key === "Enter") {
+        } else if (e.key === "ArrowDown") {
+            // Navigate down in the list
+            currentChannelIndex = (currentChannelIndex + 1) % channels.length;
+            loadChannel(currentChannelIndex);
+        } else if (e.key === "ArrowRight") {
             // Toggle fullscreen
             if (videoPlayer.requestFullscreen) {
                 videoPlayer.requestFullscreen();
@@ -156,10 +159,21 @@
             } else if (videoPlayer.msRequestFullscreen) {
                 videoPlayer.msRequestFullscreen();
             }
+        } else if (e.key === "ArrowLeft") {
+            // Exit fullscreen
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.mozCancelFullScreen) {
+                document.mozCancelFullScreen();
+            } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen();
+            } else if (document.msExitFullscreen) {
+                document.msExitFullscreen();
+            }
         }
     });
 
-    // For mobile touch control (swipe gestures)
+    // Add touch events for mobile control
     let touchStartX = 0;
     let touchEndX = 0;
 
