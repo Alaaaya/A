@@ -27,6 +27,8 @@
             border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
             overflow: hidden;
+            display: flex;
+            flex-direction: column; /* ترتيب رأسي */
         }
 
         /* العنوان */
@@ -43,8 +45,8 @@
             list-style: none;
             margin: 0;
             padding: 0;
-            overflow-y: auto;
-            max-height: 500px; /* ضبط ارتفاع القائمة */
+            overflow-y: auto; /* السماح بالتمرير العمودي */
+            flex-grow: 1; /* تمدد القائمة لتأخذ المساحة المتبقية */
         }
 
         /* عناصر القائمة */
