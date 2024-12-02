@@ -10,25 +10,27 @@
             margin: 0;
             padding: 0;
             font-family: Arial, sans-serif;
-            background-color: #000; /* خلفية سوداء */
+            background-color: #000;
             color: #fff;
+            height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
         }
 
         /* الحاوية الأساسية */
         .container {
-            width: 80%;
+            width: 100%;
             max-width: 800px;
-            background: rgba(255, 255, 255, 0.1); /* تأثير الزجاج */
+            background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(15px);
             border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
             overflow: hidden;
-            display: flex;
-            flex-direction: column; /* ترتيب رأسي */
+            display: none; /* تكون مخفية في البداية */
+            flex-direction: column;
+            position: fixed;
+            z-index: 10;
         }
 
         /* العنوان */
@@ -45,11 +47,11 @@
             list-style: none;
             margin: 0;
             padding: 0;
-            overflow-y: auto; /* السماح بالتمرير العمودي */
-            flex-grow: 1; /* تمدد القائمة لتأخذ المساحة المتبقية */
+            overflow-y: auto;
+            max-height: 500px;
+            flex-grow: 1;
         }
 
-        /* عناصر القائمة */
         .channel {
             display: flex;
             align-items: center;
@@ -78,22 +80,21 @@
         /* تنسيق الفيديو */
         video {
             width: 100%;
-            height: auto;
-            max-height: 90vh; /* لا يتجاوز 90% من ارتفاع الشاشة */
-            border: none;
+            height: 100%;
             background: #000;
         }
 
         /* تحسين وضع ملء الشاشة */
         :fullscreen video {
             width: 100%;
-            height: auto;
-            max-height: 100vh;
+            height: 100%;
         }
     </style>
 </head>
 <body>
-    <div class="container">
+    <video id="videoPlayer" controls autoplay></video>
+
+    <div class="container" id="channelList">
         <div class="header">قنوات تلفزيونية مباشرة</div>
         <ul class="channel-list">
             <li class="channel" onclick="playStream(0)">
@@ -124,49 +125,39 @@
             { name: "تلفزيون سوريا", url: "https://svs.itworkscdn.net/syriatvlive/syriatv.smil/playlist_dvr.m3u8" }
         ];
 
+        const videoElement = document.getElementById('videoPlayer');
+        const channelList = document.getElementById('channelList');
         let currentChannelIndex = 0;
-        let videoElement = null;
 
+        // تشغيل القناة
         function playStream(index) {
             currentChannelIndex = index;
 
-            // إنشاء عنصر الفيديو
-            if (!videoElement) {
-                videoElement = document.createElement('video');
-                videoElement.controls = true;
-                videoElement.autoplay = true;
-
-                if (Hls.isSupported()) {
-                    const hls = new Hls();
-                    hls.loadSource(channels[index].url);
-                    hls.attachMedia(videoElement);
-                } else if (videoElement.canPlayType('application/vnd.apple.mpegurl')) {
-                    videoElement.src = channels[index].url;
-                } else {
-                    alert('البث المباشر غير مدعوم على هذا المتصفح.');
-                    return;
-                }
-
-                document.body.appendChild(videoElement);
-                videoElement.requestFullscreen();
-
-                // إضافة مستمع للأزرار
-                document.addEventListener('keydown', handleKeyDown);
-            } else {
+            if (Hls.isSupported()) {
+                const hls = new Hls();
+                hls.loadSource(channels[index].url);
+                hls.attachMedia(videoElement);
+            } else if (videoElement.canPlayType('application/vnd.apple.mpegurl')) {
                 videoElement.src = channels[index].url;
+            } else {
+                alert('البث المباشر غير مدعوم على هذا المتصفح.');
+                return;
+            }
+
+            videoElement.play();
+            channelList.style.display = 'none'; // إخفاء القائمة عند اختيار قناة
+            if (!document.fullscreenElement) {
+                videoElement.requestFullscreen();
             }
         }
 
-        function handleKeyDown(event) {
-            if (event.key === 'ArrowUp') {
-                currentChannelIndex = (currentChannelIndex + 1) % channels.length;
-                playStream(currentChannelIndex);
-            } else if (event.key === 'ArrowDown') {
-                currentChannelIndex =
-                    (currentChannelIndex - 1 + channels.length) % channels.length;
-                playStream(currentChannelIndex);
-            }
-        }
+        // تشغيل القناة الأولى عند بدء الصفحة
+        playStream(0);
+
+        // عرض/إخفاء القائمة عند الضغط على الفيديو
+        videoElement.addEventListener('click', () => {
+            channelList.style.display = channelList.style.display === 'none' ? 'flex' : 'none';
+        });
     </script>
 </body>
 </html>
