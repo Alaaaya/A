@@ -3,105 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تصميم واجهة القنوات</title>
+    <title>قنوات تلفزيونية مباشرة</title>
     <style>
         body {
-            margin: 0;
             font-family: Arial, sans-serif;
-            background-color: #000;
-            color: #fff;
-            display: flex;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
         }
-
-        .sidebar {
-            width: 25%;
-            background-color: #111;
-            padding: 20px;
+        .container {
+            width: 80%;
+            margin: auto;
+            margin-top: 20px;
         }
-
-        .sidebar h2 {
-            font-size: 1.5em;
-            margin-bottom: 20px;
+        h1 {
+            text-align: center;
+            color: #333;
         }
-
-        .channel {
-            display: flex;
-            align-items: center;
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        li {
+            background: #fff;
+            margin: 10px 0;
             padding: 10px;
-            margin-bottom: 10px;
-            background-color: #222;
             border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .channel:hover {
-            background-color: #333;
-        }
-
-        .channel img {
-            width: 40px;
-            height: 40px;
-            margin-right: 10px;
-        }
-
-        .channel span {
-            font-size: 1.2em;
-        }
-
-        .content {
-            flex-grow: 1;
-            background-color: #222;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             display: flex;
             align-items: center;
-            justify-content: center;
-            padding: 20px;
         }
-
-        .content img {
-            max-width: 100%;
-            max-height: 100%;
-            border: 5px solid #444;
+        li img {
+            width: 60px;
+            height: 60px;
+            border-radius: 5px;
+            margin-right: 15px;
+        }
+        li a {
+            text-decoration: none;
+            color: #007BFF;
+            font-size: 18px;
+        }
+        li a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
 <body>
-    <div class="sidebar">
-        <h2>قنوات تلفزيونية مباشرة</h2>
-        <div class="channel">
-            <img src="https://via.placeholder.com/40" alt="Al-Jazeera">
-            <span>Al-Jazeera</span>
-        </div>
-        <div class="channel">
-            <img src="https://via.placeholder.com/40" alt="BBC Arabic">
-            <span>BBC Arabic</span>
-        </div>
-        <div class="channel">
-            <img src="https://via.placeholder.com/40" alt="Sky News Arabia">
-            <span>Sky News Arabia</span>
-        </div>
-        <div class="channel">
-            <img src="https://via.placeholder.com/40" alt="Al Arabiya">
-            <span>Al Arabiya</span>
-        </div>
-        <div class="channel">
-            <img src="https://via.placeholder.com/40" alt="Al Hadath">
-            <span>Al Hadath</span>
-        </div>
-        <div class="channel">
-            <img src="https://via.placeholder.com/40" alt="RT Arabic">
-            <span>RT Arabic</span>
-        </div>
-        <div class="channel">
-            <img src="https://via.placeholder.com/40" alt="Al Hurra Iraq">
-            <span>Al Hurra Iraq</span>
-        </div>
-        <div class="channel">
-            <img src="https://via.placeholder.com/40" alt="Alaraby TV">
-            <span>Alaraby TV</span>
-        </div>
-    </div>
-    <div class="content">
-        <img src="https://via.placeholder.com/800x450" alt="Current Channel Content">
+    <div class="container">
+        <h1>قنوات تلفزيونية مباشرة</h1>
+        <ul>
+            <li>
+                <img src="images/aljazeera.png" alt="Al-Jazeera">
+                <a href="https://live.aljazeera.com">Al-Jazeera</a>
+            </li>
+            <li>
+                <img src="images/bbc_arabic.png" alt="BBC Arabic">
+                <a href="https://www.bbc.com/arabic">BBC Arabic</a>
+            </li>
+            <li>
+                <img src="images/skynews_arabia.png" alt="Sky News Arabia">
+                <a href="https://www.skynewsarabia.com/live-tv">Sky News Arabia</a>
+            </li>
+            <li>
+                <img src="images/alarabiya.png" alt="Al Arabiya">
+                <a href="https://www.alarabiya.net/live-stream">Al Arabiya</a>
+            </li>
+            <li>
+                <img src="images/alhadath.png" alt="Al Hadath">
+                <a href="https://www.alhadath.net/live-stream.html">Al Hadath</a>
+            </li>
+            <li>
+                <img src="images/rt_arabic.png" alt="RT Arabic">
+                <a href="https://arabic.rt.com/live/">RT Arabic</a>
+            </li>
+            <li>
+                <img src="images/alhurra_iraq.png" alt="Al Hurra Iraq">
+                <a href="https://www.alhurra.com/live-tv">Al Hurra Iraq</a>
+            </li>
+            <li>
+                <img src="images/alaraby_tv.png" alt="Alaraby TV">
+                <a href="https://www.alaraby.com/live">Alaraby TV</a>
+            </li>
+            <li>
+                <img src="images/dw_arabic.png" alt="DW Arabic">
+                <a href="https://www.dw.com/ar/live-stream/s-100837">DW Arabic</a>
+            </li>
+        </ul>
     </div>
 </body>
 </html>
