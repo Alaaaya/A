@@ -22,6 +22,7 @@
             width: 100%;
             height: 100%;
             background: #000;
+            display: none; /* إخفاء الفيديو في البداية */
             cursor: pointer;
         }
 
@@ -71,6 +72,10 @@
     </style>
 </head>
 <body>
+    <!-- شاشة سوداء لإخفاء القنوات في البداية -->
+    <div id="blackScreen" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: black; z-index: 999;"></div>
+
+    <!-- الفيديو مبدئياً مخفي -->
     <video id="videoPlayer" controls autoplay></video>
 
     <div class="channel-list" id="channelList">
@@ -107,6 +112,7 @@
         let currentChannelIndex = 0;
         let videoElement = document.getElementById('videoPlayer');
         let channelList = document.getElementById('channelList');
+        let blackScreen = document.getElementById('blackScreen');
 
         // تشغيل البث المباشر
         function playStream(index) {
@@ -123,21 +129,18 @@
                 return;
             }
 
-            // إخفاء القائمة بعد اختيار قناة
-            channelList.style.display = 'none';  // إخفاء القائمة
+            // إخفاء القائمة
+            channelList.style.display = 'none';
+            // إخفاء شاشة سوداء
+            blackScreen.style.display = 'none';
+
+            // إظهار الفيديو
+            videoElement.style.display = 'block';
+
+            // بدء تشغيل الفيديو
+            videoElement.play();
             videoElement.requestFullscreen();  // وضع الفيديو في ملء الشاشة
         }
-
-        // عند النقر على الفيديو، إظهار أو إخفاء القائمة
-        videoElement.addEventListener('click', function() {
-            if (channelList.style.display === 'none') {
-                channelList.style.display = 'block';  // إظهار القائمة
-                videoElement.pause();  // إيقاف الفيديو مؤقتًا
-            } else {
-                channelList.style.display = 'none';  // إخفاء القائمة
-                videoElement.play();  // استئناف الفيديو
-            }
-        });
 
         // التبديل بين القنوات باستخدام الأسهم
         document.addEventListener('keydown', function(event) {
