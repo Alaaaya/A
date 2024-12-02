@@ -27,7 +27,6 @@
 
         /* تأثير الزجاج مع تحسين الشفافية */
         .channel-list {
-            display: none; /* إخفاء القائمة بشكل افتراضي */
             position: absolute;
             top: 15%;
             left: 50%;
@@ -42,6 +41,7 @@
             z-index: 1000;
             opacity: 1;
             transition: opacity 0.3s ease;
+            display: block; /* العرض افتراضي للقائمة */
         }
 
         .channel {
@@ -124,16 +124,18 @@
             }
 
             // إخفاء القائمة بعد اختيار قناة
-            channelList.style.display = 'none';
-            videoElement.requestFullscreen();
+            channelList.style.display = 'none';  // إخفاء القائمة
+            videoElement.requestFullscreen();  // وضع الفيديو في ملء الشاشة
         }
 
-        // إظهار أو إخفاء القائمة عند النقر على الفيديو
+        // عند النقر على الفيديو، إظهار أو إخفاء القائمة
         videoElement.addEventListener('click', function() {
             if (channelList.style.display === 'none') {
-                channelList.style.display = 'block';
+                channelList.style.display = 'block';  // إظهار القائمة
+                videoElement.pause();  // إيقاف الفيديو مؤقتًا
             } else {
-                channelList.style.display = 'none';
+                channelList.style.display = 'none';  // إخفاء القائمة
+                videoElement.play();  // استئناف الفيديو
             }
         });
 
