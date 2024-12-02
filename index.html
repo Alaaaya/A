@@ -4,55 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>قائمة القنوات المباشرة</title>
-    <link href="https://vjs.zencdn.net/8.3.0/video-js.css" rel="stylesheet">
+    <link href="https://vjs.zencdn.net/8.0.4/video-js.css" rel="stylesheet">
     <style>
-        /* تنسيق الجسم */
+        /* تنسيق عام */
         body {
             margin: 0;
-            padding: 0;
             font-family: Arial, sans-serif;
             background-color: #000; /* خلفية سوداء */
             color: #fff;
             display: flex;
-            justify-content: center;
-            align-items: center;
             height: 100vh;
-        }
-
-        /* الحاوية الأساسية */
-        .container {
-            width: 80%;
-            max-width: 800px;
-            background: rgba(255, 255, 255, 0.1); /* تأثير الزجاج */
-            backdrop-filter: blur(15px);
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
             overflow: hidden;
         }
 
-        /* العنوان */
-        .header {
-            background-color: #f8c332;
-            padding: 15px;
-            text-align: center;
-            font-size: 1.5rem;
-            color: #000;
-        }
-
-        /* القائمة */
-        .channel-list {
-            list-style: none;
-            margin: 0;
-            padding: 0;
+        /* الشريط الجانبي */
+        .sidebar {
+            width: 25%;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
             overflow-y: auto;
-            max-height: 500px; /* ضبط ارتفاع القائمة */
+            padding: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         }
 
-        /* عناصر القائمة */
         .channel {
             display: flex;
             align-items: center;
             padding: 10px;
+            margin-bottom: 10px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.2);
             cursor: pointer;
             transition: background 0.3s;
@@ -74,25 +53,27 @@
             font-size: 1.2rem;
         }
 
-        /* فيديو البث */
-        #video-player {
-            display: none; /* إخفاء الفيديو بشكل افتراضي */
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 80%;
-            height: auto;
-            z-index: 1000;
-            background: black;
-            border: 3px solid #f8c332;
-            border-radius: 10px;
+        /* منطقة الفيديو */
+        .video-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            position: relative;
         }
 
-        button {
-            position: fixed;
+        #videoPlayer {
+            width: 100%;
+            height: 100%;
+            max-height: 90vh;
+        }
+
+        /* زر الإغلاق */
+        .close-button {
+            position: absolute;
             top: 10px;
-            right: 10px;
+            left: 10px;
             padding: 10px 20px;
             background: #f44336;
             color: white;
@@ -100,67 +81,51 @@
             border-radius: 5px;
             cursor: pointer;
             z-index: 1001;
-            display: none; /* إخفاء الزر بشكل افتراضي */
+            display: none;
         }
 
-        button:hover {
+        .close-button:hover {
             background: #d32f2f;
-        }
-
-        /* استجابة التصميم */
-        @media (max-width: 768px) {
-            .container {
-                width: 95%;
-            }
-
-            .channel img {
-                width: 50px;
-                height: 50px;
-            }
-
-            .channel p {
-                font-size: 1rem;
-            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
+    <!-- الشريط الجانبي -->
+    <div class="sidebar">
         <div class="header">قنوات تلفزيونية مباشرة</div>
         <ul class="channel-list">
-            <li class="channel" onclick="playStream('https://live-hls-web-aja.getaj.net/AJA/index.m3u8')">
+            <li class="channel" onclick="playStream('https://live-hls-web-aja.getaj.net/AJA/index.m3u8', 'الجزيرة')">
                 <img src="https://logowik.com/content/uploads/images/al-jazeera-tv6503.jpg" alt="الجزيرة">
                 <p>الجزيرة</p>
             </li>
-            <li class="channel" onclick="playStream('https://av.alarabiya.net/alarabiapublish/alarabiya.smil/playlist.m3u8')">
+            <li class="channel" onclick="playStream('https://av.alarabiya.net/alarabiapublish/alarabiya.smil/playlist.m3u8', 'العربية')">
                 <img src="https://seeklogo.com/images/A/al-arabiya-logo-E8E441B937-seeklogo.com.png" alt="العربية">
                 <p>العربية</p>
             </li>
-            <li class="channel" onclick="playStream('https://av.alarabiya.net/alarabiapublish/alhadath.smil/playlist.m3u8')">
+            <li class="channel" onclick="playStream('https://av.alarabiya.net/alarabiapublish/alhadath.smil/playlist.m3u8', 'الحدث')">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/5/5a/AlHADATH.png" alt="الحدث">
                 <p>الحدث</p>
             </li>
-            <li class="channel" onclick="playStream('https://svs.itworkscdn.net/syriatvlive/syriatv.smil/playlist_dvr.m3u8')">
+            <li class="channel" onclick="playStream('https://svs.itworkscdn.net/syriatvlive/syriatv.smil/playlist_dvr.m3u8', 'تلفزيون سوريا')">
                 <img src="https://s.shabakngy.com/wp-content/uploads/2021/03/%D8%AA%D8%B1%D8%AF%D8%AF-%D9%82%D9%86%D8%A7%D8%A9-%D8%AA%D9%84%D9%81%D8%B2%D9%8A%D9%88%D9%86-%D8%B3%D9%88%D8%B1%D9%8A%D8%A7-Syria-TV-%D8%A7%D9%84%D8%AC%D8%AF%D9%8A%D8%AF-2021.jpg" alt="تلفزيون سوريا">
                 <p>تلفزيون سوريا</p>
             </li>
         </ul>
     </div>
 
-    <video id="video-player" class="video-js vjs-default-skin" controls preload="auto"></video>
-    <button id="close-button" onclick="closeStream()">إغلاق</button>
+    <!-- منطقة الفيديو -->
+    <div class="video-container">
+        <button class="close-button" onclick="closeStream()">إغلاق</button>
+        <video id="videoPlayer" class="video-js vjs-default-skin" controls preload="auto" style="display: none;"></video>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-    <script src="https://vjs.zencdn.net/8.3.0/video.min.js"></script>
+    <script src="https://vjs.zencdn.net/8.0.4/video.min.js"></script>
     <script>
-        const videoPlayer = document.getElementById('video-player');
-        const closeButton = document.getElementById('close-button');
+        const videoPlayer = document.getElementById('videoPlayer');
+        const closeButton = document.querySelector('.close-button');
 
-        function playStream(url) {
-            // عرض الفيديو وزر الإغلاق
-            videoPlayer.style.display = 'block';
-            closeButton.style.display = 'block';
-
+        function playStream(url, channelName) {
             if (Hls.isSupported()) {
                 const hls = new Hls();
                 hls.loadSource(url);
@@ -172,11 +137,12 @@
                 return;
             }
 
+            videoPlayer.style.display = 'block';
+            closeButton.style.display = 'block';
             videoPlayer.play();
         }
 
         function closeStream() {
-            // إيقاف الفيديو وإخفاء العناصر
             videoPlayer.pause();
             videoPlayer.style.display = 'none';
             closeButton.style.display = 'none';
