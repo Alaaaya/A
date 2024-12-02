@@ -9,79 +9,91 @@
             font-family: Arial, sans-serif;
             background-color: #000;
             color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            display: flex;
+            flex-direction: row-reverse;
+            width: 100%;
+            height: 100%;
+        }
+        #videoPlayer {
+            flex: 1;
+            height: 100%;
+            background-color: black;
+            object-fit: cover;
         }
         .channel-list {
-            display: flex;
-            overflow-x: scroll;
+            width: 250px;
+            overflow-y: auto;
             padding: 10px;
+            background-color: #333;
+            height: 100%;
+            color: white;
+            text-align: center;
         }
         .channel {
-            margin: 0 10px;
             cursor: pointer;
-            text-align: center;
+            margin: 15px 0;
         }
         .channel img {
             width: 100px;
             height: 100px;
-        }
-        #videoPlayer {
-            width: 100%;
-            height: 500px;
-            background-color: black;
-        }
-        .fullscreen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1000;
+            margin-bottom: 10px;
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <ul class="channel-list">
-        <!-- قنوات هنا -->
-        <li class="channel" tabindex="0" data-index="0">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Al_Jazeera_Arabic_logo.svg/1200px-Al_Jazeera_Arabic_logo.svg.png" alt="الجزيرة">
-            <p>الجزيرة</p>
-        </li>
-        <li class="channel" tabindex="0" data-index="1">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Al-Arabiya_Logo_2019.svg/2560px-Al-Arabiya_Logo_2019.svg.png" alt="العربية">
-            <p>العربية</p>
-        </li>
-        <li class="channel" tabindex="0" data-index="2">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Al_Arabiya_Al_Hadath_logo.svg/1200px-Al_Arabiya_Al_Hadath_logo.svg.png" alt="الحدث">
-            <p>الحدث</p>
-        </li>
-        <li class="channel" tabindex="0" data-index="3">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/Syrian_TV_logo.svg/1280px-Syrian_TV_logo.svg.png" alt="تلفزيون سوريا">
-            <p>تلفزيون سوريا</p>
-        </li>
-        <li class="channel" tabindex="0" data-index="4">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Al_Jazeera_Arabic_logo.svg/1200px-Al_Jazeera_Arabic_logo.svg.png" alt="حلب اليوم">
-            <p>حلب اليوم</p>
-        </li>
-        <li class="channel" tabindex="0" data-index="5">
-            <img src="https://example.com/rojava-logo.webp" alt="روج آفا">
-            <p>روج آفا</p>
-        </li>
-        <li class="channel" tabindex="0" data-index="6">
-            <img src="https://www.alaraby.com/themes/custom/arabytv/logo-print.png" alt="تلفزيون العربي">
-            <p>تلفزيون العربي</p>
-        </li>
-        <li class="channel" tabindex="0" data-index="7">
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRT56fM1Fp5Rh1s82aY8yzCGr7kjEQNy437BQ&s" alt="روناهي">
-            <p>روناهي</p>
-        </li>
-        <li class="channel" tabindex="0" data-index="8">
-            <img src="https://yt3.googleusercontent.com/6wh3wbMTas_FiOfcuyU-a-PSL62aeOzoNM-MDyJiUIr8HfINr_kqQlMvgYpjdi5hkVJMR7oo=s900-c-k-c0x00ffffff-no-rj" alt="سكاي نيوز عربية">
-            <p>سكاي نيوز عربية</p>
-        </li>
-    </ul>
+    <!-- شاشة الفيديو -->
     <video id="videoPlayer" controls autoplay></video>
+
+    <!-- قائمة القنوات على اليمين -->
+    <div class="channel-list">
+        <ul>
+            <li class="channel" tabindex="0" data-index="0">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Al_Jazeera_Arabic_logo.svg/1200px-Al_Jazeera_Arabic_logo.svg.png" alt="الجزيرة">
+                <p>الجزيرة</p>
+            </li>
+            <li class="channel" tabindex="0" data-index="1">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Al-Arabiya_Logo_2019.svg/2560px-Al-Arabiya_Logo_2019.svg.png" alt="العربية">
+                <p>العربية</p>
+            </li>
+            <li class="channel" tabindex="0" data-index="2">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Al_Arabiya_Al_Hadath_logo.svg/1200px-Al_Arabiya_Al_Hadath_logo.svg.png" alt="الحدث">
+                <p>الحدث</p>
+            </li>
+            <li class="channel" tabindex="0" data-index="3">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/Syrian_TV_logo.svg/1280px-Syrian_TV_logo.svg.png" alt="تلفزيون سوريا">
+                <p>تلفزيون سوريا</p>
+            </li>
+            <li class="channel" tabindex="0" data-index="4">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Al_Jazeera_Arabic_logo.svg/1200px-Al_Jazeera_Arabic_logo.svg.png" alt="حلب اليوم">
+                <p>حلب اليوم</p>
+            </li>
+            <li class="channel" tabindex="0" data-index="5">
+                <img src="https://example.com/rojava-logo.webp" alt="روج آفا">
+                <p>روج آفا</p>
+            </li>
+            <li class="channel" tabindex="0" data-index="6">
+                <img src="https://www.alaraby.com/themes/custom/arabytv/logo-print.png" alt="تلفزيون العربي">
+                <p>تلفزيون العربي</p>
+            </li>
+            <li class="channel" tabindex="0" data-index="7">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRT56fM1Fp5Rh1s82aY8yzCGr7kjEQNy437BQ&s" alt="روناهي">
+                <p>روناهي</p>
+            </li>
+            <li class="channel" tabindex="0" data-index="8">
+                <img src="https://yt3.googleusercontent.com/6wh3wbMTas_FiOfcuyU-a-PSL62aeOzoNM-MDyJiUIr8HfINr_kqQlMvgYpjdi5hkVJMR7oo=s900-c-k-c0x00ffffff-no-rj" alt="سكاي نيوز عربية">
+                <p>سكاي نيوز عربية</p>
+            </li>
+        </ul>
+    </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
