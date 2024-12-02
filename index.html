@@ -1,15 +1,16 @@
-‏<!DOCTYPE html>
+<!DOCTYPE html>
 ‏<html lang="ar" dir="rtl">
 ‏<head>
 ‏    <meta charset="UTF-8">
 ‏    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 ‏    <title>قائمة القنوات المباشرة</title>
 ‏    <style>
+        /* تنسيق الجسم */
 ‏        body {
 ‏            margin: 0;
 ‏            padding: 0;
 ‏            font-family: Arial, sans-serif;
-‏            background-color: #000;
+‏            background-color: #000; /* خلفية سوداء */
 ‏            color: #fff;
 ‏            display: flex;
 ‏            justify-content: center;
@@ -17,16 +18,18 @@
 ‏            height: 100vh;
         }
 
+        /* الحاوية الأساسية */
 ‏        .container {
 ‏            width: 80%;
 ‏            max-width: 800px;
-‏            background: rgba(255, 255, 255, 0.1);
+‏            background: rgba(255, 255, 255, 0.1); /* تأثير الزجاج */
 ‏            backdrop-filter: blur(15px);
 ‏            border-radius: 15px;
 ‏            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
 ‏            overflow: hidden;
         }
 
+        /* العنوان */
 ‏        .header {
 ‏            background-color: #f8c332;
 ‏            padding: 15px;
@@ -35,14 +38,16 @@
 ‏            color: #000;
         }
 
+        /* القائمة */
 ‏        .channel-list {
 ‏            list-style: none;
 ‏            margin: 0;
 ‏            padding: 0;
 ‏            overflow-y: auto;
-‏            max-height: 500px;
+‏            max-height: 500px; /* ضبط ارتفاع القائمة */
         }
 
+        /* عناصر القائمة */
 ‏        .channel {
 ‏            display: flex;
 ‏            align-items: center;
@@ -68,53 +73,35 @@
 ‏            font-size: 1.2rem;
         }
 
-‏        .video-wrapper {
-‏            position: fixed;
-‏            top: 0;
-‏            left: 0;
-‏            width: 100%;
-‏            height: 100%;
-‏            background: rgba(0, 0, 0, 0.9);
-‏            display: flex;
-‏            flex-direction: column;
-‏            align-items: center;
-‏            justify-content: center;
-‏            z-index: 1000;
-        }
-
+        /* فيديو البث */
 ‏        video {
+‏            position: fixed;
+‏            top: 50%;
+‏            left: 50%;
+‏            transform: translate(-50%, -50%);
 ‏            width: 80%;
 ‏            height: auto;
+‏            z-index: 1000;
 ‏            background: black;
 ‏            border: 3px solid #f8c332;
 ‏            border-radius: 10px;
         }
 
-‏        .video-controls {
-‏            margin-top: 20px;
-        }
-
 ‏        button {
+‏            position: fixed;
+‏            top: 10px;
+‏            right: 10px;
 ‏            padding: 10px 20px;
 ‏            background: #f44336;
 ‏            color: white;
 ‏            border: none;
 ‏            border-radius: 5px;
 ‏            cursor: pointer;
-‏            margin: 5px;
+‏            z-index: 1001;
         }
 
 ‏        button:hover {
 ‏            background: #d32f2f;
-        }
-
-‏        .channel-switch {
-‏            background: #f8c332;
-‏            color: #000;
-        }
-
-‏        .channel-switch:hover {
-‏            background: #f1b929;
         }
 ‏    </style>
 ‏</head>
@@ -143,16 +130,7 @@
 
 ‏    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 ‏    <script>
-‏        let currentVideoWrapper = null;
-
 ‏        function playStream(url) {
-‏            if (currentVideoWrapper) {
-‏                currentVideoWrapper.remove();
-            }
-
-‏            currentVideoWrapper = document.createElement('div');
-‏            currentVideoWrapper.className = 'video-wrapper';
-
 ‏            const video = document.createElement('video');
 ‏            video.controls = true;
 ‏            video.autoplay = true;
@@ -168,33 +146,17 @@
 ‏                return;
             }
 
-‏            const controls = document.createElement('div');
-‏            controls.className = 'video-controls';
+‏            document.body.appendChild(video);
 
 ‏            const closeButton = document.createElement('button');
 ‏            closeButton.textContent = 'إغلاق';
 ‏            closeButton.onclick = () => {
-‏                currentVideoWrapper.remove();
-‏                currentVideoWrapper = null;
+‏                video.pause();
+‏                video.remove();
+‏                closeButton.remove();
             };
-
-‏            const channelListButton = document.createElement('button');
-‏            channelListButton.textContent = 'عرض القائمة';
-‏            channelListButton.className = 'channel-switch';
-‏            channelListButton.onclick = () => {
-‏                currentVideoWrapper.style.display = 'none';
-‏                document.querySelector('.container').style.display = 'block';
-            };
-
-‏            controls.appendChild(channelListButton);
-‏            controls.appendChild(closeButton);
-
-‏            currentVideoWrapper.appendChild(video);
-‏            currentVideoWrapper.appendChild(controls);
-
-‏            document.body.appendChild(currentVideoWrapper);
-‏            document.querySelector('.container').style.display = 'none';
+‏            document.body.appendChild(closeButton);
         }
 ‏    </script>
 ‏</body>
-‏</html>
+‏</html>‏
