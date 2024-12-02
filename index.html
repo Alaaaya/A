@@ -162,9 +162,9 @@
         let clickTimeout = null; // لتحديد الزمن بين الضغطات
 
         function playStream(index, event) {
-            // منع الإجراء إذا كانت القناة نفسها تم الضغط عليها مرتين
+            // إذا كانت نفس القناة وتم الضغط عليها مرتين خلال وقت قصير
             if (currentChannelIndex === index && clickTimeout !== null) {
-                clearTimeout(clickTimeout); // إذا كانت هناك محاولة ثانية، ألغِ التوقيت
+                clearTimeout(clickTimeout); // إلغاء العداد في حالة الضغط المزدوج
                 videoElement.requestFullscreen(); // التبديل إلى ملء الشاشة
                 clickTimeout = null; // إعادة ضبط العداد
                 return;
