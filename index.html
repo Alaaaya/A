@@ -1,162 +1,170 @@
 <!DOCTYPE html>
-‏<html lang="ar" dir="rtl">
-‏<head>
-‏    <meta charset="UTF-8">
-‏    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-‏    <title>قائمة القنوات المباشرة</title>
-‏    <style>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>قائمة القنوات المباشرة</title>
+    <style>
         /* تنسيق الجسم */
-‏        body {
-‏            margin: 0;
-‏            padding: 0;
-‏            font-family: Arial, sans-serif;
-‏            background-color: #000; /* خلفية سوداء */
-‏            color: #fff;
-‏            display: flex;
-‏            justify-content: center;
-‏            align-items: center;
-‏            height: 100vh;
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #000; /* خلفية سوداء */
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
 
         /* الحاوية الأساسية */
-‏        .container {
-‏            width: 80%;
-‏            max-width: 800px;
-‏            background: rgba(255, 255, 255, 0.1); /* تأثير الزجاج */
-‏            backdrop-filter: blur(15px);
-‏            border-radius: 15px;
-‏            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-‏            overflow: hidden;
+        .container {
+            width: 80%;
+            max-width: 800px;
+            background: rgba(255, 255, 255, 0.1); /* تأثير الزجاج */
+            backdrop-filter: blur(15px);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
         }
 
         /* العنوان */
-‏        .header {
-‏            background-color: #f8c332;
-‏            padding: 15px;
-‏            text-align: center;
-‏            font-size: 1.5rem;
-‏            color: #000;
+        .header {
+            background-color: #f8c332;
+            padding: 15px;
+            text-align: center;
+            font-size: 1.5rem;
+            color: #000;
         }
 
         /* القائمة */
-‏        .channel-list {
-‏            list-style: none;
-‏            margin: 0;
-‏            padding: 0;
-‏            overflow-y: auto;
-‏            max-height: 500px; /* ضبط ارتفاع القائمة */
+        .channel-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            overflow-y: auto;
+            max-height: 500px; /* ضبط ارتفاع القائمة */
         }
 
         /* عناصر القائمة */
-‏        .channel {
-‏            display: flex;
-‏            align-items: center;
-‏            padding: 10px;
-‏            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-‏            cursor: pointer;
-‏            transition: background 0.3s;
+        .channel {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            transition: background 0.3s;
         }
 
-‏        .channel:hover {
-‏            background: rgba(255, 255, 255, 0.2);
+        .channel:hover {
+            background: rgba(255, 255, 255, 0.2);
         }
 
-‏        .channel img {
-‏            width: 60px;
-‏            height: 60px;
-‏            border-radius: 10px;
-‏            margin-left: 15px;
+        .channel img {
+            width: 60px;
+            height: 60px;
+            border-radius: 10px;
+            margin-left: 15px;
         }
 
-‏        .channel p {
-‏            margin: 0;
-‏            font-size: 1.2rem;
+        .channel p {
+            margin: 0;
+            font-size: 1.2rem;
         }
 
-        /* فيديو البث */
-‏        video {
-‏            position: fixed;
-‏            top: 50%;
-‏            left: 50%;
-‏            transform: translate(-50%, -50%);
-‏            width: 80%;
-‏            height: auto;
-‏            z-index: 1000;
-‏            background: black;
-‏            border: 3px solid #f8c332;
-‏            border-radius: 10px;
+        /* حاوية الفيديو */
+        .video-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 1000;
         }
 
-‏        button {
-‏            position: fixed;
-‏            top: 10px;
-‏            right: 10px;
-‏            padding: 10px 20px;
-‏            background: #f44336;
-‏            color: white;
-‏            border: none;
-‏            border-radius: 5px;
-‏            cursor: pointer;
-‏            z-index: 1001;
+        video {
+            width: 80%;
+            height: auto;
+            background: black;
+            border: 3px solid #f8c332;
+            border-radius: 10px;
         }
 
-‏        button:hover {
-‏            background: #d32f2f;
+        button {
+            margin-top: 15px;
+            padding: 10px 20px;
+            background: #f44336;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
         }
-‏    </style>
-‏</head>
-‏<body>
-‏    <div class="container">
-‏        <div class="header">قنوات تلفزيونية مباشرة</div>
-‏        <ul class="channel-list">
-‏            <li class="channel" onclick="playStream('https://live-hls-web-aja.getaj.net/AJA/index.m3u8')">
-‏                <img src="https://logowik.com/content/uploads/images/al-jazeera-tv6503.jpg" alt="الجزيرة">
-‏                <p>الجزيرة</p>
-‏            </li>
-‏            <li class="channel" onclick="playStream('https://av.alarabiya.net/alarabiapublish/alarabiya.smil/playlist.m3u8')">
-‏                <img src="https://seeklogo.com/images/A/al-arabiya-logo-E8E441B937-seeklogo.com.png" alt="العربية">
-‏                <p>العربية</p>
-‏            </li>
-‏            <li class="channel" onclick="playStream('https://av.alarabiya.net/alarabiapublish/alhadath.smil/playlist.m3u8')">
-‏                <img src="https://upload.wikimedia.org/wikipedia/commons/5/5a/AlHADATH.png" alt="الحدث">
-‏                <p>الحدث</p>
-‏            </li>
-‏            <li class="channel" onclick="playStream('https://svs.itworkscdn.net/syriatvlive/syriatv.smil/playlist_dvr.m3u8')">
-‏                <img src="https://s.shabakngy.com/wp-content/uploads/2021/03/%D8%AA%D8%B1%D8%AF%D8%AF-%D9%82%D9%86%D8%A7%D8%A9-%D8%AA%D9%84%D9%81%D8%B2%D9%8A%D9%88%D9%86-%D8%B3%D9%88%D8%B1%D9%8A%D8%A7-Syria-TV-%D8%A7%D9%84%D8%AC%D8%AF%D9%8A%D8%AF-2021.jpg" alt="تلفزيون سوريا">
-‏                <p>تلفزيون سوريا</p>
-‏            </li>
-‏        </ul>
-‏    </div>
 
-‏    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-‏    <script>
-‏        function playStream(url) {
-‏            const video = document.createElement('video');
-‏            video.controls = true;
-‏            video.autoplay = true;
+        button:hover {
+            background: #d32f2f;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">قنوات تلفزيونية مباشرة</div>
+        <ul class="channel-list">
+            <li class="channel" onclick="playStream('https://live-hls-web-aja.getaj.net/AJA/index.m3u8')">
+                <img src="https://logowik.com/content/uploads/images/al-jazeera-tv6503.jpg" alt="الجزيرة">
+                <p>الجزيرة</p>
+            </li>
+            <li class="channel" onclick="playStream('https://av.alarabiya.net/alarabiapublish/alarabiya.smil/playlist.m3u8')">
+                <img src="https://seeklogo.com/images/A/al-arabiya-logo-E8E441B937-seeklogo.com.png" alt="العربية">
+                <p>العربية</p>
+            </li>
+            <li class="channel" onclick="playStream('https://av.alarabiya.net/alarabiapublish/alhadath.smil/playlist.m3u8')">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/5/5a/AlHADATH.png" alt="الحدث">
+                <p>الحدث</p>
+            </li>
+            <li class="channel" onclick="playStream('https://svs.itworkscdn.net/syriatvlive/syriatv.smil/playlist_dvr.m3u8')">
+                <img src="https://s.shabakngy.com/wp-content/uploads/2021/03/%D8%AA%D8%B1%D8%AF%D8%AF-%D9%82%D9%86%D8%A7%D8%A9-%D8%AA%D9%84%D9%81%D8%B2%D9%8A%D9%88%D9%86-%D8%B3%D9%88%D8%B1%D9%8A%D8%A7-Syria-TV-%D8%A7%D9%84%D8%AC%D8%AF%D9%8A%D8%AF-2021.jpg" alt="تلفزيون سوريا">
+                <p>تلفزيون سوريا</p>
+            </li>
+        </ul>
+    </div>
 
-‏            if (Hls.isSupported()) {
-‏                const hls = new Hls();
-‏                hls.loadSource(url);
-‏                hls.attachMedia(video);
-‏            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-‏                video.src = url;
-‏            } else {
-‏                alert('البث المباشر غير مدعوم على هذا المتصفح.');
-‏                return;
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <script>
+        function playStream(url) {
+            const container = document.createElement('div');
+            container.classList.add('video-container');
+
+            const video = document.createElement('video');
+            video.controls = true;
+            video.autoplay = true;
+
+            if (Hls.isSupported()) {
+                const hls = new Hls();
+                hls.loadSource(url);
+                hls.attachMedia(video);
+            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                video.src = url;
+            } else {
+                alert('البث المباشر غير مدعوم على هذا المتصفح.');
+                return;
             }
 
-‏            document.body.appendChild(video);
-
-‏            const closeButton = document.createElement('button');
-‏            closeButton.textContent = 'إغلاق';
-‏            closeButton.onclick = () => {
-‏                video.pause();
-‏                video.remove();
-‏                closeButton.remove();
+            const closeButton = document.createElement('button');
+            closeButton.textContent = 'إغلاق';
+            closeButton.onclick = () => {
+                container.remove();
             };
-‏            document.body.appendChild(closeButton);
+
+            container.appendChild(video);
+            container.appendChild(closeButton);
+            document.body.appendChild(container);
         }
-‏    </script>
-‏</body>
-‏</html>‏
+    </script>
+</body>
+</html>
