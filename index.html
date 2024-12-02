@@ -72,56 +72,6 @@
             margin: 0;
             font-size: 1.2rem;
         }
-
-        /* حاوية الفيديو */
-        .video-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            z-index: 1000;
-        }
-
-        video {
-            width: 80%;
-            height: auto;
-            background: black;
-            border: 3px solid #f8c332;
-            border-radius: 10px;
-        }
-
-        .button-group {
-            margin-top: 15px;
-            display: flex;
-            gap: 10px;
-        }
-
-        button {
-            padding: 10px 20px;
-            background: #f44336;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background: #d32f2f;
-        }
-
-        .btn-secondary {
-            background: #4CAF50;
-        }
-
-        .btn-secondary:hover {
-            background: #388E3C;
-        }
     </style>
 </head>
 <body>
@@ -157,68 +107,47 @@
         ];
 
         let currentChannelIndex = 0;
+        let videoElement = null;
 
         function playStream(index) {
             currentChannelIndex = index;
-            showVideo(channels[index].url);
+
+            // إنشاء عنصر الفيديو
+            if (!videoElement) {
+                videoElement = document.createElement('video');
+                videoElement.controls = true;
+                videoElement.autoplay = true;
+
+                if (Hls.isSupported()) {
+                    const hls = new Hls();
+                    hls.loadSource(channels[index].url);
+                    hls.attachMedia(videoElement);
+                } else if (videoElement.canPlayType('application/vnd.apple.mpegurl')) {
+                    videoElement.src = channels[index].url;
+                } else {
+                    alert('البث المباشر غير مدعوم على هذا المتصفح.');
+                    return;
+                }
+
+                document.body.appendChild(videoElement);
+                videoElement.requestFullscreen();
+
+                // إضافة مستمع للأزرار
+                document.addEventListener('keydown', handleKeyDown);
+            } else {
+                videoElement.src = channels[index].url;
+            }
         }
 
-        function showVideo(url) {
-            // إخفاء القائمة
-            document.querySelector('.container').style.display = 'none';
-
-            const container = document.createElement('div');
-            container.classList.add('video-container');
-
-            const video = document.createElement('video');
-            video.controls = true;
-            video.autoplay = true;
-
-            if (Hls.isSupported()) {
-                const hls = new Hls();
-                hls.loadSource(url);
-                hls.attachMedia(video);
-            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                video.src = url;
-            } else {
-                alert('البث المباشر غير مدعوم على هذا المتصفح.');
-                return;
-            }
-
-            const buttonGroup = document.createElement('div');
-            buttonGroup.classList.add('button-group');
-
-            const closeButton = document.createElement('button');
-            closeButton.textContent = 'إغلاق';
-            closeButton.onclick = () => {
-                container.remove();
-                document.querySelector('.container').style.display = 'block';
-            };
-
-            const nextButton = document.createElement('button');
-            nextButton.textContent = 'القناة التالية';
-            nextButton.onclick = () => {
+        function handleKeyDown(event) {
+            if (event.key === 'ArrowUp') {
                 currentChannelIndex = (currentChannelIndex + 1) % channels.length;
-                video.src = "";
-                showVideo(channels[currentChannelIndex].url);
-            };
-
-            const prevButton = document.createElement('button');
-            prevButton.textContent = 'القناة السابقة';
-            prevButton.onclick = () => {
+                playStream(currentChannelIndex);
+            } else if (event.key === 'ArrowDown') {
                 currentChannelIndex =
                     (currentChannelIndex - 1 + channels.length) % channels.length;
-                video.src = "";
-                showVideo(channels[currentChannelIndex].url);
-            };
-
-            buttonGroup.appendChild(prevButton);
-            buttonGroup.appendChild(nextButton);
-            buttonGroup.appendChild(closeButton);
-
-            container.appendChild(video);
-            container.appendChild(buttonGroup);
-            document.body.appendChild(container);
+                playStream(currentChannelIndex);
+            }
         }
     </script>
 </body>
