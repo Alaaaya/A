@@ -1,95 +1,72 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>قنوات تلفزيونية مباشرة</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-        }
-        .container {
-            width: 80%;
-            margin: auto;
-            margin-top: 20px;
-        }
-        h1 {
-            text-align: center;
-            color: #333;
-        }
-        ul {
-            list-style: none;
-            padding: 0;
-        }
-        li {
-            background: #fff;
-            margin: 10px 0;
-            padding: 10px;
-            border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            display: flex;
-            align-items: center;
-        }
-        li img {
-            width: 60px;
-            height: 60px;
-            border-radius: 5px;
-            margin-right: 15px;
-        }
-        li a {
-            text-decoration: none;
-            color: #007BFF;
-            font-size: 18px;
-        }
-        li a:hover {
-            text-decoration: underline;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>قنوات تلفزيونية مباشرة</h1>
-        <ul>
-            <li>
-                <img src="images/aljazeera.png" alt="Al-Jazeera">
-                <a href="https://live.aljazeera.com">Al-Jazeera</a>
-            </li>
-            <li>
-                <img src="images/bbc_arabic.png" alt="BBC Arabic">
-                <a href="https://www.bbc.com/arabic">BBC Arabic</a>
-            </li>
-            <li>
-                <img src="images/skynews_arabia.png" alt="Sky News Arabia">
-                <a href="https://www.skynewsarabia.com/live-tv">Sky News Arabia</a>
-            </li>
-            <li>
-                <img src="images/alarabiya.png" alt="Al Arabiya">
-                <a href="https://www.alarabiya.net/live-stream">Al Arabiya</a>
-            </li>
-            <li>
-                <img src="images/alhadath.png" alt="Al Hadath">
-                <a href="https://www.alhadath.net/live-stream.html">Al Hadath</a>
-            </li>
-            <li>
-                <img src="images/rt_arabic.png" alt="RT Arabic">
-                <a href="https://arabic.rt.com/live/">RT Arabic</a>
-            </li>
-            <li>
-                <img src="images/alhurra_iraq.png" alt="Al Hurra Iraq">
-                <a href="https://www.alhurra.com/live-tv">Al Hurra Iraq</a>
-            </li>
-            <li>
-                <img src="images/alaraby_tv.png" alt="Alaraby TV">
-                <a href="https://www.alaraby.com/live">Alaraby TV</a>
-            </li>
-            <li>
-                <img src="images/dw_arabic.png" alt="DW Arabic">
-                <a href="https://www.dw.com/ar/live-stream/s-100837">DW Arabic</a>
-            </li>
-        </ul>
-    </div>
-</body>
-</html>
+import tkinter as tk
+from tkinter import ttk
+from PIL import Image, ImageTk
+
+# URLs and channel images for live streaming
+channels = [
+    {"name": "Al-Jazeera", "url": "https://example.com/aljazeera", "image": "aljazeera.png"},
+    {"name": "BBC Arabic", "url": "https://example.com/bbcarabic", "image": "bbc.png"},
+    {"name": "Sky News Arabia", "url": "https://example.com/skynews", "image": "skynews.png"},
+    {"name": "Al Arabiya", "url": "https://example.com/alarabiya", "image": "alarabiya.png"},
+    {"name": "Al Hadath", "url": "https://example.com/alhadath", "image": "alhadath.png"},
+    {"name": "RT Arabic", "url": "https://example.com/rtarabic", "image": "rtarabic.png"},
+    {"name": "Al Hurra Iraq", "url": "https://example.com/alhurra", "image": "alhurra.png"},
+    {"name": "Alaraby TV", "url": "https://example.com/alaraby", "image": "alaraby.png"},
+    {"name": "France 24 Arabic", "url": "https://example.com/france24", "image": "france24.png"}
+]
+
+# Function to handle remote control actions
+def remote_control(action):
+    if action == "left":
+        fullscreen_mode()
+    elif action == "right":
+        open_channel_list()
+
+def fullscreen_mode():
+    print("Switching to fullscreen mode on TV.")
+
+
+def open_channel_list():
+    print("Opening channel list on TV.")
+
+# GUI Setup
+root = tk.Tk()
+root.title("TV Remote and Streaming App")
+root.geometry("800x600")
+
+# Frame for channels
+channel_frame = tk.Frame(root)
+channel_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+
+# Frame for remote control
+remote_frame = tk.Frame(root, bg="gray")
+remote_frame.pack(side=tk.RIGHT, fill=tk.Y)
+
+# Display channels with images and buttons
+for channel in channels:
+    channel_container = tk.Frame(channel_frame, padx=10, pady=10)
+    channel_container.pack(fill=tk.X)
+
+    # Load and display channel image
+    img = Image.open(channel["image"])
+    img = img.resize((50, 50), Image.ANTIALIAS)
+    img = ImageTk.PhotoImage(img)
+    img_label = tk.Label(channel_container, image=img)
+    img_label.image = img
+    img_label.pack(side=tk.LEFT)
+
+    # Channel name and button
+    name_label = tk.Label(channel_container, text=channel["name"], font=("Arial", 14))
+    name_label.pack(side=tk.LEFT, padx=10)
+
+    play_button = ttk.Button(channel_container, text="Play", command=lambda url=channel["url"]: print(f"Playing {url}"))
+    play_button.pack(side=tk.RIGHT)
+
+# Remote control buttons
+btn_fullscreen = ttk.Button(remote_frame, text="← Fullscreen", command=lambda: remote_control("left"))
+btn_fullscreen.pack(pady=20, padx=10, fill=tk.X)
+
+btn_channels = ttk.Button(remote_frame, text="→ Channels", command=lambda: remote_control("right"))
+btn_channels.pack(pady=20, padx=10, fill=tk.X)
+
+root.mainloop()
