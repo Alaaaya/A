@@ -1,72 +1,145 @@
-import tkinter as tk
-from tkinter import ttk
-from PIL import Image, ImageTk
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>قائمة القنوات المباشرة</title>
+    <style>
+        /* تنسيق الجسم */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #000; /* خلفية سوداء */
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
 
-# URLs and channel images for live streaming
-channels = [
-    {"name": "Al-Jazeera", "url": "https://example.com/aljazeera", "image": "aljazeera.png"},
-    {"name": "BBC Arabic", "url": "https://example.com/bbcarabic", "image": "bbc.png"},
-    {"name": "Sky News Arabia", "url": "https://example.com/skynews", "image": "skynews.png"},
-    {"name": "Al Arabiya", "url": "https://example.com/alarabiya", "image": "alarabiya.png"},
-    {"name": "Al Hadath", "url": "https://example.com/alhadath", "image": "alhadath.png"},
-    {"name": "RT Arabic", "url": "https://example.com/rtarabic", "image": "rtarabic.png"},
-    {"name": "Al Hurra Iraq", "url": "https://example.com/alhurra", "image": "alhurra.png"},
-    {"name": "Alaraby TV", "url": "https://example.com/alaraby", "image": "alaraby.png"},
-    {"name": "France 24 Arabic", "url": "https://example.com/france24", "image": "france24.png"}
-]
+        /* الحاوية الأساسية */
+        .container {
+            display: flex;
+            flex-direction: row-reverse; /* القائمة على اليمين */
+            align-items: flex-start;
+            width: 90%;
+            max-width: 1200px;
+            height: 90vh;
+            background: rgba(255, 255, 255, 0.1); /* تأثير الزجاج */
+            backdrop-filter: blur(15px);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+        }
 
-# Function to handle remote control actions
-def remote_control(action):
-    if action == "left":
-        fullscreen_mode()
-    elif action == "right":
-        open_channel_list()
+        /* القائمة */
+        .channel-list {
+            width: 40%;
+            max-height: 100%;
+            overflow-y: auto;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
 
-def fullscreen_mode():
-    print("Switching to fullscreen mode on TV.")
+        /* عناصر القائمة */
+        .channel {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            transition: background 0.3s;
+        }
 
+        .channel:focus,
+        .channel.highlight {
+            background: rgba(255, 255, 255, 0.3); /* تمييز العنصر */
+            outline: none;
+        }
 
-def open_channel_list():
-    print("Opening channel list on TV.")
+        .channel img {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            margin-left: 15px;
+        }
 
-# GUI Setup
-root = tk.Tk()
-root.title("TV Remote and Streaming App")
-root.geometry("800x600")
+        .channel p {
+            margin: 0;
+            font-size: 1rem;
+        }
 
-# Frame for channels
-channel_frame = tk.Frame(root)
-channel_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        /* الفيديو */
+        video {
+            width: 60%;
+            height: 100%;
+            background: #000;
+            border-radius: 0 15px 15px 0;
+        }
 
-# Frame for remote control
-remote_frame = tk.Frame(root, bg="gray")
-remote_frame.pack(side=tk.RIGHT, fill=tk.Y)
+        /* تحسين وضع ملء الشاشة */
+        :fullscreen video {
+            width: 100%;
+            height: auto;
+            max-height: 100vh;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <ul class="channel-list" id="channelList">
+            <li class="channel" tabindex="0" data-index="0">
+                <img src="https://logowik.com/content/uploads/images/al-jazeera-tv6503.jpg" alt="الجزيرة">
+                <p>الجزيرة</p>
+            </li>
+            <li class="channel" tabindex="0" data-index="1">
+                <img src="https://seeklogo.com/images/A/al-arabiya-logo-E8E441B937-seeklogo.com.png" alt="العربية">
+                <p>العربية</p>
+            </li>
+            <li class="channel" tabindex="0" data-index="2">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/5/5a/AlHADATH.png" alt="الحدث">
+                <p>الحدث</p>
+            </li>
+            <li class="channel" tabindex="0" data-index="3">
+                <img src="https://s.shabakngy.com/wp-content/uploads/2021/03/%D8%AA%D8%B1%D8%AF%D8%AF-%D9%82%D9%86%D8%A7%D8%A9-%D8%AA%D9%84%D9%81%D8%B2%D9%8A%D9%88%D9%86-%D8%B3%D9%88%D8%B1%D9%8A%D8%A7-Syria-TV-%D8%A7%D9%84%D8%AC%D8%AF%D9%8A%D8%AF-2021.jpg" alt="تلفزيون سوريا">
+                <p>تلفزيون سوريا</p>
+            </li>
+            <li class="channel" tabindex="0" data-index="4">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/a/aa/%D8%B4%D8%B9%D8%A7%D8%B1_%D9%82%D9%86%D8%A7%D8%A9_%D8%AD%D9%84%D8%A8_%D8%A7%D9%84%D9%8A%D9%88%D9%85.jpg" alt="حلب اليوم">
+                <p>حلب اليوم</p>
+            </li>
+            <li class="channel" tabindex="0" data-index="5">
+                <img src="https://altbah1aloula.com/wp-content/uploads/2024/07/%D8%AA%D8%B1%D8%AF%D8%AF-%D9%82%D9%86%D8%A7%D8%A9-%D8%B1%D9%88%D8%AC%D8%A7%D9%81%D8%A7-%D8%A7%D9%84%D8%A5%D8%AE%D8%A8%D8%A7%D8%B1%D9%8A%D8%A9-e1721037716578.webp" alt="روج آفا">
+                <p>روج آفا</p>
+            </li>
+            <li class="channel" tabindex="0" data-index="6">
+                <img src="https://www.alaraby.com/themes/custom/arabytv/logo-print.png" alt="تلفزيون العربي">
+                <p>تلفزيون العربي</p>
+            </li>
+            <li class="channel" tabindex="0" data-index="7">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRT56fM1Fp5Rh1s82aY8yzCGr7kjEQNy437BQ&s" alt="روناهي">
+                <p>روناهي</p>
+            </li>
+            <li class="channel" tabindex="0" data-index="8">
+                <img src="https://yt3.googleusercontent.com/6wh3wbMTas_FiOfcuyU-a-PSL62aeOzoNM-MDyJiUIr8HfINr_kqQlMvgYpjdi5hkVJMR7oo=s900-c-k-c0x00ffffff-no-rj" alt="سكاي نيوز عربية">
+                <p>سكاي نيوز عربية</p>
+            </li>
+        </ul>
+        <video id="videoPlayer" controls autoplay></video>
+    </div>
 
-# Display channels with images and buttons
-for channel in channels:
-    channel_container = tk.Frame(channel_frame, padx=10, pady=10)
-    channel_container.pack(fill=tk.X)
-
-    # Load and display channel image
-    img = Image.open(channel["image"])
-    img = img.resize((50, 50), Image.ANTIALIAS)
-    img = ImageTk.PhotoImage(img)
-    img_label = tk.Label(channel_container, image=img)
-    img_label.image = img
-    img_label.pack(side=tk.LEFT)
-
-    # Channel name and button
-    name_label = tk.Label(channel_container, text=channel["name"], font=("Arial", 14))
-    name_label.pack(side=tk.LEFT, padx=10)
-
-    play_button = ttk.Button(channel_container, text="Play", command=lambda url=channel["url"]: print(f"Playing {url}"))
-    play_button.pack(side=tk.RIGHT)
-
-# Remote control buttons
-btn_fullscreen = ttk.Button(remote_frame, text="← Fullscreen", command=lambda: remote_control("left"))
-btn_fullscreen.pack(pady=20, padx=10, fill=tk.X)
-
-btn_channels = ttk.Button(remote_frame, text="→ Channels", command=lambda: remote_control("right"))
-btn_channels.pack(pady=20, padx=10, fill=tk.X)
-
-root.mainloop()
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <script>
+        const channels = [
+            { name: "الجزيرة", url: "https://live-hls-web-aja.getaj.net/AJA/index.m3u8" },
+            { name: "العربية", url: "https://av.alarabiya.net/alarabiapublish/alarabiya.smil/playlist.m3u8" },
+            { name: "الحدث", url: "https://av.alarabiya.net/alarabiapublish/alhadath.smil/playlist.m3u8" },
+            { name: "تلفزيون سوريا", url: "https://svs.itworkscdn.net/syriatvlive/syriatv.smil/playlist_dvr.m3u8" },
+            { name: "حلب اليوم", url: "https://usher.ttvnw.net/api/channel/hls/halabtodaytvlive.m3u8" },
+            { name: "روج آفا", url: "https://rojava-tv.akamaized.net/hls/rojava-tv.m3u8" },
+            { name: "تلفزيون العربي", url: "https://alarabyta.cdn.octivid.com/alaraby/smil:alaraby.stream.smil/playlist.m3u8" },
+            { name: "روناهي", url: "https://example.com/ronahi.m3u8" },
+            { name: "سكاي نيوز عربية", url: "
