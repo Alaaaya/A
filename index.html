@@ -3,48 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مشغل القنوات</title>
+    <title>قائمة القنوات المباشرة</title>
     <style>
+        /* تنسيق الجسم */
         body {
             margin: 0;
+            padding: 0;
             font-family: Arial, sans-serif;
-            background-color: #000;
+            background-color: #000; /* خلفية سوداء */
             color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
 
+        /* الحاوية الأساسية */
         .container {
             display: flex;
-            flex-direction: row-reverse;
-            height: 100vh;
-            width: 100%;
+            flex-direction: row-reverse; /* القائمة على اليمين */
+            align-items: flex-start;
+            width: 90%;
+            max-width: 1200px;
+            height: 90vh;
+            background: rgba(255, 255, 255, 0.1); /* تأثير الزجاج */
+            backdrop-filter: blur(15px);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
         }
 
+        /* القائمة */
         .channel-list {
             width: 40%;
-            background-color: #222;
+            max-height: 100%;
             overflow-y: auto;
-            padding: 0;
-            margin: 0;
             list-style: none;
+            margin: 0;
+            padding: 0;
+            background-color: rgba(255, 255, 255, 0.1);
         }
 
+        /* عناصر القائمة */
         .channel {
-            padding: 15px;
-            border-bottom: 1px solid #444;
-            cursor: pointer;
             display: flex;
             align-items: center;
-            transition: background-color 0.3s ease;
+            padding: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            transition: background 0.3s;
         }
 
-        .channel:hover, .channel:focus {
-            background-color: #555;
+        .channel:focus,
+        .channel.highlight {
+            background: rgba(255, 255, 255, 0.3); /* تمييز العنصر */
+            outline: none;
         }
 
         .channel img {
             width: 50px;
             height: 50px;
-            border-radius: 8px;
+            border-radius: 10px;
             margin-left: 15px;
         }
 
@@ -53,40 +72,43 @@
             font-size: 1rem;
         }
 
-        #videoPlayer {
-            display: none;
-            width: 100%;
+        /* الفيديو */
+        video {
+            width: 60%;
             height: 100%;
-            background: black;
+            background: #000;
+            border-radius: 0 15px 15px 0;
         }
 
-        /* لإخفاء القائمة عند تشغيل الفيديو */
-        .hide-list .channel-list {
-            display: none;
-        }
-
-        .hide-list #videoPlayer {
-            display: block;
+        /* تحسين وضع ملء الشاشة */
+        :fullscreen video {
+            width: 100%;
+            height: auto;
+            max-height: 100vh;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <ul class="channel-list" id="channelList">
-            <li class="channel" data-index="0">
+            <li class="channel" id="channel0" tabindex="0" data-index="0">
                 <img src="https://logowik.com/content/uploads/images/al-jazeera-tv6503.jpg" alt="الجزيرة">
                 <p>الجزيرة</p>
             </li>
-            <li class="channel" data-index="1">
+            <li class="channel" id="channel1" tabindex="0" data-index="1">
                 <img src="https://seeklogo.com/images/A/al-arabiya-logo-E8E441B937-seeklogo.com.png" alt="العربية">
                 <p>العربية</p>
             </li>
-            <li class="channel" data-index="2">
+            <li class="channel" id="channel2" tabindex="0" data-index="2">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/5/5a/AlHADATH.png" alt="الحدث">
                 <p>الحدث</p>
             </li>
+            <li class="channel" id="channel3" tabindex="0" data-index="3">
+                <img src="https://s.shabakngy.com/wp-content/uploads/2021/03/%D8%AA%D8%B1%D8%AF%D8%AF-%D9%82%D9%86%D8%A7%D8%A9-%D8%AA%D9%84%D9%81%D8%B2%D9%8A%D9%88%D9%86-%D8%B3%D9%88%D8%B1%D9%8A%D8%A7-Syria-TV-%D8%A7%D9%84%D8%AC%D8%AF%D9%8A%D8%AF-2021.jpg" alt="تلفزيون سوريا">
+                <p>تلفزيون سوريا</p>
+            </li>
         </ul>
-        <video id="videoPlayer" controls></video>
+        <video id="videoPlayer" controls autoplay></video>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
@@ -94,55 +116,92 @@
         const channels = [
             { name: "الجزيرة", url: "https://live-hls-web-aja.getaj.net/AJA/index.m3u8" },
             { name: "العربية", url: "https://av.alarabiya.net/alarabiapublish/alarabiya.smil/playlist.m3u8" },
-            { name: "الحدث", url: "https://av.alarabiya.net/alarabiapublish/alhadath.smil/playlist.m3u8" }
+            { name: "الحدث", url: "https://av.alarabiya.net/alarabiapublish/alhadath.smil/playlist.m3u8" },
+            { name: "تلفزيون سوريا", url: "https://svs.itworkscdn.net/syriatvlive/syriatv.smil/playlist_dvr.m3u8" }
         ];
 
-        const videoPlayer = document.getElementById('videoPlayer');
-        const channelList = document.getElementById('channelList');
-        const container = document.querySelector('.container');
+        let videoElement = document.getElementById('videoPlayer');
+        let channelList = document.getElementById('channelList');
+        let currentChannelIndex = 0;
 
-        // تشغيل القناة عند النقر
-        channelList.addEventListener('click', (event) => {
-            const channel = event.target.closest('.channel');
-            if (!channel) return;
-
-            const index = channel.dataset.index;
-            playChannel(index);
-        });
-
-        // تشغيل الفيديو
-        function playChannel(index) {
-            const channel = channels[index];
+        // بدء تشغيل قناة
+        function playStream(index) {
+            currentChannelIndex = index;
 
             if (Hls.isSupported()) {
                 const hls = new Hls();
-                hls.loadSource(channel.url);
-                hls.attachMedia(videoPlayer);
-            } else if (videoPlayer.canPlayType('application/vnd.apple.mpegurl')) {
-                videoPlayer.src = channel.url;
+                hls.loadSource(channels[index].url);
+                hls.attachMedia(videoElement);
+            } else if (videoElement.canPlayType('application/vnd.apple.mpegurl')) {
+                videoElement.src = channels[index].url;
             } else {
                 alert('البث المباشر غير مدعوم على هذا المتصفح.');
                 return;
             }
-
-            // عرض الفيديو فقط
-            container.classList.add('hide-list');
-            videoPlayer.play();
         }
 
-        // الرجوع إلى القائمة عند الضغط على Backspace
-        document.addEventListener('keydown', (event) => {
-            if (event.key === 'Backspace') {
-                stopVideo();
+        // تنقل باستخدام الريموت
+        function navigateChannels(event) {
+            const channels = document.querySelectorAll('.channel');
+
+            switch (event.key) {
+                case 'ArrowDown': // السهم للأسفل
+                    if (currentChannelIndex < channels.length - 1) {
+                        currentChannelIndex++;
+                    }
+                    break;
+                case 'ArrowUp': // السهم للأعلى
+                    if (currentChannelIndex > 0) {
+                        currentChannelIndex--;
+                    }
+                    break;
+                case 'Enter': // زر الإدخال
+                    playStream(currentChannelIndex);
+                    break;
+                default:
+                    return;
             }
+
+            // تمييز القناة الحالية
+            highlightChannel(currentChannelIndex);
+        }
+
+        // تسليط الضوء على قناة معينة
+        function highlightChannel(index) {
+            const channels = document.querySelectorAll('.channel');
+            channels.forEach((channel, i) => {
+                if (i === index) {
+                    channel.classList.add('highlight');
+                    channel.focus();
+                } else {
+                    channel.classList.remove('highlight');
+                }
+            });
+        }
+
+        // التنقل باللمس على الهاتف
+        function handleTouch(event) {
+            const touchedElement = event.target.closest('.channel');
+            if (touchedElement) {
+                const index = parseInt(touchedElement.dataset.index, 10);
+                highlightChannel(index);
+                playStream(index);
+            }
+        }
+
+        // إضافة أحداث اللمس لكل عنصر
+        document.querySelectorAll('.channel').forEach(channel => {
+            channel.addEventListener('click', handleTouch);
         });
 
-        // إيقاف الفيديو
-        function stopVideo() {
-            videoPlayer.pause();
-            videoPlayer.src = '';
-            container.classList.remove('hide-list');
-        }
+        // استماع لأحداث لوحة المفاتيح
+        document.addEventListener('keydown', navigateChannels);
+
+        // تعيين القناة الأولى كمختارة عند التحميل
+        window.onload = () => {
+            highlightChannel(0); // تمييز أول قناة
+            playStream(0); // تشغيل أول قناة افتراضياً
+        };
     </script>
 </body>
 </html>
