@@ -25,21 +25,23 @@
             cursor: pointer;
         }
 
-        /* تأثير الزجاج */
+        /* تأثير الزجاج مع تحسين الشفافية */
         .channel-list {
             display: none; /* إخفاء القائمة بشكل افتراضي */
             position: absolute;
-            top: 20%;
+            top: 15%;
             left: 50%;
             transform: translateX(-50%);
             background: rgba(255, 255, 255, 0.1); /* خلفية شبه شفافة */
             backdrop-filter: blur(15px); /* تأثير ضبابي */
-            padding: 20px;
-            border-radius: 10px;
-            max-height: 50%;
-            overflow-y: auto;
-            z-index: 1000;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4); /* إضافة ظل يعطي تأثير الزجاج */
+            max-height: 60%;
             width: 80%;
+            z-index: 1000;
+            opacity: 1;
+            transition: opacity 0.3s ease;
         }
 
         .channel {
