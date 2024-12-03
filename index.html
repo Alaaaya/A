@@ -29,25 +29,26 @@
             padding: 10px;
             overflow-y: auto;
             color: white;
-            text-align: center;
+            text-align: left;
             box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
         }
         .channel {
             cursor: pointer;
-            margin: 15px 0;
             display: flex;
-            flex-direction: column;
-            align-items: center;
+            align-items: center;  /* محاذاة الصورة والاسم في الوسط */
+            gap: 10px;  /* المسافة بين الصورة والاسم */
         }
         .channel img {
             width: 50px;  /* تصغير عرض الصورة إلى نصف الحجم السابق */
             height: 50px; /* تصغير ارتفاع الصورة إلى نصف الحجم السابق */
             object-fit: contain;
-            margin-bottom: 10px;
         }
         .channel p {
             margin: 0;
-            font-size: 14px;
+            font-size: 16px;
         }
     </style>
 </head>
@@ -177,19 +178,38 @@
     // Add touch events for mobile control
     let touchStartX = 0;
     let touchEndX = 0;
+    let touchStartY = 0;
+    let touchEndY = 0;
 
-    videoPlayer.addEventListener("touchstart", (e) => {
+    document.addEventListener('touchstart', (e) => {
         touchStartX = e.changedTouches[0].screenX;
+        touchStartY = e.changedTouches[0].screenY;
     });
 
-    videoPlayer.addEventListener("touchend", (e) => {
+    document.addEventListener('touchend', (e) => {
         touchEndX = e.changedTouches[0].screenX;
-        if (touchEndX > touchStartX) {
-            currentChannelIndex = (currentChannelIndex + 1) % channels.length;
-            loadChannel(currentChannelIndex);
-        } else if (touchEndX < touchStartX) {
-            currentChannelIndex = (currentChannelIndex - 1 + channels.length) % channels.length;
-            loadChannel(currentChannelIndex);
+        touchEndY = e.changedTouches[0].screenY;
+
+        if (Math.abs(touchEndY - touchStartY) > Math.abs(touchEndX - touchStartX)) {
+            if (touchEndY > touchStartY) {
+                // Swipe Down - Navigate down
+                currentChannelIndex = (currentChannelIndex + 1) % channels.length;
+                loadChannel(currentChannelIndex);
+            } else {
+                // Swipe Up - Navigate up
+                currentChannelIndex = (currentChannelIndex - 1 + channels.length) % channels.length;
+                loadChannel(currentChannelIndex);
+            }
+        } else {
+            if (touchEndX > touchStartX) {
+                // Swipe Right - Next channel
+                currentChannelIndex = (currentChannelIndex + 1) % channels.length;
+                loadChannel(currentChannelIndex);
+            } else {
+                // Swipe Left - Previous channel
+                currentChannelIndex = (currentChannelIndex - 1 + channels.length) % channels.length;
+                loadChannel(currentChannelIndex);
+            }
         }
     });
 </script>
