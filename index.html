@@ -1,218 +1,143 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>قنوات التلفزيون</title>
+    <title>قائمة القنوات المباشرة</title>
     <style>
+        /* تنسيق الجسم */
         body {
-            font-family: Arial, sans-serif;
-            background-color: #000;
-            color: white;
             margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #000; /* خلفية سوداء */
+            color: #fff;
             display: flex;
+            justify-content: center;
+            align-items: center;
             height: 100vh;
         }
+
+        /* الحاوية الأساسية */
         .container {
-            display: flex;
-            width: 100%;
+            width: 80%;
+            max-width: 800px;
+            background: rgba(255, 255, 255, 0.1); /* تأثير الزجاج */
+            backdrop-filter: blur(15px);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
         }
-        #videoPlayer {
-            width: 50%; /* جعل الفيديو يأخذ 50% من العرض */
-            height: 100%;
-            background-color: black;
-            object-fit: cover;
+
+        /* العنوان */
+        .header {
+            background-color: #f8c332;
+            padding: 15px;
+            text-align: center;
+            font-size: 1.5rem;
+            color: #000;
         }
+
+        /* القائمة */
         .channel-list {
-            width: 40%; /* جعل القائمة تأخذ 40% من العرض بدلاً من 50% */
-            background-color: #333;
-            padding: 10px;
+            list-style: none;
+            margin: 0;
+            padding: 0;
             overflow-y: auto;
-            color: white;
-            text-align: left;
-            box-sizing: border-box;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
+            max-height: 500px; /* ضبط ارتفاع القائمة */
         }
+
+        /* عناصر القائمة */
         .channel {
-            cursor: pointer;
             display: flex;
-            align-items: center;  /* محاذاة الصورة والاسم في الوسط */
-            gap: 10px;  /* المسافة بين الصورة والاسم */
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            transition: background 0.3s;
         }
+
+        .channel:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
         .channel img {
-            width: 50px;  /* تصغير عرض الصورة إلى نصف الحجم السابق */
-            height: 50px; /* تصغير ارتفاع الصورة إلى نصف الحجم السابق */
-            object-fit: contain;
+            width: 60px;
+            height: 60px;
+            border-radius: 10px;
+            margin-left: 15px;
         }
+
         .channel p {
             margin: 0;
-            font-size: 16px;
+            font-size: 1.2rem;
+        }
+
+        /* حاوية الفيديو */
+        .video-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 1000;
+        }
+
+        video {
+            width: 80%;
+            height: auto;
+            background: black;
+            border: 3px solid #f8c332;
+            border-radius: 10px;
+        }
+
+        .button-group {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background: #f44336;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #d32f2f;
+        }
+
+        .btn-secondary {
+            background: #4CAF50;
+        }
+
+        .btn-secondary:hover {
+            background: #388E3C;
         }
     </style>
 </head>
 <body>
-
-<div class="container">
-    <!-- شاشة الفيديو -->
-    <video id="videoPlayer" controls autoplay></video>
-
-    <!-- قائمة القنوات على اليمين -->
-    <div class="channel-list">
-        <div class="channel" tabindex="0" data-index="0">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Al_Jazeera_Arabic_logo.svg/1200px-Al_Jazeera_Arabic_logo.svg.png" alt="الجزيرة">
-            <p>الجزيرة</p>
-        </div>
-        <div class="channel" tabindex="0" data-index="1">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Al-Arabiya_Logo_2019.svg/2560px-Al-Arabiya_Logo_2019.svg.png" alt="العربية">
-            <p>العربية</p>
-        </div>
-        <div class="channel" tabindex="0" data-index="2">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Al_Arabiya_Al_Hadath_logo.svg/1200px-Al_Arabiya_Al_Hadath_logo.svg.png" alt="الحدث">
-            <p>الحدث</p>
-        </div>
-        <div class="channel" tabindex="0" data-index="3">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/Syrian_TV_logo.svg/1280px-Syrian_TV_logo.svg.png" alt="تلفزيون سوريا">
-            <p>تلفزيون سوريا</p>
-        </div>
-        <div class="channel" tabindex="0" data-index="4">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Al_Jazeera_Arabic_logo.svg/1200px-Al_Jazeera_Arabic_logo.svg.png" alt="حلب اليوم">
-            <p>حلب اليوم</p>
-        </div>
-        <div class="channel" tabindex="0" data-index="5">
-            <img src="https://example.com/rojava-logo.webp" alt="روج آفا">
-            <p>روج آفا</p>
-        </div>
-        <div class="channel" tabindex="0" data-index="6">
-            <img src="https://www.alaraby.com/themes/custom/arabytv/logo-print.png" alt="تلفزيون العربي">
-            <p>تلفزيون العربي</p>
-        </div>
-        <div class="channel" tabindex="0" data-index="7">
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRT56fM1Fp5Rh1s82aY8yzCGr7kjEQNy437BQ&s" alt="روناهي">
-            <p>روناهي</p>
-        </div>
-        <div class="channel" tabindex="0" data-index="8">
-            <img src="https://yt3.googleusercontent.com/6wh3wbMTas_FiOfcuyU-a-PSL62aeOzoNM-MDyJiUIr8HfINr_kqQlMvgYpjdi5hkVJMR7oo=s900-c-k-c0x00ffffff-no-rj" alt="سكاي نيوز عربية">
-            <p>سكاي نيوز عربية</p>
-        </div>
-    </div>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-<script>
-    const channels = [
-        { name: "الجزيرة", url: "https://live-hls-web-aja.getaj.net/AJA/index.m3u8" },
-        { name: "العربية", url: "https://av.alarabiya.net/alarabiapublish/alarabiya.smil/playlist.m3u8" },
-        { name: "الحدث", url: "https://av.alarabiya.net/alarabiapublish/alhadath.smil/playlist.m3u8" },
-        { name: "تلفزيون سوريا", url: "https://svs.itworkscdn.net/syriatvlive/syriatv.smil/playlist_dvr.m3u8" },
-        { name: "حلب اليوم", url: "https://usher.ttvnw.net/api/channel/hls/halabtodaytvlive.m3u8?acmb=eyJBcHBWZXJzaW9uIjoiMzExMTg4ZTctNTg3OC00YWE3LTgwMzgtZjAwN2ViZjY5N2E0In0%3D&allow_source=true&browser_family=safari&browser_version=16.0&cdm=fp&fast_bread=true&os_name=iOS&os_version=16.5&p=2160264&platform=mobile_web&play_session_id=1f15905145d25078f4b64e577f09e12b&player_backend=mediaplayer&player_version=1.35.0-rc.2&playlist_include_framerate=true&reassignments_supported=true&sig=899300fec99963625510de1c276d14fd21c9a6c3&supported_codecs=h265,h264&token=%7B%22adblock%22%3Afalse%2C%22authorization%22%3A%7B%22forbidden%22%3Afalse%2C%22reason%22%3A%22%22%7D%2C%22blackout_enabled%22%3Afalse%2C%22channel%22%3A%22halabtodaytvlive%22%2C%22channel_id%22%3A890941722%2C%22chansub%22%3A%7B%22restricted_bitrates%22%3A%5B%5D%2C%22view_until%22%3A1924905600%7D%2C%22ci_gb%22%3Afalse%2C%22geoblock_reason%22%3A%22%22%2C%22device_id%22%3A%22FTX1u2l4f7WHamrL3SLkngblEplfn0AN%22%2C%22expires%22%3A1733210861%2C%22extended_history_allowed%22%3Afalse%2C%22game%22%3A%22%22%2C%22hide_ads%22%3Afalse%2C%22https_required%22%3Atrue%2C%22mature%22%3Afalse%2C%22partner%22%3Afalse%2C%22platform%22%3A%22mobile_web%22%2C%22player_type%22%3A%22channel_home_live%22%2C%22private%22%3A%7B%22allowed_to_view%22%3Atrue%7D%2C%22privileged%22%3Afalse%2C%22role%22%3A%22%22%2C%22server_ads%22%3Atrue%2C%22show_ads%22%3Atrue%2C%22subscriber%22%3Afalse%2C%22turbo%22%3Afalse%2C%22user_id%22%3Anull%2C%22user_ip%22%3A%2287.122.24.225%22%2C%22version%22%3A2%7D&transcode_mode=cbr_v1" },
-        { name: "روج آفا", url: "https://rojava-tv.akamaized.net/hls/rojava-tv.m3u8" },
-        { name: "تلفزيون العربي", url: "https://alarabyta.cdn.octivid.com/alaraby/smil:alaraby.stream.smil/chunklist.m3u8" },
-        { name: "روناهي", url: "https://ronahi-tv.akamaized.net/hls/ronahi-tv.m3u8" },
-        { name: "سكاي نيوز عربية", url: "https://manifest.googlevideo.com/api/manifest/hls_variant/file/index.m3u8?expire=1733231727&ei=D7BOZ5D_OIHMi9oPy_-OkQY&ip=2001%3A9e8%3Acfc8%3A1300%3A206b%3Aad27%3A445%3Ac628&id=et0bSUddkn4.1&source=yt_live_broadcast&requiressl=yes&xpc=EgVo2aDSNQ%3D%3D&hfr=1&playlist_duration=30&manifest_duration=30&vprv=1&go=1&rqh=5&pacing=0&nvgoi=1&ncsapi=1&keepalive=yes&fexp=51326338%2C51326932%2C51331020%2C51335594&dover=11&itag=0&playlist_type=DVR&sparams=expire%2Cei%2Cip%2Cid%2Csource%2Crequiressl%2Cxpc%2Chfr%2Cplaylist_duration%2Cmanifest_duration%2Cvprv%2Cgo%2Crqh%2Citag%2Cplaylist_type&sig=AJfQdSswRQIgKBmRYGUUzg3TkLF9R8CORqj79FxdUCtclkpXnm3eAasCIQDzvDMPj4-9lTVtot9j13pOSPQaLfLLlJkifb8UR-VLAg%3D%3D&cpn=0lpNRtJ5q5qLOe6X&ibw=11030000&c=MWEB&cver=2.20241202.01.00&ptk=youtube_single&oid=fZaPOSOru2vyQjIn4Q8jog&ptchn=rj5BGAhtWxDfqbza9T9hqA&pltype=contentlive" }
-    ];
-
-    const videoPlayer = document.getElementById('videoPlayer');
-    let hls = null;
-
-    if (Hls.isSupported()) {
-        hls = new Hls();
-    }
-
-    function loadChannel(index) {
-        const channel = channels[index];
-        if (hls) {
-            hls.stopLoad();
-            hls.loadSource(channel.url);
-            hls.attachMedia(videoPlayer);
-        } else if (videoPlayer.canPlayType('application/vnd.apple.mpegurl')) {
-            videoPlayer.src = channel.url;
-        }
-    }
-
-    document.querySelectorAll('.channel').forEach((channelElement, index) => {
-        channelElement.addEventListener('click', () => {
-            loadChannel(index);
-        });
-    });
-
-    let currentChannelIndex = 0;
-    loadChannel(currentChannelIndex);
-
-    // Handling keydown for arrow keys
-    document.addEventListener('keydown', (e) => {
-        if (e.key === "ArrowUp") {
-            // Navigate up in the list
-            currentChannelIndex = (currentChannelIndex - 1 + channels.length) % channels.length;
-            loadChannel(currentChannelIndex);
-        } else if (e.key === "ArrowDown") {
-            // Navigate down in the list
-            currentChannelIndex = (currentChannelIndex + 1) % channels.length;
-            loadChannel(currentChannelIndex);
-        } else if (e.key === "ArrowRight") {
-            // Toggle fullscreen
-            if (videoPlayer.requestFullscreen) {
-                videoPlayer.requestFullscreen();
-            } else if (videoPlayer.mozRequestFullScreen) {
-                videoPlayer.mozRequestFullScreen();
-            } else if (videoPlayer.webkitRequestFullscreen) {
-                videoPlayer.webkitRequestFullscreen();
-            } else if (videoPlayer.msRequestFullscreen) {
-                videoPlayer.msRequestFullscreen();
-            }
-        } else if (e.key === "ArrowLeft") {
-            // Exit fullscreen
-            if (document.exitFullscreen) {
-                document.exitFullscreen();
-            } else if (document.mozCancelFullScreen) {
-                document.mozCancelFullScreen();
-            } else if (document.webkitExitFullscreen) {
-                document.webkitExitFullscreen();
-            } else if (document.msExitFullscreen) {
-                document.msExitFullscreen();
-            }
-        }
-    });
-
-    // Add touch events for mobile control
-    let touchStartX = 0;
-    let touchEndX = 0;
-    let touchStartY = 0;
-    let touchEndY = 0;
-
-    document.addEventListener('touchstart', (e) => {
-        touchStartX = e.changedTouches[0].screenX;
-        touchStartY = e.changedTouches[0].screenY;
-    });
-
-    document.addEventListener('touchend', (e) => {
-        touchEndX = e.changedTouches[0].screenX;
-        touchEndY = e.changedTouches[0].screenY;
-
-        if (Math.abs(touchEndY - touchStartY) > Math.abs(touchEndX - touchStartX)) {
-            if (touchEndY > touchStartY) {
-                // Swipe Down - Navigate down
-                currentChannelIndex = (currentChannelIndex + 1) % channels.length;
-                loadChannel(currentChannelIndex);
-            } else {
-                // Swipe Up - Navigate up
-                currentChannelIndex = (currentChannelIndex - 1 + channels.length) % channels.length;
-                loadChannel(currentChannelIndex);
-            }
-        } else {
-            if (touchEndX > touchStartX) {
-                // Swipe Right - Next channel
-                currentChannelIndex = (currentChannelIndex + 1) % channels.length;
-                loadChannel(currentChannelIndex);
-            } else {
-                // Swipe Left - Previous channel
-                currentChannelIndex = (currentChannelIndex - 1 + channels.length) % channels.length;
-                loadChannel(currentChannelIndex);
-            }
-        }
-    });
-</script>
-
-</body>
-</html>
+    <div class="container">
+        <div class="header">قنوات تلفزيونية مباشرة</div>
+        <ul class="channel-list">
+            <li class="channel" onclick="playStream('https://live-hls-web-aja.getaj.net/AJA/index.m3u8')">
+                <img src="https://logowik.com/content/uploads/images/al-jazeera-tv6503.jpg" alt="الجزيرة">
+                <p>الجزيرة</p>
+            </li>
+            <li class="channel" onclick="playStream('https://av.alarabiya.net/alarabiapublish/alarabiya.smil/playlist.m3u8')">
+                <img src="https://seeklogo.com/images/A/al-arabiya-logo-E8E441B937-seeklogo.com.png" alt="العربية">
+                <p>العربية</p>
+            </li>
+            <li class="channel" onclick="playStream('https://av.alarabiya.net/alarabiapublish/alhadath.smil/playlist.m3u8')">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/5/5a/AlHADATH.png" alt="الحدث">
+                <p>الحدث</p>
+            </li>
+            <li class="channel" onclick="playStream('https://svs.itworkscdn.
