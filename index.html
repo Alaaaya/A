@@ -142,3 +142,85 @@
             </li>
             <li class="channel" onclick="playStream(3)">
                 <img src="https://s.shabakngy.
+                    com/wp-content/uploads/2021/03/%D8%AA%D8%B1%D8%AF%D8%AF-%D9%82%D9%86%D8%A7%D8%A9-%D8%AA%D9%84%D9%81%D8%B2%D9%8A%D9%88%D9%86-%D8%B3%D9%88%D8%B1%D9%8A%D8%A7-Syria-TV-%D8%A7%D9%84%D8%AC%D8%AF%D9%8A%D8%AF-2021.jpg" alt="تلفزيون سوريا">
+                <p>تلفزيون سوريا</p>
+            </li>
+        </ul>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <script>
+        const channels = [
+            { name: "الجزيرة", url: "https://live-hls-web-aja.getaj.net/AJA/index.m3u8" },
+            { name: "العربية", url: "https://av.alarabiya.net/alarabiapublish/alarabiya.smil/playlist.m3u8" },
+            { name: "الحدث", url: "https://av.alarabiya.net/alarabiapublish/alhadath.smil/playlist.m3u8" },
+            { name: "تلفزيون سوريا", url: "https://svs.itworkscdn.net/syriatvlive/syriatv.smil/playlist_dvr.m3u8" }
+        ];
+
+        let currentChannelIndex = 0;
+
+        function playStream(index) {
+            currentChannelIndex = index;
+            showVideo(channels[index].url);
+        }
+
+        function showVideo(url) {
+            // إخفاء القائمة
+            document.querySelector('.container').style.display = 'none';
+
+            const container = document.createElement('div');
+            container.classList.add('video-container');
+
+            const video = document.createElement('video');
+            video.controls = true;
+            video.autoplay = true;
+
+            if (Hls.isSupported()) {
+                const hls = new Hls();
+                hls.loadSource(url);
+                hls.attachMedia(video);
+            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                video.src = url;
+            } else {
+                alert('البث المباشر غير مدعوم على هذا المتصفح.');
+                return;
+            }
+
+            const buttonGroup = document.createElement('div');
+            buttonGroup.classList.add('button-group');
+
+            const closeButton = document.createElement('button');
+            closeButton.textContent = 'إغلاق';
+            closeButton.onclick = () => {
+                container.remove();
+                document.querySelector('.container').style.display = 'block';
+            };
+
+            const nextButton = document.createElement('button');
+            nextButton.textContent = 'القناة التالية';
+            nextButton.onclick = () => {
+                currentChannelIndex = (currentChannelIndex + 1) % channels.length;
+                video.src = "";
+                showVideo(channels[currentChannelIndex].url);
+            };
+
+            const prevButton = document.createElement('button');
+            prevButton.textContent = 'القناة السابقة';
+            prevButton.onclick = () => {
+                currentChannelIndex =
+                    (currentChannelIndex - 1 + channels.length) % channels.length;
+                video.src = "";
+                showVideo(channels[currentChannelIndex].url);
+            };
+
+            buttonGroup.appendChild(prevButton);
+            buttonGroup.appendChild(nextButton);
+            buttonGroup.appendChild(closeButton);
+
+            container.appendChild(video);
+            container.appendChild(buttonGroup);
+            document.body.appendChild(container);
+        }
+    </script>
+</body>
+</html>
