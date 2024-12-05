@@ -59,14 +59,14 @@
 <body>
 
 <div class="container">
-    <!-- شاشة الفيديو -->
+‎    <!-- شاشة الفيديو -->
     <video id="videoPlayer" controls autoplay></video>
 
-    <!-- قائمة القنوات -->
+‎    <!-- قائمة القنوات -->
     <div class="channel-list">
         <div class="channel active" tabindex="0" data-src="https://live-hls-web-aja.getaj.net/AJA/index.m3u8">
             <span>1</span>
-            <img src="ooo" alt="الجزيرة">
+            <img src="https://images.app.goo.gl/JenVPNoZir1B9igL8" alt="الجزيرة">
             <p>الجزيرة</p>
         </div>
         <div class="channel" tabindex="0" data-src="https://av.alarabiya.net/alarabiapublish/alarabiya.smil/playlist.m3u8">
@@ -118,18 +118,18 @@
 
     channels.forEach(channel => {
         channel.addEventListener("click", () => {
-            // إزالة النشط من جميع القنوات
+‎            // إزالة النشط من جميع القنوات
             channels.forEach(ch => ch.classList.remove("active"));
             channel.classList.add("active");
 
-            // تغيير مصدر الفيديو
+‎            // تغيير مصدر الفيديو
             const src = channel.getAttribute("data-src");
             videoPlayer.src = src;
             videoPlayer.play();
         });
     });
 
-    // تشغيل القناة الأولى افتراضياً
+‎    // تشغيل القناة الأولى افتراضياً
     videoPlayer.src = channels[0].getAttribute("data-src");
     videoPlayer.play();
 </script>
