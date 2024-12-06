@@ -22,7 +22,6 @@
             height: 35%;
             background-color: black;
             object-fit: cover;
-            transition: all 0.3s ease;
         }
         .channel-list {
             width: 60%;
@@ -111,39 +110,95 @@
 <script>
     const videoPlayer = document.getElementById("videoPlayer");
     const container = document.querySelector(".container");
+    const channels = document.querySelectorAll(".channel");
 
     let startX = 0;
+    let endX = 0;
+    let isDragging = false;
+    let activeIndex = 0; // القناة النشطة
 
     // دعم السحب باللمس
     document.addEventListener("touchstart", (e) => {
         startX = e.touches[0].clientX;
+        isDragging = false;
     });
 
-    document.addEventListener("touchend", (e) => {
-        const endX = e.changedTouches[0].clientX;
-        if (startX - endX > 50) {
-            // السحب لليسار: ملء الشاشة
-            videoPlayer.style.width = "100%";
-            videoPlayer.style.height = "100%";
-        } else if (endX - startX > 50) {
-            // السحب لليمين: العودة إلى قائمة القنوات
-            videoPlayer.style.width = "40%";
-            videoPlayer.style.height = "35%";
+    document.addEventListener("touchmove", (e) => {
+        isDragging = true;
+        endX = e.touches[0].clientX;
+    });
+
+    document.addEventListener("touchend", () => {
+        if (isDragging && Math.abs(startX - endX) > 50) {
+            if (startX - endX > 50) {
+                // السحب لليسار: ملء الشاشة
+                videoPlayer.style.width = "100%";
+                videoPlayer.style.height = "100%";
+            } else if (endX - startX > 50) {
+                // السحب لليمين: العودة إلى القائمة
+                videoPlayer.style.width = "40%";
+                videoPlayer.style.height = "35%";
+            }
         }
     });
 
-    // دعم التحكم بالريموت كنترول
+    // النقر على القنوات
+    channels.forEach(channel => {
+        channel.addEventListener("click", () => {
+            if (!isDragging) {
+                activateChannel(channel);
+            }
+        });
+    });
+
+    // تشغيل القناة الأولى افتراضياً
+    activateChannel(channels[0]);
+
+    // التحكم بالريموت كنترول
     document.addEventListener("keydown", (e) => {
-        if (e.key === "ArrowLeft") {
-            // زر السهم الأيسر: ملء الشاشة
+        if (e.key === "ArrowDown") {
+            // الانتقال إلى القناة التالية
+            if (activeIndex < channels.length - 1) {
+                activeIndex++;
+                activateChannel(channels[activeIndex]);
+            }
+        } else if (e.key === "ArrowUp") {
+            // الانتقال إلى القناة السابقة
+            if (activeIndex > 0) {
+                activeIndex--;
+                activateChannel(channels[activeIndex]);
+            }
+        } else if (e.key === "Enter") {
+            // تشغيل القناة النشطة
+            const activeChannel = channels[activeIndex];
+            const src = activeChannel.getAttribute("data-src");
+            videoPlayer.src = src;
+            videoPlayer.play();
+        } else if (e.key === "ArrowLeft") {
+            // السهم الأيسر: ملء الشاشة
             videoPlayer.style.width = "100%";
             videoPlayer.style.height = "100%";
         } else if (e.key === "ArrowRight") {
-            // زر السهم الأيمن: العودة إلى القائمة
+            // السهم الأيمن: العودة إلى القائمة
             videoPlayer.style.width = "40%";
             videoPlayer.style.height = "35%";
         }
     });
+
+    // تفعيل قناة معينة
+    function activateChannel(channel) {
+        // إزالة النشط من جميع القنوات
+        channels.forEach(ch => ch.classList.remove("active"));
+        channel.classList.add("active");
+
+        // تحديث القناة النشطة
+        activeIndex = Array.from(channels).indexOf(channel);
+
+        // تشغيل القناة
+        const src = channel.getAttribute("data-src");
+        videoPlayer.src = src;
+        videoPlayer.play();
+    }
 </script>
 
 </body>
