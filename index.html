@@ -22,6 +22,7 @@
             height: 35%;
             background-color: black;
             object-fit: cover;
+            transition: all 0.3s ease;
         }
         .channel-list {
             width: 60%;
@@ -109,28 +110,11 @@
 
 <script>
     const videoPlayer = document.getElementById("videoPlayer");
-    const channels = document.querySelectorAll(".channel");
-    let activeChannelIndex = 0;
-
-    channels.forEach((channel, index) => {
-        channel.addEventListener("click", () => {
-            setActiveChannel(index);
-        });
-    });
-
-    document.addEventListener("keydown", (e) => {
-        if (e.key === "ArrowUp") {
-            activeChannelIndex = (activeChannelIndex > 0) ? activeChannelIndex - 1 : channels.length - 1;
-            setActiveChannel(activeChannelIndex);
-        } else if (e.key === "ArrowDown") {
-            activeChannelIndex = (activeChannelIndex < channels.length - 1) ? activeChannelIndex + 1 : 0;
-            setActiveChannel(activeChannelIndex);
-        } else if (e.key === "Enter") {
-            videoPlayer.play();
-        }
-    });
+    const container = document.querySelector(".container");
 
     let startX = 0;
+
+    // دعم السحب باللمس
     document.addEventListener("touchstart", (e) => {
         startX = e.touches[0].clientX;
     });
@@ -138,24 +122,28 @@
     document.addEventListener("touchend", (e) => {
         const endX = e.changedTouches[0].clientX;
         if (startX - endX > 50) {
-            document.querySelector(".channel-list").style.display = "none";
+            // السحب لليسار: ملء الشاشة
             videoPlayer.style.width = "100%";
+            videoPlayer.style.height = "100%";
         } else if (endX - startX > 50) {
-            document.querySelector(".channel-list").style.display = "block";
+            // السحب لليمين: العودة إلى قائمة القنوات
             videoPlayer.style.width = "40%";
+            videoPlayer.style.height = "35%";
         }
     });
 
-    function setActiveChannel(index) {
-        channels.forEach(ch => ch.classList.remove("active"));
-        channels[index].classList.add("active");
-        videoPlayer.src = channels[index].getAttribute("data-src");
-        videoPlayer.play();
-        activeChannelIndex = index;
-    }
-
-    // تشغيل القناة الأولى افتراضياً
-    setActiveChannel(0);
+    // دعم التحكم بالريموت كنترول
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowLeft") {
+            // زر السهم الأيسر: ملء الشاشة
+            videoPlayer.style.width = "100%";
+            videoPlayer.style.height = "100%";
+        } else if (e.key === "ArrowRight") {
+            // زر السهم الأيمن: العودة إلى القائمة
+            videoPlayer.style.width = "40%";
+            videoPlayer.style.height = "35%";
+        }
+    });
 </script>
 
 </body>
