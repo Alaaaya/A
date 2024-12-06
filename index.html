@@ -16,18 +16,16 @@
         .container {
             display: flex;
             width: 100%;
-            transition: transform 0.3s ease-in-out;
         }
         #videoPlayer {
-            width:60%;
-            height: 40%;
+            width: 40%;
+            height: 35%;
             background-color: black;
             object-fit: cover;
-            transition: width 0.3s ease-in-out, height 0.3s ease-in-out;
         }
         .channel-list {
-            width: 40%;
-            background-color: #334;
+            width: 60%;
+            background-color: #332;
             padding: 10px 20px;
             overflow-y: auto;
             color: white;
@@ -111,10 +109,28 @@
 
 <script>
     const videoPlayer = document.getElementById("videoPlayer");
-    const container = document.querySelector(".container");
+    const channels = document.querySelectorAll(".channel");
+    let activeChannelIndex = 0;
+
+    channels.forEach((channel, index) => {
+        channel.addEventListener("click", () => {
+            setActiveChannel(index);
+        });
+    });
+
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowUp") {
+            activeChannelIndex = (activeChannelIndex > 0) ? activeChannelIndex - 1 : channels.length - 1;
+            setActiveChannel(activeChannelIndex);
+        } else if (e.key === "ArrowDown") {
+            activeChannelIndex = (activeChannelIndex < channels.length - 1) ? activeChannelIndex + 1 : 0;
+            setActiveChannel(activeChannelIndex);
+        } else if (e.key === "Enter") {
+            videoPlayer.play();
+        }
+    });
 
     let startX = 0;
-
     document.addEventListener("touchstart", (e) => {
         startX = e.touches[0].clientX;
     });
@@ -122,17 +138,24 @@
     document.addEventListener("touchend", (e) => {
         const endX = e.changedTouches[0].clientX;
         if (startX - endX > 50) {
-            // السحب لليسار: ملء الشاشة
-            container.style.transform = "translateX(-100%)";
+            document.querySelector(".channel-list").style.display = "none";
             videoPlayer.style.width = "100%";
-            videoPlayer.style.height = "100%";
         } else if (endX - startX > 50) {
-            // السحب لليمين: عرض القائمة
-            container.style.transform = "translateX(0)";
+            document.querySelector(".channel-list").style.display = "block";
             videoPlayer.style.width = "40%";
-            videoPlayer.style.height = "35%";
         }
     });
+
+    function setActiveChannel(index) {
+        channels.forEach(ch => ch.classList.remove("active"));
+        channels[index].classList.add("active");
+        videoPlayer.src = channels[index].getAttribute("data-src");
+        videoPlayer.play();
+        activeChannelIndex = index;
+    }
+
+    // تشغيل القناة الأولى افتراضياً
+    setActiveChannel(0);
 </script>
 
 </body>
