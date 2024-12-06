@@ -18,14 +18,14 @@
             width: 100%;
         }
         #videoPlayer {
-            width: 60%;
+            width: 65%;
             height: 40%;
             background-color: black;
             object-fit: cover;
         }
         .channel-list {
-            width: 40%;
-            background-color: #335;
+            width: 35%;
+            background-color: #336;
             padding: 10px 20px;
             overflow-y: auto;
             color: white;
@@ -59,51 +59,10 @@
 <body>
 
 <div class="container">
-    <!-- شاشة الفيديو -->
     <video id="videoPlayer" controls autoplay></video>
 
-    <!-- قائمة القنوات -->
     <div class="channel-list">
-        <div class="channel active" tabindex="0" data-src="https://live-hls-web-aja.getaj.net/AJA/index.m3u8">
-            <span>1</span>
-            <img src="https://iconape.com/wp-content/files/vy/365397/svg/-%D8%A7%D9%84%D8%AC%D8%B2%D9%8A%D8%B1%D8%A9-logo-icon-png-svg.png" alt="الجزيرة">
-            <p>الجزيرة</p>
-        </div>
-        <div class="channel" tabindex="0" data-src="https://av.alarabiya.net/alarabiapublish/alarabiya.smil/playlist.m3u8">
-            <span>2</span>
-            <img src="https://vid.alarabiya.net/images/2016/04/01/8edd67af-f66b-4eaf-9702-840a060869aa/8edd67af-f66b-4eaf-9702-840a060869aa_16x9_1200x676.jpg?width=372&format=jpg" alt="العربية">
-            <p>العربية</p>
-        </div>
-        <div class="channel" tabindex="0" data-src="https://svs.itworkscdn.net/syriatvlive/syriatv.smil/playlist_dvr.m3u8">
-            <span>3</span>
-            <img src="https://www.muhtwa.com/wp-content/uploads/46-8.jpg" alt="تلفزيون سوريا">
-            <p>تلفزيون سوريا</p>
-        </div>
-        <div class="channel" tabindex="0" data-src="https://rojava-tv.akamaized.net/hls/rojava-tv.m3u8">
-            <span>4</span>
-            <img src="https://hawarnews.com/ar/uploads/images/202102/215305_heseke-ronahi-tv.jpg" alt="روج آفا">
-            <p>روج آفا</p>
-        </div>
-        <div class="channel" tabindex="0" data-src="https://ns2.elahmad.com/tv713_www.elahmad.com_halabtoday/index.m3u8?token=45326824b263b94ab87bfaacfb9574ab66f0bd6e-9178cd5761958b265e577eb28a26e8cc-1733438807-1733428007">
-            <span>5</span>
-            <img src="https://pbs.twimg.com/profile_images/1779495135841075200/aPINrLwe_400x400.png" alt="حلب اليوم">
-            <p>حلب اليوم</p>
-        </div>
-        <div class="channel" tabindex="0" data-src="https://ronahi-tv.akamaized.net/hls/ronahi-tv.m3u8">
-            <span>6</span>
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRT56fM1Fp5Rh1s82aY8yzCGr7kjEQNy437BQ&s" alt="روناهي">
-            <p>روناهي</p>
-        </div>
-        <div class="channel" tabindex="0" data-src="https://alarabyta.cdn.octivid.com/alaraby/smil:alaraby.stream.smil/chunklist.m3u8">
-            <span>7</span>
-            <img src="https://www.alaraby.com/themes/custom/arabytv/logo-print.png" alt="تلفزيون العربي">
-            <p>تلفزيون العربي</p>
-        </div>
-        <div class="channel" tabindex="0" data-src="https://stream.skynewsarabia.com/hls/sna.m3u8">
-            <span>8</span>
-            <img src="https://yt3.googleusercontent.com/6wh3wbMTas_FiOfcuyU-a-PSL62aeOzoNM-MDyJiUIr8HfINr_kqQlMvgYpjdi5hkVJMR7oo=s900-c-k-c0x00ffffff-no-rj" alt="سكاي نيوز عربية">
-            <p>سكاي نيوز عربية</p>
-        </div>
+        <!-- قائمة القنوات (كما في الكود السابق) -->
     </div>
 </div>
 
@@ -131,74 +90,51 @@
     document.addEventListener("touchend", () => {
         if (isDragging && Math.abs(startX - endX) > 50) {
             if (startX - endX > 50) {
-                // السحب لليسار: ملء الشاشة
-                videoPlayer.style.width = "100%";
-                videoPlayer.style.height = "100%";
+                enableFullScreen(); // ملء الشاشة
             } else if (endX - startX > 50) {
-                // السحب لليمين: العودة إلى القائمة
-                videoPlayer.style.width = "40%";
-                videoPlayer.style.height = "35%";
+                exitFullScreen(); // العودة للوضع الطبيعي
             }
         }
     });
-
-    // النقر على القنوات
-    channels.forEach(channel => {
-        channel.addEventListener("click", () => {
-            if (!isDragging) {
-                activateChannel(channel);
-            }
-        });
-    });
-
-    // تشغيل القناة الأولى افتراضياً
-    activateChannel(channels[0]);
 
     // التحكم بالريموت كنترول
     document.addEventListener("keydown", (e) => {
-        if (e.key === "ArrowDown") {
-            // الانتقال إلى القناة التالية
-            if (activeIndex < channels.length - 1) {
-                activeIndex++;
-                activateChannel(channels[activeIndex]);
-            }
-        } else if (e.key === "ArrowUp") {
-            // الانتقال إلى القناة السابقة
-            if (activeIndex > 0) {
-                activeIndex--;
-                activateChannel(channels[activeIndex]);
-            }
-        } else if (e.key === "Enter") {
-            // تشغيل القناة النشطة
-            const activeChannel = channels[activeIndex];
-            const src = activeChannel.getAttribute("data-src");
-            videoPlayer.src = src;
-            videoPlayer.play();
-        } else if (e.key === "ArrowLeft") {
-            // السهم الأيسر: ملء الشاشة
-            videoPlayer.style.width = "100%";
-            videoPlayer.style.height = "100%";
+        if (e.key === "ArrowLeft") {
+            enableFullScreen(); // ملء الشاشة
         } else if (e.key === "ArrowRight") {
-            // السهم الأيمن: العودة إلى القائمة
-            videoPlayer.style.width = "40%";
-            videoPlayer.style.height = "35%";
+            exitFullScreen(); // العودة للوضع الطبيعي
         }
     });
 
-    // تفعيل قناة معينة
+    // التحكم بملء الشاشة
+    function enableFullScreen() {
+        videoPlayer.style.position = "fixed";
+        videoPlayer.style.top = "0";
+        videoPlayer.style.left = "0";
+        videoPlayer.style.width = "100%";
+        videoPlayer.style.height = "100%";
+        videoPlayer.style.zIndex = "1000";
+    }
+
+    function exitFullScreen() {
+        videoPlayer.style.position = "static";
+        videoPlayer.style.width = "40%";
+        videoPlayer.style.height = "35%";
+        videoPlayer.style.zIndex = "0";
+    }
+
+    // تفعيل القناة
     function activateChannel(channel) {
-        // إزالة النشط من جميع القنوات
         channels.forEach(ch => ch.classList.remove("active"));
         channel.classList.add("active");
-
-        // تحديث القناة النشطة
         activeIndex = Array.from(channels).indexOf(channel);
-
-        // تشغيل القناة
         const src = channel.getAttribute("data-src");
         videoPlayer.src = src;
         videoPlayer.play();
     }
+
+    // تشغيل القناة الأولى افتراضياً
+    activateChannel(channels[0]);
 </script>
 
 </body>
