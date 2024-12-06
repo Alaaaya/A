@@ -18,14 +18,14 @@
             width: 100%;
         }
         #videoPlayer {
-            width: 65%;
-            height: 40%;
+            width: 40%;
+            height: 35%;
             background-color: black;
             object-fit: cover;
         }
         .channel-list {
-            width: 35%;
-            background-color: #336;
+            width: 60%;
+            background-color: #332;
             padding: 10px 20px;
             overflow-y: auto;
             color: white;
@@ -62,15 +62,23 @@
     <video id="videoPlayer" controls autoplay></video>
 
     <div class="channel-list">
-        <!-- قائمة القنوات (كما في الكود السابق) -->
+        <!-- قائمة القنوات -->
+        <div class="channel active" tabindex="0" data-src="https://live-hls-web-aja.getaj.net/AJA/index.m3u8">
+            <span>1</span>
+            <img src="https://iconape.com/wp-content/files/vy/365397/svg/-%D8%A7%D9%84%D8%AC%D8%B2%D9%8A%D8%B1%D8%A9-logo-icon-png-svg.png" alt="الجزيرة">
+            <p>الجزيرة</p>
+        </div>
+        <div class="channel" tabindex="0" data-src="https://av.alarabiya.net/alarabiapublish/alarabiya.smil/playlist.m3u8">
+            <span>2</span>
+            <img src="https://vid.alarabiya.net/images/2016/04/01/8edd67af-f66b-4eaf-9702-840a060869aa/8edd67af-f66b-4eaf-9702-840a060869aa_16x9_1200x676.jpg?width=372&format=jpg" alt="العربية">
+            <p>العربية</p>
+        </div>
     </div>
 </div>
 
 <script>
     const videoPlayer = document.getElementById("videoPlayer");
-    const container = document.querySelector(".container");
     const channels = document.querySelectorAll(".channel");
-
     let startX = 0;
     let endX = 0;
     let isDragging = false;
@@ -97,16 +105,22 @@
         }
     });
 
-    // التحكم بالريموت كنترول
+    // دعم الريموت كنترول
     document.addEventListener("keydown", (e) => {
-        if (e.key === "ArrowLeft") {
+        if (e.key === "ArrowUp") {
+            changeChannel(-1); // الانتقال للقناة السابقة
+        } else if (e.key === "ArrowDown") {
+            changeChannel(1); // الانتقال للقناة التالية
+        } else if (e.key === "Enter") {
+            playChannel(); // تشغيل القناة الحالية
+        } else if (e.key === "ArrowLeft") {
             enableFullScreen(); // ملء الشاشة
         } else if (e.key === "ArrowRight") {
             exitFullScreen(); // العودة للوضع الطبيعي
         }
     });
 
-    // التحكم بملء الشاشة
+    // وظائف ملء الشاشة
     function enableFullScreen() {
         videoPlayer.style.position = "fixed";
         videoPlayer.style.top = "0";
@@ -123,18 +137,23 @@
         videoPlayer.style.zIndex = "0";
     }
 
-    // تفعيل القناة
-    function activateChannel(channel) {
-        channels.forEach(ch => ch.classList.remove("active"));
-        channel.classList.add("active");
-        activeIndex = Array.from(channels).indexOf(channel);
-        const src = channel.getAttribute("data-src");
+    // تغيير القناة
+    function changeChannel(direction) {
+        channels[activeIndex].classList.remove("active");
+        activeIndex = (activeIndex + direction + channels.length) % channels.length;
+        channels[activeIndex].classList.add("active");
+        playChannel();
+    }
+
+    // تشغيل القناة الحالية
+    function playChannel() {
+        const src = channels[activeIndex].getAttribute("data-src");
         videoPlayer.src = src;
         videoPlayer.play();
     }
 
     // تشغيل القناة الأولى افتراضياً
-    activateChannel(channels[0]);
+    playChannel();
 </script>
 
 </body>
