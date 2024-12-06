@@ -110,23 +110,52 @@
 <script>
     const videoPlayer = document.getElementById("videoPlayer");
     const channels = document.querySelectorAll(".channel");
+    let activeChannelIndex = 0;
 
-    channels.forEach(channel => {
+    channels.forEach((channel, index) => {
         channel.addEventListener("click", () => {
-            // إزالة النشط من جميع القنوات
-            channels.forEach(ch => ch.classList.remove("active"));
-            channel.classList.add("active");
-
-            // تغيير مصدر الفيديو
-            const src = channel.getAttribute("data-src");
-            videoPlayer.src = src;
-            videoPlayer.play();
+            setActiveChannel(index);
         });
     });
 
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowUp") {
+            activeChannelIndex = (activeChannelIndex > 0) ? activeChannelIndex - 1 : channels.length - 1;
+            setActiveChannel(activeChannelIndex);
+        } else if (e.key === "ArrowDown") {
+            activeChannelIndex = (activeChannelIndex < channels.length - 1) ? activeChannelIndex + 1 : 0;
+            setActiveChannel(activeChannelIndex);
+        } else if (e.key === "Enter") {
+            videoPlayer.play();
+        }
+    });
+
+    let startX = 0;
+    document.addEventListener("touchstart", (e) => {
+        startX = e.touches[0].clientX;
+    });
+
+    document.addEventListener("touchend", (e) => {
+        const endX = e.changedTouches[0].clientX;
+        if (startX - endX > 50) {
+            document.querySelector(".channel-list").style.display = "none";
+            videoPlayer.style.width = "100%";
+        } else if (endX - startX > 50) {
+            document.querySelector(".channel-list").style.display = "block";
+            videoPlayer.style.width = "40%";
+        }
+    });
+
+    function setActiveChannel(index) {
+        channels.forEach(ch => ch.classList.remove("active"));
+        channels[index].classList.add("active");
+        videoPlayer.src = channels[index].getAttribute("data-src");
+        videoPlayer.play();
+        activeChannelIndex = index;
+    }
+
     // تشغيل القناة الأولى افتراضياً
-    videoPlayer.src = channels[0].getAttribute("data-src");
-    videoPlayer.play();
+    setActiveChannel(0);
 </script>
 
 </body>
