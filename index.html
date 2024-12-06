@@ -59,10 +59,11 @@
 <body>
 
 <div class="container">
+    <!-- شاشة الفيديو -->
     <video id="videoPlayer" controls autoplay></video>
 
+    <!-- قائمة القنوات -->
     <div class="channel-list">
-        <!-- قائمة القنوات -->
         <div class="channel active" tabindex="0" data-src="https://live-hls-web-aja.getaj.net/AJA/index.m3u8">
             <span>1</span>
             <img src="https://iconape.com/wp-content/files/vy/365397/svg/-%D8%A7%D9%84%D8%AC%D8%B2%D9%8A%D8%B1%D8%A9-logo-icon-png-svg.png" alt="الجزيرة">
@@ -127,6 +128,13 @@
         }
     });
 
+    // إضافة مستمع للنقر على القنوات
+    channels.forEach((channel, index) => {
+        channel.addEventListener("click", () => {
+            selectChannel(index);
+        });
+    });
+
     // دعم الريموت كنترول
     document.addEventListener("keydown", (e) => {
         if (e.key === "ArrowUp") {
@@ -163,6 +171,14 @@
     function changeChannel(direction) {
         channels[activeIndex].classList.remove("active");
         activeIndex = (activeIndex + direction + channels.length) % channels.length;
+        channels[activeIndex].classList.add("active");
+        playChannel();
+    }
+
+    // اختيار قناة معينة
+    function selectChannel(index) {
+        channels[activeIndex].classList.remove("active");
+        activeIndex = index;
         channels[activeIndex].classList.add("active");
         playChannel();
     }
