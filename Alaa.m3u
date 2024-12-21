@@ -1,0 +1,9 @@
+#EXTM3U
+#EXTINF:-1, قناة Nawaem
+https://weyyak-live.akamaized.net/weyyak_nawaem/index.m3u8
+#EXTINF:-1, قناة Mix
+https://weyyak-live.akamaized.net/weyyak_mix/index.m3u8
+#EXTINF:-1, قناة Action
+https://weyyak-live.akamaized.net/weyyak_action/index.m3u8
+#EXTINF:-1, قناة Drama
+https://weyyak-live.akamaized.net/weyyak_drama/tracks-v1a1/mono.m3u8
