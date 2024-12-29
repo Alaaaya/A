@@ -157,13 +157,6 @@
         updateCurrentChannel(name);
     }
 
-    // إضافة مستمع للنقر
-    channels.forEach((channel, index) => {
-        channel.addEventListener("click", () => {
-            selectChannel(index);
-        });
-    });
-
     // البحث
     searchInput.addEventListener("input", (e) => {
         const query = e.target.value.toLowerCase();
@@ -171,6 +164,30 @@
             const name = channel.getAttribute("data-name").toLowerCase();
             channel.style.display = name.includes(query) ? "flex" : "none";
         });
+    });
+
+    // التحكم بلوحة المفاتيح
+    document.addEventListener("keydown", (e) => {
+        switch (e.key) {
+            case "ArrowUp":
+                if (activeIndex > 0) selectChannel(activeIndex - 1);
+                break;
+            case "ArrowDown":
+                if (activeIndex < channels.length - 1) selectChannel(activeIndex + 1);
+                break;
+            case "ArrowLeft":
+                if (!document.fullscreenElement) videoPlayer.requestFullscreen();
+                break;
+            case "ArrowRight":
+                searchInput.focus();
+                break;
+            case "Enter":
+                selectChannel(activeIndex);
+                break;
+            case "Escape":
+                if (document.fullscreenElement) document.exitFullscreen();
+                break;
+        }
     });
 
     // تشغيل القناة الأولى افتراضياً
