@@ -12,6 +12,7 @@
             margin: 0;
             display: flex;
             height: 100vh;
+            overflow: hidden;
         }
         .container {
             display: flex;
@@ -116,18 +117,6 @@
                 <img src="https://pbs.twimg.com/profile_images/1779495135841075200/aPINrLwe_400x400.png" alt="حلب اليوم">
                 <p>حلب اليوم</p>
             </div>
-            <div class="channel" data-src="https://ronahi-tv.akamaized.net/hls/ronahi-tv.m3u8" data-name="روناهي">
-                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRT56fM1Fp5Rh1s82aY8yzCGr7kjEQNy437BQ&s" alt="روناهي">
-                <p>روناهي</p>
-            </div>
-            <div class="channel" data-src="https://alarabyta.cdn.octivid.com/alaraby/smil:alaraby.stream.smil/chunklist.m3u8" data-name="تلفزيون العربي">
-                <img src="https://www.alaraby.com/themes/custom/arabytv/logo-print.png" alt="تلفزيون العربي">
-                <p>تلفزيون العربي</p>
-            </div>
-            <div class="channel" data-src="https://stream.skynewsarabia.com/hls/sna.m3u8" data-name="سكاي نيوز">
-                <img src="https://yt3.googleusercontent.com/6wh3wbMTas_FiOfcuyU-a-PSL62aeOzoNM-MDyJiUIr8HfINr_kqQlMvgYpjdi5hkVJMR7oo=s900-c-k-c0x00ffffff-no-rj" alt="سكاي نيوز">
-                <p>سكاي نيوز عربية</p>
-            </div>
         </div>
     </div>
 </div>
@@ -168,25 +157,16 @@
 
     // التحكم بلوحة المفاتيح
     document.addEventListener("keydown", (e) => {
-        switch (e.key) {
-            case "ArrowUp":
-                if (activeIndex > 0) selectChannel(activeIndex - 1);
-                break;
-            case "ArrowDown":
-                if (activeIndex < channels.length - 1) selectChannel(activeIndex + 1);
-                break;
-            case "ArrowLeft":
-                if (!document.fullscreenElement) videoPlayer.requestFullscreen();
-                break;
-            case "ArrowRight":
-                searchInput.focus();
-                break;
-            case "Enter":
-                selectChannel(activeIndex);
-                break;
-            case "Escape":
-                if (document.fullscreenElement) document.exitFullscreen();
-                break;
+        if (e.key === "ArrowUp" || e.key === "PageUp") {
+            if (activeIndex > 0) selectChannel(activeIndex - 1);
+        } else if (e.key === "ArrowDown" || e.key === "PageDown") {
+            if (activeIndex < channels.length - 1) selectChannel(activeIndex + 1);
+        } else if (e.key === "Enter") {
+            videoPlayer.play();
+        } else if (e.key === "ArrowLeft") {
+            videoPlayer.requestFullscreen();
+        } else if (e.key === "ArrowRight" && document.fullscreenElement) {
+            document.exitFullscreen();
         }
     });
 
