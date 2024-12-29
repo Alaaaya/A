@@ -27,7 +27,7 @@
         }
         .channel-list-container {
             width: 30%;
-            background-color: #330;
+            background-color: #334;
             display: flex;
             flex-direction: column;
             overflow-y: auto;
@@ -113,9 +113,25 @@
                 <img src="https://hawarnews.com/ar/uploads/images/202102/215305_heseke-ronahi-tv.jpg" alt="الحدث">
                 <p>الحدث</p>
             </div>
-            <div class="channel" data-src="https://ns2.elahmad.com/tv713_www.elahmad.com_halabtoday/index.m3u8?token=45326824b263b94ab87bfaacfb9574ab66f0bd6e-9178cd5761958b265e577eb28a26e8cc-1733438807-1733428007" data-name="حلب اليوم">
+            <div class="channel" data-src="https://ns2.elahmad.com/tv713_www.elahmad.com_halabtoday/index.m3u8" data-name="حلب اليوم">
                 <img src="https://pbs.twimg.com/profile_images/1779495135841075200/aPINrLwe_400x400.png" alt="حلب اليوم">
                 <p>حلب اليوم</p>
+            </div>
+            <div class="channel" data-src="https://ronahi-tv.akamaized.net/hls/ronahi-tv.m3u8" data-name="روناهي">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRT56fM1Fp5Rh1s82aY8yzCGr7kjEQNy437BQ&s" alt="روناهي">
+                <p>روناهي</p>
+            </div>
+            <div class="channel" data-src="https://alarabyta.cdn.octivid.com/alaraby/smil:alaraby.stream.smil/chunklist.m3u8" data-name="تلفزيون العربي">
+                <img src="https://www.alaraby.com/themes/custom/arabytv/logo-print.png" alt="تلفزيون العربي">
+                <p>تلفزيون العربي</p>
+            </div>
+            <div class="channel" data-src="https://stream.skynewsarabia.com/hls/sna.m3u8" data-name="سكاي نيوز">
+                <img src="https://yt3.googleusercontent.com/6wh3wbMTas_FiOfcuyU-a-PSL62aeOzoNM-MDyJiUIr8HfINr_kqQlMvgYpjdi5hkVJMR7oo=s900-c-k-c0x00ffffff-no-rj" alt="سكاي نيوز">
+                <p>سكاي نيوز عربية</p>
+            </div>
+            <div class="channel" data-src="https://livestream.com/accounts/19142189/events/8564375/streams/208478259/video/320860317.m3u8" data-name="فرانس 24">
+                <img src="https://upload.wikimedia.org/wikipedia/en/thumb/b/b0/France_24_Logo.svg/1200px-France_24_Logo.svg.png" alt="فرانس 24">
+                <p>فرانس 24</p>
             </div>
         </div>
     </div>
@@ -129,12 +145,10 @@
 
     let activeIndex = 0;
 
-    // تحديث اسم القناة
     function updateCurrentChannel(name) {
         currentChannel.textContent = name;
     }
 
-    // اختيار قناة
     function selectChannel(index) {
         channels[activeIndex].classList.remove("active");
         activeIndex = index;
@@ -146,16 +160,6 @@
         updateCurrentChannel(name);
     }
 
-    // البحث
-    searchInput.addEventListener("input", (e) => {
-        const query = e.target.value.toLowerCase();
-        channels.forEach((channel) => {
-            const name = channel.getAttribute("data-name").toLowerCase();
-            channel.style.display = name.includes(query) ? "flex" : "none";
-        });
-    });
-
-    // التحكم بلوحة المفاتيح
     document.addEventListener("keydown", (e) => {
         if (e.key === "ArrowUp" || e.key === "PageUp") {
             if (activeIndex > 0) selectChannel(activeIndex - 1);
@@ -170,7 +174,10 @@
         }
     });
 
-    // تشغيل القناة الأولى افتراضياً
+    document.addEventListener("fullscreenchange", () => {
+        videoPlayer.focus();
+    });
+
     selectChannel(0);
 </script>
 
