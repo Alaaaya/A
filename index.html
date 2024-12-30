@@ -18,13 +18,13 @@
             width: 100%;
         }
         #videoPlayer {
-            width: 40%;
-            height: 35%;
+            width: 65%;
+            height: 90%;
             background-color: black;
             object-fit: cover;
         }
         .channel-list {
-            width: 60%;
+            width: 35%;
             background-color: #330;
             padding: 10px 20px;
             overflow-y: auto;
@@ -116,10 +116,10 @@
 
     // إضافة مستمع للريموط كنترول
     document.addEventListener("keydown", (e) => {
-        if (e.key === "ArrowUp" || e.key === "p") { 
-            changeChannel(-1); // زر السهم لأعلى أو "P" للتنقل للقناة السابقة
-        } else if (e.key === "ArrowDown" || e.key === "P") {
-            changeChannel(1); // زر السهم لأسفل أو "P" للتنقل للقناة التالية
+        if (e.key === "ArrowUp" || e.key === "p" || e.key === "PageUp") { 
+            changeChannel(-1); // زر السهم لأعلى أو "P" أو Page Up للتنقل للقناة السابقة
+        } else if (e.key === "ArrowDown" || e.key === "P" || e.key === "PageDown") {
+            changeChannel(1); // زر السهم لأسفل أو "P" أو Page Down للتنقل للقناة التالية
         } else if (e.key === "Enter") {
             if (enterPressed) {
                 toggleFullScreen(); // الضغط مرتين على Enter يقوم بتفعيل أو إيقاف ملء الشاشة
