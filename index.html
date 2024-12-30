@@ -66,7 +66,7 @@
     <div class="channel-list">
         <div class="channel active" tabindex="0" data-src="https://live-hls-web-aja.getaj.net/AJA/index.m3u8">
             <span>1</span>
-            <img src="https://iconape.com/wp-content/files/vy/365397/svg/-%D8%A7%D9%84%D8%AC%D8%B2%D9%8A%D8%B1%D8%A9-logo-icon-png-svg.png" alt="الجزيرة">
+            <img src="https://iconape.com/wp-content/files/vy/365397/svg/-%D8%A7%D9%84%D8%AC%D8%B2%D8%A7%D9%8A%D8%B1%D8%A9-logo-icon-png-svg.png" alt="الجزيرة">
             <p>الجزيرة</p>
         </div>
         <div class="channel" tabindex="0" data-src="https://av.alarabiya.net/alarabiapublish/alarabiya.smil/playlist.m3u8">
@@ -82,7 +82,7 @@
         <div class="channel" tabindex="0" data-src="https://live.alarabiya.net/alarabiapublish/alhadath.smil/playlist.m3u8">
             <span>4</span>
             <img src="https://hawarnews.com/ar/uploads/images/202102/215305_heseke-ronahi-tv.jpg" alt="روج آفا">
-            <p>الحدث </p>
+            <p>الحدث</p>
         </div>
         <div class="channel" tabindex="0" data-src="https://ns2.elahmad.com/tv713_www.elahmad.com_halabtoday/index.m3u8?token=45326824b263b94ab87bfaacfb9574ab66f0bd6e-9178cd5761958b265e577eb28a26e8cc-1733438807-1733428007">
             <span>5</span>
@@ -100,7 +100,7 @@
             <p>تلفزيون العربي</p>
         </div>
         <div class="channel" tabindex="0" data-src="https://stream.skynewsarabia.com/hls/sna.m3u8">
-        <span>8</span>
+            <span>8</span>
             <img src="https://yt3.googleusercontent.com/6wh3wbMTas_FiOfcuyU-a-PSL62aeOzoNM-MDyJiUIr8HfINr_kqQlMvgYpjdi5hkVJMR7oo=s900-c-k-c0x00ffffff-no-rj" alt="سكاي نيوز عربية">
             <p>سكاي نيوز عربية</p>
         </div>
@@ -110,41 +110,18 @@
 <script>
     const videoPlayer = document.getElementById("videoPlayer");
     const channels = document.querySelectorAll(".channel");
-    let startX = 0;
-    let endX = 0;
     let activeIndex = 0;
-
-    // دعم اللمس للجوال
-    document.addEventListener("touchstart", (e) => {
-        startX = e.touches[0].clientX;
-    });
-
-    document.addEventListener("touchend", (e) => {
-        endX = e.changedTouches[0].clientX;
-        if (startX - endX > 50) {
-            enableFullScreen();
-        } else if (endX - startX > 50) {
-            exitFullScreen();
-        }
-    });
-
-    // إضافة مستمع للنقر على القنوات
-    channels.forEach((channel, index) => {
-        channel.addEventListener("click", () => {
-            selectChannel(index);
-        });
-    });
 
     // دعم الريموت كنترول
     document.addEventListener("keydown", (e) => {
         if (e.key === "ArrowUp") {
-            changeChannel(-1);
+            changeChannel(-1); // السهم للأعلى للتنقل بين القنوات
         } else if (e.key === "ArrowDown") {
-            changeChannel(1);
+            changeChannel(1); // السهم للأسفل للتنقل بين القنوات
         } else if (e.key === "Enter") {
-            playChannel();
+            playChannel(); // زر Enter لتشغيل القناة
         } else if (e.key === "ArrowLeft") {
-            enableFullScreen(); // زر اليسار الآن لتفعيل ملء الشاشة
+            enableFullScreen(); // زر اليسار لتفعيل ملء الشاشة
         } else if (e.key === "ArrowRight") {
             goToChannelList(); // زر اليمين للرجوع إلى قائمة القنوات
         }
