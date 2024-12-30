@@ -18,14 +18,14 @@
             width: 100%;
         }
         #videoPlayer {
-            width: 70%;
-            height: 100%;
+            width: 40%;
+            height: 35%;
             background-color: black;
             object-fit: cover;
         }
         .channel-list {
-            width: 30%;
-            background-color: #320;
+            width: 60%;
+            background-color: #330;
             padding: 10px 20px;
             overflow-y: auto;
             color: white;
@@ -82,7 +82,7 @@
         <div class="channel" tabindex="0" data-src="https://live.alarabiya.net/alarabiapublish/alhadath.smil/playlist.m3u8">
             <span>4</span>
             <img src="https://hawarnews.com/ar/uploads/images/202102/215305_heseke-ronahi-tv.jpg" alt="روج آفا">
-            <p>الحدث</p>
+            <p>الحدث </p>
         </div>
         <div class="channel" tabindex="0" data-src="https://ns2.elahmad.com/tv713_www.elahmad.com_halabtoday/index.m3u8?token=45326824b263b94ab87bfaacfb9574ab66f0bd6e-9178cd5761958b265e577eb28a26e8cc-1733438807-1733428007">
             <span>5</span>
@@ -111,53 +111,27 @@
     const videoPlayer = document.getElementById("videoPlayer");
     const channels = document.querySelectorAll(".channel");
     let activeIndex = 0;
-    let enterPressCount = 0;
-    let enterPressTimeout;
+    let isFullScreen = false;
+    let enterPressed = false;
 
-    // دعم الريموت كنترول
+    // إضافة مستمع للريموط كنترول
     document.addEventListener("keydown", (e) => {
-        if (e.key === "ArrowUp") {
-            changeChannel(-1); // السهم للأعلى للتنقل بين القنوات
-        } else if (e.key === "ArrowDown") {
-            changeChannel(1); // السهم للأسفل للتنقل بين القنوات
+        if (e.key === "ArrowUp" || e.key === "p") { 
+            changeChannel(-1); // زر السهم لأعلى أو "P" للتنقل للقناة السابقة
+        } else if (e.key === "ArrowDown" || e.key === "P") {
+            changeChannel(1); // زر السهم لأسفل أو "P" للتنقل للقناة التالية
         } else if (e.key === "Enter") {
-            handleEnterPress(); // زر Enter لاختيار القناة أو ملء الشاشة
+            if (enterPressed) {
+                toggleFullScreen(); // الضغط مرتين على Enter يقوم بتفعيل أو إيقاف ملء الشاشة
+            } else {
+                selectChannel(activeIndex); // الضغط مرة واحدة لاختيار القناة
+                enterPressed = true;
+                setTimeout(() => { enterPressed = false; }, 1000); // إعادة تعيين بعد ثانية واحدة
+            }
+        } else if (e.key === "Backspace") {
+            showChannelList(); // زر العودة لعرض قائمة القنوات
         }
     });
-
-    // التعامل مع ضغط زر Enter
-    function handleEnterPress() {
-        enterPressCount++;
-        
-        if (enterPressCount === 1) {
-            setTimeout(() => {
-                if (enterPressCount === 1) {
-                    playChannel(); // اختيار القناة
-                }
-                enterPressCount = 0;
-            }, 300); // تأخير لاكتشاف الضغط الفردي (اختيار القناة)
-        } else if (enterPressCount === 2) {
-            enableFullScreen(); // ملء الشاشة عند الضغط مرتين
-            enterPressCount = 0;
-        }
-    }
-
-    // ملء الشاشة
-    function enableFullScreen() {
-        videoPlayer.style.position = "fixed";
-        videoPlayer.style.top = "0";
-        videoPlayer.style.left = "0";
-        videoPlayer.style.width = "100%";
-        videoPlayer.style.height = "100%";
-        videoPlayer.style.zIndex = "1000";
-    }
-
-    function exitFullScreen() {
-        videoPlayer.style.position = "static";
-        videoPlayer.style.width = "40%";
-        videoPlayer.style.height = "35%";
-        videoPlayer.style.zIndex = "0";
-    }
 
     // تغيير القناة
     function changeChannel(direction) {
@@ -167,6 +141,13 @@
         playChannel();
     }
 
+    // اختيار القناة
+    function selectChannel(index) {
+        const src = channels[index].getAttribute("data-src");
+        videoPlayer.src = src;
+        videoPlayer.play();
+    }
+
     // تشغيل القناة
     function playChannel() {
         const src = channels[activeIndex].getAttribute("data-src");
@@ -174,7 +155,33 @@
         videoPlayer.play();
     }
 
-    // تشغيل القناة الأولى افتراضياً
+    // تفعيل أو إيقاف ملء الشاشة
+    function toggleFullScreen() {
+        if (!isFullScreen) {
+            videoPlayer.style.position = "fixed";
+            videoPlayer.style.top = "0";
+            videoPlayer.style.left = "0";
+            videoPlayer.style.width = "100%";
+            videoPlayer.style.height = "100%";
+            videoPlayer.style.zIndex = "1000";
+            isFullScreen = true;
+        } else {
+            videoPlayer.style.position = "static";
+            videoPlayer.style.width = "40%";
+            videoPlayer.style.height = "35%";
+            videoPlayer.style.zIndex = "0";
+            isFullScreen = false;
+        }
+    }
+
+    // العودة إلى قائمة القنوات
+    function showChannelList() {
+        document.querySelector('.channel-list').style.display = 'block';
+        videoPlayer.style.width = '40%'; 
+        videoPlayer.style.height = '35%';
+    }
+
+    // تشغيل القناة الأولى بشكل افتراضي
     playChannel();
 </script>
 
