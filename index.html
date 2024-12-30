@@ -16,21 +16,31 @@
         .container {
             display: flex;
             width: 100%;
+            position: relative;
         }
         #videoPlayer {
-            width: 65%;
-            height: 90%;
+            width: 40%;
+            height: 35%;
             background-color: black;
             object-fit: cover;
+            position: relative;
+            transition: all 0.3s ease;
         }
         .channel-list {
-            width: 35%;
-            background-color: #330;
+            width: 60%;
+            background-color: rgba(0, 0, 0, 0.7);
             padding: 10px 20px;
             overflow-y: auto;
             color: white;
             text-align: left;
             box-sizing: border-box;
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            display: none;
+            z-index: 999;
         }
         .channel {
             cursor: pointer;
@@ -54,6 +64,17 @@
             background-color: #555;
             border-radius: 5px;
         }
+        #backButton {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: #444;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 16px;
+        }
     </style>
 </head>
 <body>
@@ -64,6 +85,7 @@
 
     <!-- قائمة القنوات -->
     <div class="channel-list">
+        <button id="backButton">رجوع للقائمة</button>
         <div class="channel active" tabindex="0" data-src="https://live-hls-web-aja.getaj.net/AJA/index.m3u8">
             <span>1</span>
             <img src="https://iconape.com/wp-content/files/vy/365397/svg/-%D8%A7%D9%84%D8%AC%D8%B2%D8%A7%D9%8A%D8%B1%D8%A9-logo-icon-png-svg.png" alt="الجزيرة">
@@ -116,10 +138,10 @@
 
     // إضافة مستمع للريموط كنترول
     document.addEventListener("keydown", (e) => {
-        if (e.key === "ArrowUp" || e.key === "p" || e.key === "PageUp") { 
-            changeChannel(-1); // زر السهم لأعلى أو "P" أو Page Up للتنقل للقناة السابقة
-        } else if (e.key === "ArrowDown" || e.key === "P" || e.key === "PageDown") {
-            changeChannel(1); // زر السهم لأسفل أو "P" أو Page Down للتنقل للقناة التالية
+        if (e.key === "ArrowUp" || e.key === "PageUp") { 
+            changeChannel(-1); // زر السهم لأعلى أو Page Up للتنقل للقناة السابقة
+        } else if (e.key === "ArrowDown" || e.key === "PageDown") {
+            changeChannel(1); // زر السهم لأسفل أو Page Down للتنقل للقناة التالية
         } else if (e.key === "Enter") {
             if (enterPressed) {
                 toggleFullScreen(); // الضغط مرتين على Enter يقوم بتفعيل أو إيقاف ملء الشاشة
