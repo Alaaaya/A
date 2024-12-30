@@ -28,7 +28,7 @@
         }
         .channel-list {
             width: 30%;
-            height: 30%;
+            height: 100%;
             background-color: rgba(0, 0, 0, 0.7);
             padding: 10px 20px;
             overflow-y: auto;
@@ -37,8 +37,8 @@
             box-sizing: border-box;
             position: absolute;
             top: 0;
-            left: 0;
-            display: none;
+            left: 70%;
+            display: block; /* تعديل هنا لتكون قائمة القنوات مرئية */
             z-index: 999;
         }
         .channel {
@@ -138,21 +138,38 @@
     // إضافة مستمع للريموط كنترول
     document.addEventListener("keydown", (e) => {
         if (e.key === "ArrowUp" || e.key === "PageUp") { 
-            changeChannel(-1); // زر السهم لأعلى أو Page Up للتنقل للقناة السابقة
+            changeChannel(-1); // تغيير القناة عند الضغط على السهم لأعلى أو PageUp
         } else if (e.key === "ArrowDown" || e.key === "PageDown") {
-            changeChannel(1); // زر السهم لأسفل أو Page Down للتنقل للقناة التالية
+            changeChannel(1); // تغيير القناة عند الضغط على السهم لأسفل أو PageDown
         } else if (e.key === "Enter") {
             if (enterPressed) {
-                toggleFullScreen(); // الضغط مرتين على Enter يقوم بتفعيل أو إيقاف ملء الشاشة
+                enableFullScreen(); // تشغيل ملء الشاشة عند الضغط على Enter مرتين
             } else {
-                selectChannel(activeIndex); // الضغط مرة واحدة لاختيار القناة
-                enterPressed = true;
-                setTimeout(() => { enterPressed = false; }, 1000); // إعادة تعيين بعد ثانية واحدة
+                selectChannel(activeIndex); // اختيار القناة عند الضغط على Enter مرة واحدة
+                enterPressed = true; // تعيين أن Enter تم ضغطها
             }
-        } else if (e.key === "Backspace") {
-            showChannelList(); // زر العودة لعرض قائمة القنوات
         }
     });
+
+    // وظيفة لتمكين ملء الشاشة
+    function enableFullScreen() {
+        videoPlayer.style.position = "fixed";
+        videoPlayer.style.top = "0";
+        videoPlayer.style.left = "0";
+        videoPlayer.style.width = "100%";
+        videoPlayer.style.height = "100%";
+        videoPlayer.style.zIndex = "1000";
+        isFullScreen = true;
+    }
+
+    // وظيفة للخروج من ملء الشاشة
+    function exitFullScreen() {
+        videoPlayer.style.position = "relative";
+        videoPlayer.style.width = "70%";
+        videoPlayer.style.height = "80%";
+        videoPlayer.style.zIndex = "1";
+        isFullScreen = false;
+    }
 
     // تغيير القناة
     function changeChannel(direction) {
@@ -164,9 +181,11 @@
 
     // اختيار القناة
     function selectChannel(index) {
-        const src = channels[index].getAttribute("data-src");
-        videoPlayer.src = src;
-        videoPlayer.play();
+        channels[activeIndex].classList.remove("active");
+        activeIndex = index;
+        channels[activeIndex].classList.add("active");
+        playChannel();
+        enterPressed = false; // إعادة تعيين متغير Enter
     }
 
     // تشغيل القناة
@@ -176,33 +195,7 @@
         videoPlayer.play();
     }
 
-    // تفعيل أو إيقاف ملء الشاشة
-    function toggleFullScreen() {
-        if (!isFullScreen) {
-            videoPlayer.style.position = "fixed";
-            videoPlayer.style.top = "0";
-            videoPlayer.style.left = "0";
-            videoPlayer.style.width = "100%";
-            videoPlayer.style.height = "100%";
-            videoPlayer.style.zIndex = "1000";
-            isFullScreen = true;
-        } else {
-            videoPlayer.style.position = "static";
-            videoPlayer.style.width = "100%";
-            videoPlayer.style.height = "80%";
-            videoPlayer.style.zIndex = "0";
-            isFullScreen = false;
-        }
-    }
-
-    // العودة إلى قائمة القنوات
-    function showChannelList() {
-        document.querySelector('.channel-list').style.display = 'block';
-        videoPlayer.style.width = '100%'; 
-        videoPlayer.style.height = '80%';
-    }
-
-    // تشغيل القناة الأولى بشكل افتراضي
+    // عرض القناة الأولى عند تحميل الصفحة
     playChannel();
 </script>
 
