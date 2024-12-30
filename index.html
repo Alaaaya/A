@@ -25,7 +25,7 @@
         }
         .channel-list {
             width: 60%;
-            background-color: #333;
+            background-color: #330;
             padding: 10px 20px;
             overflow-y: auto;
             color: white;
@@ -66,7 +66,7 @@
     <div class="channel-list">
         <div class="channel active" tabindex="0" data-src="https://live-hls-web-aja.getaj.net/AJA/index.m3u8">
             <span>1</span>
-            <img src="https://iconape.com/wp-content/files/vy/365397/svg/-%D8%A7%D9%84%D8%AC%D8%B2%D8%A9-logo-icon-png-svg.png" alt="الجزيرة">
+            <img src="https://iconape.com/wp-content/files/vy/365397/svg/-%D8%A7%D9%84%D8%AC%D8%B2%D9%8A%D8%B1%D8%A9-logo-icon-png-svg.png" alt="الجزيرة">
             <p>الجزيرة</p>
         </div>
         <div class="channel" tabindex="0" data-src="https://av.alarabiya.net/alarabiapublish/alarabiya.smil/playlist.m3u8">
@@ -82,7 +82,7 @@
         <div class="channel" tabindex="0" data-src="https://live.alarabiya.net/alarabiapublish/alhadath.smil/playlist.m3u8">
             <span>4</span>
             <img src="https://hawarnews.com/ar/uploads/images/202102/215305_heseke-ronahi-tv.jpg" alt="روج آفا">
-            <p>الحدث</p>
+            <p>الحدث </p>
         </div>
         <div class="channel" tabindex="0" data-src="https://ns2.elahmad.com/tv713_www.elahmad.com_halabtoday/index.m3u8?token=45326824b263b94ab87bfaacfb9574ab66f0bd6e-9178cd5761958b265e577eb28a26e8cc-1733438807-1733428007">
             <span>5</span>
@@ -100,7 +100,7 @@
             <p>تلفزيون العربي</p>
         </div>
         <div class="channel" tabindex="0" data-src="https://stream.skynewsarabia.com/hls/sna.m3u8">
-            <span>8</span>
+        <span>8</span>
             <img src="https://yt3.googleusercontent.com/6wh3wbMTas_FiOfcuyU-a-PSL62aeOzoNM-MDyJiUIr8HfINr_kqQlMvgYpjdi5hkVJMR7oo=s900-c-k-c0x00ffffff-no-rj" alt="سكاي نيوز عربية">
             <p>سكاي نيوز عربية</p>
         </div>
@@ -108,85 +108,95 @@
 </div>
 
 <script>
-// تعطيل التحكم باستخدام الفأرة
-document.querySelectorAll(".channel").forEach((channel) => {
-    channel.style.pointerEvents = "none"; // تعطيل النقر
-});
+    const videoPlayer = document.getElementById("videoPlayer");
+    const channels = document.querySelectorAll(".channel");
+    let startX = 0;
+    let endX = 0;
+    let activeIndex = 0;
 
-// التحكم باستخدام أزرار جهاز التحكم
-document.addEventListener("keydown", (e) => {
-    switch (e.code) {
-        case "ArrowUp": // السهم للأعلى للتنقل إلى القناة السابقة
-            changeChannel(-1);
-            break;
-        case "ArrowDown": // السهم للأسفل للتنقل إلى القناة التالية
-            changeChannel(1);
-            break;
-        case "Enter": // زر OK لتشغيل القناة المختارة
-            playChannel();
-            break;
-        case "ArrowRight": // السهم لليمين لتفعيل وضع ملء الشاشة
+    // دعم اللمس للجوال
+    document.addEventListener("touchstart", (e) => {
+        startX = e.touches[0].clientX;
+    });
+
+    document.addEventListener("touchend", (e) => {
+        endX = e.changedTouches[0].clientX;
+        if (startX - endX > 50) {
             enableFullScreen();
-            break;
-        case "ArrowLeft": // السهم لليسار للعودة إلى قائمة القنوات
+        } else if (endX - startX > 50) {
             exitFullScreen();
-            break;
+        }
+    });
+
+    // إضافة مستمع للنقر على القنوات
+    channels.forEach((channel, index) => {
+        channel.addEventListener("click", () => {
+            selectChannel(index);
+        });
+    });
+
+    // دعم الريموت كنترول
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowUp") {
+            changeChannel(-1);
+        } else if (e.key === "ArrowDown") {
+            changeChannel(1);
+        } else if (e.key === "Enter") {
+            playChannel();
+        } else if (e.key === "ArrowLeft") {
+            enableFullScreen(); // زر اليسار الآن لتفعيل ملء الشاشة
+        } else if (e.key === "ArrowRight") {
+            goToChannelList(); // زر اليمين للرجوع إلى قائمة القنوات
+        }
+    });
+
+    // وظائف ملء الشاشة
+    function enableFullScreen() {
+        videoPlayer.style.position = "fixed";
+        videoPlayer.style.top = "0";
+        videoPlayer.style.left = "0";
+        videoPlayer.style.width = "100%";
+        videoPlayer.style.height = "100%";
+        videoPlayer.style.zIndex = "1000";
     }
-});
 
-// دالة إظهار/إخفاء قائمة القنوات - إذا كانت مخفية أو ظاهرة
-function toggleChannelList() {
-    const channelList = document.querySelector(".channel-list");
-    channelList.style.display =
-        channelList.style.display === "none" ? "block" : "none";
-}
+    function exitFullScreen() {
+        videoPlayer.style.position = "static";
+        videoPlayer.style.width = "40%";
+        videoPlayer.style.height = "35%";
+        videoPlayer.style.zIndex = "0";
+    }
 
-// دالة ملء الشاشة
-function enableFullScreen() {
-    const videoPlayer = document.getElementById("videoPlayer");
-    videoPlayer.style.position = "fixed";
-    videoPlayer.style.top = "0";
-    videoPlayer.style.left = "0";
-    videoPlayer.style.width = "100%";
-    videoPlayer.style.height = "100%";
-    videoPlayer.style.zIndex = "1000";
-}
+    // العودة إلى قائمة القنوات
+    function goToChannelList() {
+        document.querySelector(".channel-list").scrollIntoView({ behavior: "smooth" });
+    }
 
-// دالة الخروج من ملء الشاشة
-function exitFullScreen() {
-    const videoPlayer = document.getElementById("videoPlayer");
-    videoPlayer.style.position = "static";
-    videoPlayer.style.width = "40%";
-    videoPlayer.style.height = "35%";
-    videoPlayer.style.zIndex = "0";
-}
+    // تغيير القناة
+    function changeChannel(direction) {
+        channels[activeIndex].classList.remove("active");
+        activeIndex = (activeIndex + direction + channels.length) % channels.length;
+        channels[activeIndex].classList.add("active");
+        playChannel();
+    }
 
-// دالة التنقل بين القنوات
-function changeChannel(direction) {
-    const channels = document.querySelectorAll(".channel");
-    let activeIndex = Array.from(channels).findIndex((channel) =>
-        channel.classList.contains("active")
-    );
-    channels[activeIndex].classList.remove("active");
-    activeIndex = (activeIndex + direction + channels.length) % channels.length;
-    channels[activeIndex].classList.add("active");
+    // اختيار قناة معينة
+    function selectChannel(index) {
+        channels[activeIndex].classList.remove("active");
+        activeIndex = index;
+        channels[activeIndex].classList.add("active");
+        playChannel();
+    }
+
+    // تشغيل القناة الحالية
+    function playChannel() {
+        const src = channels[activeIndex].getAttribute("data-src");
+        videoPlayer.src = src;
+        videoPlayer.play();
+    }
+
+    // تشغيل القناة الأولى افتراضياً
     playChannel();
-}
-
-// دالة تشغيل القناة الحالية
-function playChannel() {
-    const channels = document.querySelectorAll(".channel");
-    const videoPlayer = document.getElementById("videoPlayer");
-    const activeChannel = Array.from(channels).find((channel) =>
-        channel.classList.contains("active")
-    );
-    const src = activeChannel.getAttribute("data-src");
-    videoPlayer.src = src;
-    videoPlayer.play();
-}
-
-// تشغيل القناة الأولى افتراضيًا عند تحميل الصفحة
-playChannel();
 </script>
 
 </body>
