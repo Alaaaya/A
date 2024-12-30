@@ -19,13 +19,13 @@
         }
         #videoPlayer {
             width: 70%;
-            height: 60%;
+            height: 100%;
             background-color: black;
             object-fit: cover;
         }
         .channel-list {
             width: 30%;
-            background-color: #330;
+            background-color: #320;
             padding: 10px 20px;
             overflow-y: auto;
             color: white;
@@ -111,6 +111,8 @@
     const videoPlayer = document.getElementById("videoPlayer");
     const channels = document.querySelectorAll(".channel");
     let activeIndex = 0;
+    let enterPressCount = 0;
+    let enterPressTimeout;
 
     // دعم الريموت كنترول
     document.addEventListener("keydown", (e) => {
@@ -119,15 +121,28 @@
         } else if (e.key === "ArrowDown") {
             changeChannel(1); // السهم للأسفل للتنقل بين القنوات
         } else if (e.key === "Enter") {
-            playChannel(); // زر Enter لتشغيل القناة
-        } else if (e.key === "ArrowLeft") {
-            enableFullScreen(); // زر اليسار لتفعيل ملء الشاشة
-        } else if (e.key === "ArrowRight") {
-            goToChannelList(); // زر اليمين للرجوع إلى قائمة القنوات
+            handleEnterPress(); // زر Enter لاختيار القناة أو ملء الشاشة
         }
     });
 
-    // وظائف ملء الشاشة
+    // التعامل مع ضغط زر Enter
+    function handleEnterPress() {
+        enterPressCount++;
+        
+        if (enterPressCount === 1) {
+            setTimeout(() => {
+                if (enterPressCount === 1) {
+                    playChannel(); // اختيار القناة
+                }
+                enterPressCount = 0;
+            }, 300); // تأخير لاكتشاف الضغط الفردي (اختيار القناة)
+        } else if (enterPressCount === 2) {
+            enableFullScreen(); // ملء الشاشة عند الضغط مرتين
+            enterPressCount = 0;
+        }
+    }
+
+    // ملء الشاشة
     function enableFullScreen() {
         videoPlayer.style.position = "fixed";
         videoPlayer.style.top = "0";
@@ -144,11 +159,6 @@
         videoPlayer.style.zIndex = "0";
     }
 
-    // العودة إلى قائمة القنوات
-    function goToChannelList() {
-        document.querySelector(".channel-list").scrollIntoView({ behavior: "smooth" });
-    }
-
     // تغيير القناة
     function changeChannel(direction) {
         channels[activeIndex].classList.remove("active");
@@ -157,15 +167,7 @@
         playChannel();
     }
 
-    // اختيار قناة معينة
-    function selectChannel(index) {
-        channels[activeIndex].classList.remove("active");
-        activeIndex = index;
-        channels[activeIndex].classList.add("active");
-        playChannel();
-    }
-
-    // تشغيل القناة الحالية
+    // تشغيل القناة
     function playChannel() {
         const src = channels[activeIndex].getAttribute("data-src");
         videoPlayer.src = src;
