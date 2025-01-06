@@ -20,11 +20,10 @@
         }
         #videoPlayer {
             width: 70%;
-            height: 80%;
+            height: 100%;
             background-color: black;
             object-fit: cover;
             position: relative;
-            transition: all 0.3s ease;
         }
         .channel-list {
             width: 30%;
@@ -37,17 +36,16 @@
             position: absolute;
             top: 0;
             left: 70%;
-            display: block;
             z-index: 999;
         }
         .channel {
-            cursor: pointer;
             display: flex;
             align-items: center;
             padding: 10px;
             gap: 15px;
             font-size: 18px;
             border-bottom: 1px solid #555;
+            cursor: pointer;
             transition: background-color 0.3s;
         }
         .channel img {
@@ -57,14 +55,21 @@
         }
         .channel p {
             margin: 0;
-            font-size: 18px;
         }
         .channel.active {
             background-color: #555;
             border-radius: 5px;
         }
         .channel:hover {
+            background-color: #444;
+        }
+        .channel-list-header {
+            text-align: center;
+            font-size: 22px;
+            padding: 10px;
             background-color: #333;
+            margin-bottom: 10px;
+            color: #fff;
         }
         #backButton {
             position: absolute;
@@ -76,14 +81,6 @@
             padding: 5px 10px;
             cursor: pointer;
             font-size: 16px;
-        }
-        .channel-list-header {
-            text-align: center;
-            font-size: 22px;
-            padding: 10px;
-            background-color: #333;
-            margin-bottom: 10px;
-            color: #fff;
         }
     </style>
 </head>
@@ -98,42 +95,34 @@
         <button id="backButton">رجوع للقائمة</button>
         <div class="channel-list-header">قائمة القنوات</div>
         <div class="channel active" tabindex="0" data-src="https://live-hls-web-aja.getaj.net/AJA/index.m3u8">
-            <span>1</span>
             <img src="https://iconape.com/wp-content/files/vy/365397/svg/-%D8%A7%D9%84%D8%AC%D8%B2%D8%A7%D9%8A%D8%B1%D8%A9-logo-icon-png-svg.png" alt="الجزيرة">
             <p>الجزيرة</p>
         </div>
         <div class="channel" tabindex="0" data-src="https://av.alarabiya.net/alarabiapublish/alarabiya.smil/playlist.m3u8">
-            <span>2</span>
             <img src="https://vid.alarabiya.net/images/2016/04/01/8edd67af-f66b-4eaf-9702-840a060869aa/8edd67af-f66b-4eaf-9702-840a060869aa_16x9_1200x676.jpg?width=372&format=jpg" alt="العربية">
             <p>العربية</p>
         </div>
         <div class="channel" tabindex="0" data-src="https://svs.itworkscdn.net/syriatvlive/syriatv.smil/playlist_dvr.m3u8">
-            <span>3</span>
             <img src="https://www.muhtwa.com/wp-content/uploads/46-8.jpg" alt="تلفزيون سوريا">
             <p>تلفزيون سوريا</p>
         </div>
         <div class="channel" tabindex="0" data-src="https://live.alarabiya.net/alarabiapublish/alhadath.smil/playlist.m3u8">
-            <span>4</span>
             <img src="https://hawarnews.com/ar/uploads/images/202102/215305_heseke-ronahi-tv.jpg" alt="روج آفا">
-            <p>الحدث </p>
+            <p>الحدث</p>
         </div>
         <div class="channel" tabindex="0" data-src="https://ns2.elahmad.com/tv713_www.elahmad.com_halabtoday/index.m3u8?token=45326824b263b94ab87bfaacfb9574ab66f0bd6e-9178cd5761958b265e577eb28a26e8cc-1733438807-1733428007">
-            <span>5</span>
             <img src="https://pbs.twimg.com/profile_images/1779495135841075200/aPINrLwe_400x400.png" alt="حلب اليوم">
             <p>حلب اليوم</p>
         </div>
         <div class="channel" tabindex="0" data-src="https://ronahi-tv.akamaized.net/hls/ronahi-tv.m3u8">
-            <span>6</span>
             <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRT56fM1Fp5Rh1s82aY8yzCGr7kjEQNy437BQ&s" alt="روناهي">
             <p>روناهي</p>
         </div>
         <div class="channel" tabindex="0" data-src="https://alarabyta.cdn.octivid.com/alaraby/smil:alaraby.stream.smil/chunklist.m3u8">
-            <span>7</span>
             <img src="https://www.alaraby.com/themes/custom/arabytv/logo-print.png" alt="تلفزيون العربي">
             <p>تلفزيون العربي</p>
         </div>
         <div class="channel" tabindex="0" data-src="https://stream.skynewsarabia.com/hls/sna.m3u8">
-            <span>8</span>
             <img src="https://yt3.googleusercontent.com/6wh3wbMTas_FiOfcuyU-a-PSL62aeOzoNM-MDyJiUIr8HfINr_kqQlMvgYpjdi5hkVJMR7oo=s900-c-k-c0x00ffffff-no-rj" alt="سكاي نيوز عربية">
             <p>سكاي نيوز عربية</p>
         </div>
@@ -178,7 +167,7 @@
     function exitFullScreen() {
         videoPlayer.style.position = "relative";
         videoPlayer.style.width = "70%";
-        videoPlayer.style.height = "80%";
+        videoPlayer.style.height = "100%";
         videoPlayer.style.zIndex = "1";
         isFullScreen = false;
     }
