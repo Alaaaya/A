@@ -85,12 +85,32 @@
             <p>الجزيرة</p>
         </div>
         <div class="channel" tabindex="0" data-src="https://av.alarabiya.net/alarabiapublish/alarabiya.smil/playlist.m3u8">
-            <img src="https://vid.alarabiya.net/images/2016/04/01/8edd67af-f66b-4eaf-9702-840a060869aa/8edd67af-f66b-4eaf-9702-840a060869aa_16x9_1200x676.jpg?width=372&format=jpg" alt="العربية">
+            <img src="https://vid.alarabiya.net/images/2016/04/01/8edd67af-f66b-4eaf-9702-840a060869aa/8edd67af-f66b-4eaf-9702-840a060869aa_16x9_1200x676.jpg" alt="العربية">
             <p>العربية</p>
         </div>
         <div class="channel" tabindex="0" data-src="https://svs.itworkscdn.net/syriatvlive/syriatv.smil/playlist_dvr.m3u8">
             <img src="https://www.muhtwa.com/wp-content/uploads/46-8.jpg" alt="تلفزيون سوريا">
             <p>تلفزيون سوريا</p>
+        </div>
+        <div class="channel" tabindex="0" data-src="https://live.alarabiya.net/alarabiapublish/alhadath.smil/playlist.m3u8">
+            <img src="https://hawarnews.com/ar/uploads/images/202102/215305_heseke-ronahi-tv.jpg" alt="الحدث">
+            <p>الحدث</p>
+        </div>
+        <div class="channel" tabindex="0" data-src="https://ns2.elahmad.com/tv713_www.elahmad.com_halabtoday/index.m3u8?token=45326824b263b94ab87bfaacfb9574ab66f0bd6e-9178cd5761958b265e577eb28a26e8cc-1733438807-1733428007">
+            <img src="https://pbs.twimg.com/profile_images/1779495135841075200/aPINrLwe_400x400.png" alt="حلب اليوم">
+            <p>حلب اليوم</p>
+        </div>
+        <div class="channel" tabindex="0" data-src="https://ronahi-tv.akamaized.net/hls/ronahi-tv.m3u8">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRT56fM1Fp5Rh1s82aY8yzCGr7kjEQNy437BQ&s" alt="روناهي">
+            <p>روناهي</p>
+        </div>
+        <div class="channel" tabindex="0" data-src="https://alarabyta.cdn.octivid.com/alaraby/smil:alaraby.stream.smil/chunklist.m3u8">
+            <img src="https://www.alaraby.com/themes/custom/arabytv/logo-print.png" alt="تلفزيون العربي">
+            <p>تلفزيون العربي</p>
+        </div>
+        <div class="channel" tabindex="0" data-src="https://stream.skynewsarabia.com/hls/sna.m3u8">
+            <img src="https://yt3.googleusercontent.com/6wh3wbMTas_FiOfcuyU-a-PSL62aeOzoNM-MDyJiUIr8HfINr_kqQlMvgYpjdi5hkVJMR7oo=s900-c-k-c0x00ffffff-no-rj" alt="سكاي نيوز عربية">
+            <p>سكاي نيوز عربية</p>
         </div>
     </div>
 </div>
@@ -99,18 +119,6 @@
     const videoPlayer = document.getElementById("videoPlayer");
     const channels = document.querySelectorAll(".channel");
     let activeIndex = 0;
-    let enterPressed = false;
-
-    // مستمع لأزرار لوحة المفاتيح
-    document.addEventListener("keydown", (e) => {
-        if (e.key === "ArrowUp") {
-            changeChannel(-1); // تغيير القناة عند السهم لأعلى
-        } else if (e.key === "ArrowDown") {
-            changeChannel(1); // تغيير القناة عند السهم لأسفل
-        } else if (e.key === "Enter") {
-            selectChannel(activeIndex); // اختيار القناة الحالية
-        }
-    });
 
     // مستمع للنقر واللمس
     channels.forEach((channel, index) => {
@@ -119,14 +127,6 @@
     });
 
     // تغيير القناة
-    function changeChannel(direction) {
-        channels[activeIndex].classList.remove("active");
-        activeIndex = (activeIndex + direction + channels.length) % channels.length;
-        channels[activeIndex].classList.add("active");
-        playChannel();
-    }
-
-    // اختيار قناة
     function selectChannel(index) {
         channels[activeIndex].classList.remove("active");
         activeIndex = index;
