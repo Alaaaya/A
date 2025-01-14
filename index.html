@@ -71,28 +71,14 @@
             margin-bottom: 10px;
             color: #fff;
         }
-        #backButton {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            background-color: #444;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            cursor: pointer;
-            font-size: 16px;
-        }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <!-- شاشة الفيديو -->
     <video id="videoPlayer" controls autoplay></video>
 
-    <!-- قائمة القنوات -->
     <div class="channel-list">
-        <button id="backButton">💚</button>
         <div class="channel-list-header">قائمة القنوات</div>
         <div class="channel active" tabindex="0" data-src="https://live-hls-web-aja.getaj.net/AJA/index.m3u8">
             <img src="https://iconape.com/wp-content/files/vy/365397/svg/-%D8%A7%D9%84%D8%AC%D8%B2%D8%A7%D9%8A%D8%B1%D8%A9-logo-icon-png-svg.png" alt="الجزيرة">
@@ -106,26 +92,6 @@
             <img src="https://www.muhtwa.com/wp-content/uploads/46-8.jpg" alt="تلفزيون سوريا">
             <p>تلفزيون سوريا</p>
         </div>
-        <div class="channel" tabindex="0" data-src="https://live.alarabiya.net/alarabiapublish/alhadath.smil/playlist.m3u8">
-            <img src="https://hawarnews.com/ar/uploads/images/202102/215305_heseke-ronahi-tv.jpg" alt="روج آفا">
-            <p>الحدث</p>
-        </div>
-        <div class="channel" tabindex="0" data-src="https://ns2.elahmad.com/tv713_www.elahmad.com_halabtoday/index.m3u8?token=45326824b263b94ab87bfaacfb9574ab66f0bd6e-9178cd5761958b265e577eb28a26e8cc-1733438807-1733428007">
-            <img src="https://pbs.twimg.com/profile_images/1779495135841075200/aPINrLwe_400x400.png" alt="حلب اليوم">
-            <p>حلب اليوم</p>
-        </div>
-        <div class="channel" tabindex="0" data-src="https://ronahi-tv.akamaized.net/hls/ronahi-tv.m3u8">
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRT56fM1Fp5Rh1s82aY8yzCGr7kjEQNy437BQ&s" alt="روناهي">
-            <p>روناهي</p>
-        </div>
-        <div class="channel" tabindex="0" data-src="https://alarabyta.cdn.octivid.com/alaraby/smil:alaraby.stream.smil/chunklist.m3u8">
-            <img src="https://www.alaraby.com/themes/custom/arabytv/logo-print.png" alt="تلفزيون العربي">
-            <p>تلفزيون العربي</p>
-        </div>
-        <div class="channel" tabindex="0" data-src="https://stream.skynewsarabia.com/hls/sna.m3u8">
-            <img src="https://yt3.googleusercontent.com/6wh3wbMTas_FiOfcuyU-a-PSL62aeOzoNM-MDyJiUIr8HfINr_kqQlMvgYpjdi5hkVJMR7oo=s900-c-k-c0x00ffffff-no-rj" alt="سكاي نيوز عربية">
-            <p>سكاي نيوز عربية</p>
-        </div>
     </div>
 </div>
 
@@ -133,44 +99,24 @@
     const videoPlayer = document.getElementById("videoPlayer");
     const channels = document.querySelectorAll(".channel");
     let activeIndex = 0;
-    let isFullScreen = false;
     let enterPressed = false;
 
-    // إضافة مستمع للريموط كنترول
+    // مستمع لأزرار لوحة المفاتيح
     document.addEventListener("keydown", (e) => {
-        if (e.key === "ArrowUp" || e.key === "PageUp") { 
-            changeChannel(-1); // تغيير القناة عند الضغط على السهم لأعلى أو PageUp
-        } else if (e.key === "ArrowDown" || e.key === "PageDown") {
-            changeChannel(1); // تغيير القناة عند الضغط على السهم لأسفل أو PageDown
+        if (e.key === "ArrowUp") {
+            changeChannel(-1); // تغيير القناة عند السهم لأعلى
+        } else if (e.key === "ArrowDown") {
+            changeChannel(1); // تغيير القناة عند السهم لأسفل
         } else if (e.key === "Enter") {
-            if (enterPressed) {
-                enableFullScreen(); // تشغيل ملء الشاشة عند الضغط على Enter مرتين
-            } else {
-                selectChannel(activeIndex); // اختيار القناة عند الضغط على Enter مرة واحدة
-                enterPressed = true; // تعيين أن Enter تم ضغطها
-            }
+            selectChannel(activeIndex); // اختيار القناة الحالية
         }
     });
 
-    // وظيفة لتمكين ملء الشاشة
-    function enableFullScreen() {
-        videoPlayer.style.position = "fixed";
-        videoPlayer.style.top = "0";
-        videoPlayer.style.left = "0";
-        videoPlayer.style.width = "100%";
-        videoPlayer.style.height = "100%";
-        videoPlayer.style.zIndex = "1000";
-        isFullScreen = true;
-    }
-
-    // وظيفة للخروج من ملء الشاشة
-    function exitFullScreen() {
-        videoPlayer.style.position = "relative";
-        videoPlayer.style.width = "70%";
-        videoPlayer.style.height = "100%";
-        videoPlayer.style.zIndex = "1";
-        isFullScreen = false;
-    }
+    // مستمع للنقر واللمس
+    channels.forEach((channel, index) => {
+        channel.addEventListener("click", () => selectChannel(index)); // عند النقر
+        channel.addEventListener("touchstart", () => selectChannel(index)); // عند اللمس
+    });
 
     // تغيير القناة
     function changeChannel(direction) {
@@ -180,13 +126,12 @@
         playChannel();
     }
 
-    // اختيار القناة
+    // اختيار قناة
     function selectChannel(index) {
         channels[activeIndex].classList.remove("active");
         activeIndex = index;
         channels[activeIndex].classList.add("active");
         playChannel();
-        enterPressed = false; // إعادة تعيين متغير Enter
     }
 
     // تشغيل القناة
@@ -196,7 +141,7 @@
         videoPlayer.play();
     }
 
-    // عرض القناة الأولى عند تحميل الصفحة
+    // تشغيل القناة الأولى عند تحميل الصفحة
     playChannel();
 </script>
 
