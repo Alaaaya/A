@@ -6,12 +6,18 @@
     <title>بث مباشر - قنوات إخبارية</title>
     <style>
         :root {
-            --primary-color: #2196F3;
-            --bg-gradient: linear-gradient(45deg, #1a1a1a, #2d2d2d);
-            --glass-bg: rgba(255, 255, 255, 0.05);
+            --primary-color: rgba(33, 150, 243, 0.9);
+            --bg-gradient: linear-gradient(45deg, #0f172a, #1e293b);
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
         body {
             font-family: 'Segoe UI', 'Tahoma', sans-serif;
@@ -20,13 +26,20 @@
             min-height: 100vh;
         }
 
-        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
 
         .player-section {
             position: relative;
             border-radius: 20px;
             overflow: hidden;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
             margin-bottom: 30px;
         }
 
@@ -46,17 +59,35 @@
 
         .channel-card {
             background: var(--glass-bg);
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
             border-radius: 15px;
             padding: 15px;
             cursor: pointer;
             text-align: center;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .channel-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
+            pointer-events: none;
         }
 
         .channel-card:hover {
-            transform: translateY(-5px);
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.12);
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+        }
+
+        .channel-card.active {
+            background: rgba(33, 150, 243, 0.15);
+            border: 1px solid rgba(33, 150, 243, 0.3);
         }
 
         .channel-logo {
@@ -64,9 +95,20 @@
             height: 80px;
             object-fit: contain;
             margin-bottom: 10px;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+            transition: transform 0.3s ease;
         }
 
-        .channel-name { font-weight: 600; }
+        .channel-card:hover .channel-logo {
+            transform: scale(1.1);
+        }
+
+        .channel-name {
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.95);
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            letter-spacing: -0.5px;
+        }
     </style>
 </head>
 <body>
@@ -76,6 +118,7 @@
         </div>
 
         <div class="channel-grid">
+            <!-- القنوات كما هي -->
             <div class="channel-card active" data-src="https://live-hls-web-aja.getaj.net/AJA/index.m3u8">
                 <img src="https://iconape.com/wp-content/files/vy/365397/svg/-%D8%A7%D9%84%D8%AC%D8%B2%D9%8A%D8%B1%D8%A9-logo-icon-png.svg" class="channel-logo" alt="الجزيرة">
                 <div class="channel-name">الجزيرة</div>
