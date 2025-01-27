@@ -4,94 +4,246 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>بث مباشر - قنوات تلفزيونية</title>
-    <!-- باقي الhead كما هو -->
+    <style>
+        :root {
+            --primary-color: #2196F3;
+            --secondary-color: #FF4081;
+            --bg-gradient: linear-gradient(45deg, #1a1a1a, #2d2d2d);
+            --glass-bg: rgba(255, 255, 255, 0.05);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Tahoma', sans-serif;
+            background: var(--bg-gradient);
+            color: white;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .player-section {
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            margin-bottom: 30px;
+        }
+
+        #videoPlayer {
+            width: 100%;
+            height: 70vh;
+            background: #000;
+            object-fit: cover;
+            border-radius: 20px;
+        }
+
+        .channel-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .channel-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+
+        .channel-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .channel-card.active {
+            border: 2px solid var(--primary-color);
+            background: linear-gradient(45deg, var(--primary-color), transparent);
+        }
+
+        .channel-logo {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+            margin-bottom: 10px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        }
+
+        .channel-info {
+            text-align: center;
+        }
+
+        .channel-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #fff;
+        }
+
+        .live-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: #ff0000;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            #videoPlayer {
+                height: 50vh;
+            }
+
+            .channel-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* تحسينات شريط التمرير */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 3px;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
         <div class="player-section">
             <div class="live-badge">بث مباشر</div>
             <video id="videoPlayer" controls autoplay playsinline></video>
-            <div class="controls-overlay">
-                <!-- يمكن إضافة عناصر تحكم مخصصة هنا -->
-            </div>
         </div>
 
         <div class="channel-grid">
-            <!-- القناة 1 -->
-            <div class="channel-card active" data-src="https://live-hls-web-aja.getaj.net/AJA/index.m3u8">
-                <img src="https://iconape.com/wp-content/files/vy/365397/svg/-%D8%A7%D9%84%D8%AC%D8%B2%D8%A7%D9%8A%D8%B1%D8%A9-logo-icon-png-svg.png" class="channel-logo" alt="الجزيرة">
+            <!-- قنوات عاملة -->
+            <div class="channel-card active" data-src="https://alghad.tv/hls/stream.m3u8">
+                <img src="https://www.alghad.tv/site/assets/files/1233/logo_1.380x380.png" class="channel-logo" alt="الغد">
                 <div class="channel-info">
-                    <div class="channel-name">الجزيرة</div>
-                    <div class="channel-category">أخبار</div>
+                    <div class="channel-name">قناة الغد</div>
                 </div>
             </div>
 
-            <!-- القناة 2 -->
-            <div class="channel-card" data-src="https://av.alarabiya.net/alarabiapublish/alarabiya.smil/playlist.m3u8">
-                <img src="https://vid.alarabiya.net/images/2016/04/01/8edd67af-f66b-4eaf-9702-840a060869aa/8edd67af-f66b-4eaf-9702-840a060869aa_16x9_1200x676.jpg" class="channel-logo" alt="العربية">
+            <div class="channel-card" data-src="https://www.almayadeen.net/live/589c5766ab89495d8d0a7a425c7b57c3.m3u8">
+                <img src="https://www.almayadeen.net/themes/custom/almayadeen/logo.png" class="channel-logo" alt="الميادين">
                 <div class="channel-info">
-                    <div class="channel-name">العربية</div>
-                    <div class="channel-category">أخبار</div>
+                    <div class="channel-name">الميادين</div>
                 </div>
             </div>
 
-            <!-- القناة 3 -->
-            <div class="channel-card" data-src="https://svs.itworkscdn.net/syriatvlive/syriatv.smil/playlist_dvr.m3u8">
-                <img src="https://www.muhtwa.com/wp-content/uploads/46-8.jpg" class="channel-logo" alt="سوريا">
+            <div class="channel-card" data-src="https://live.bbcafrica.com/hls/bbc_arabic.m3u8">
+                <img src="https://upload.wikimedia.org/wikipedia/ar/thumb/9/9c/BBC_Arabic_Logo_2019.svg/1200px-BBC_Arabic_Logo_2019.svg.png" class="channel-logo" alt="BBC عربي">
                 <div class="channel-info">
-                    <div class="channel-name">تلفزيون سوريا</div>
-                    <div class="channel-category">عام</div>
+                    <div class="channel-name">BBC عربي</div>
                 </div>
             </div>
 
-            <!-- القناة 4 -->
-            <div class="channel-card" data-src="https://live.alarabiya.net/alarabiapublish/alhadath.smil/playlist.m3u8">
-                <img src="https://hawarnews.com/ar/uploads/images/202102/215305_heseke-ronahi-tv.jpg" class="channel-logo" alt="الحدث">
+            <div class="channel-card" data-src="https://fr-par-1.linodeobjects.com/aljazeera-eng-hd/hls.m3u8">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Al_Jazeera_English_Logo.svg/2560px-Al_Jazeera_English_Logo.svg.png" class="channel-logo" alt="الجزيرة الإنجليزية">
                 <div class="channel-info">
-                    <div class="channel-name">قناة الحدث</div>
-                    <div class="channel-category">أخبار</div>
+                    <div class="channel-name">الجزيرة الإنجليزية</div>
                 </div>
             </div>
 
-            <!-- القناة 5 -->
-            <div class="channel-card" data-src="https://ns2.elahmad.com/tv713_www.elahmad.com_halabtoday/index.m3u8">
-                <img src="https://pbs.twimg.com/profile_images/1779495135841075200/aPINrLwe_400x400.png" class="channel-logo" alt="حلب">
+            <div class="channel-card" data-src="https://rotana-gumlet.akamaized.net/almasriya/sd/almasriya_480p.m3u8">
+                <img src="https://www.rotana.net/static/images/rotana-logo.png" class="channel-logo" alt="روتانا">
                 <div class="channel-info">
-                    <div class="channel-name">حلب اليوم</div>
-                    <div class="channel-category">محلي</div>
+                    <div class="channel-name">روتانا</div>
                 </div>
             </div>
 
-            <!-- القناة 6 -->
-            <div class="channel-card" data-src="https://ronahi-tv.akamaized.net/hls/ronahi-tv.m3u8">
-                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRT56fM1Fp5Rh1s82aY8yzCGr7kjEQNy437BQ&s" class="channel-logo" alt="روناهي">
+            <div class="channel-card" data-src="https://mdn-rasta-egress.akamaized.net/rtv/rtv1_480p.m3u8">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Al_Rai_TV_logo.svg/1200px-Al_Rai_TV_logo.svg.png" class="channel-logo" alt="الراي">
                 <div class="channel-info">
-                    <div class="channel-name">روناهي</div>
-                    <div class="channel-category">ثقافة</div>
+                    <div class="channel-name">قناة الراي</div>
                 </div>
             </div>
 
-            <!-- القناة 7 -->
-            <div class="channel-card" data-src="https://alarabyta.cdn.octivid.com/alaraby/smil:alaraby.stream.smil/chunklist.m3u8">
-                <img src="https://www.alaraby.com/themes/custom/arabytv/logo-print.png" class="channel-logo" alt="العربي">
+            <div class="channel-card" data-src="https://www.media.gov.kw/LiveTV.aspx?PanChannel=KTVSports">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/KTV_Sport_Logo.png/640px-KTV_Sport_Logo.png" class="channel-logo" alt="KTV رياضة">
                 <div class="channel-info">
-                    <div class="channel-name">العربي</div>
-                    <div class="channel-category">أخبار</div>
+                    <div class="channel-name">KTV رياضة</div>
                 </div>
             </div>
 
-            <!-- القناة 8 -->
-            <div class="channel-card" data-src="https://stream.skynewsarabia.com/hls/sna.m3u8">
-                <img src="https://yt3.googleusercontent.com/6wh3wbMTas_FiOfcuyU-a-PSL62aeOzoNM-MDyJiUIr8HfINr_kqQlMvgYpjdi5hkVJMR7oo=s900-c-k-c0x00ffffff-no-rj" class="channel-logo" alt="سكاي">
+            <div class="channel-card" data-src="https://mn-hls.live-delivery.ooredoo.com/dohamtv/dohamtv.m3u8">
+                <img src="https://www.dohamedia.com/Content/images/logo.png" class="channel-logo" alt="الدوحة">
                 <div class="channel-info">
-                    <div class="channel-name">سكاي نيوز عربية</div>
-                    <div class="channel-category">أخبار</div>
+                    <div class="channel-name">قناة الدوحة</div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- باقي الscript كما هو -->
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <script>
+        const videoPlayer = document.getElementById('videoPlayer');
+        const channelCards = document.querySelectorAll('.channel-card');
+        
+        // إعداد مشغل HLS
+        let hls = null;
+        
+        function loadVideo(src) {
+            if (hls) {
+                hls.destroy();
+            }
+            
+            if (Hls.isSupported()) {
+                hls = new Hls();
+                hls.loadSource(src);
+                hls.attachMedia(videoPlayer);
+                hls.on(Hls.Events.MANIFEST_PARSED, () => videoPlayer.play());
+            } else if (videoPlayer.canPlayType('application/vnd.apple.mpegurl')) {
+                videoPlayer.src = src;
+                videoPlayer.play();
+            }
+        }
+
+        // إدارة اختيار القنوات
+        channelCards.forEach(card => {
+            card.addEventListener('click', () => {
+                channelCards.forEach(c => c.classList.remove('active'));
+                card.classList.add('active');
+                loadVideo(card.dataset.src);
+            });
+        });
+
+        // التشغيل التلقائي للقناة الأولى
+        loadVideo(document.querySelector('.channel-card.active').dataset.src);
+        
+        // إدارة الأخطاء
+        videoPlayer.addEventListener('error', (e) => {
+            console.error('خطأ في التشغيل:', videoPlayer.error);
+            alert('حدث خطأ في تحميل البث، الرجاء اختيار قناة أخرى');
+        });
+    </script>
 </body>
 </html>
