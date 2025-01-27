@@ -3,20 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بث مباشر - قنوات تلفزيونية</title>
+    <title>بث مباشر - قنوات إخبارية</title>
     <style>
         :root {
             --primary-color: #2196F3;
-            --secondary-color: #FF4081;
             --bg-gradient: linear-gradient(45deg, #1a1a1a, #2d2d2d);
             --glass-bg: rgba(255, 255, 255, 0.05);
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             font-family: 'Segoe UI', 'Tahoma', sans-serif;
@@ -25,11 +20,7 @@
             min-height: 100vh;
         }
 
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 20px;
-        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
 
         .player-section {
             position: relative;
@@ -47,20 +38,10 @@
             border-radius: 20px;
         }
 
-        .controls-overlay {
-            position: absolute;
-            bottom: 0;
-            width: 100%;
-            background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
-            padding: 20px;
-            color: white;
-        }
-
         .channel-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            gap: 20px;
-            padding: 20px;
+            gap: 15px;
         }
 
         .channel-card {
@@ -69,144 +50,95 @@
             border-radius: 15px;
             padding: 15px;
             cursor: pointer;
+            text-align: center;
             transition: all 0.3s ease;
-            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .channel-card:hover {
             transform: translateY(-5px);
             background: rgba(255, 255, 255, 0.1);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
         }
 
         .channel-logo {
-            width: 60px;
-            height: 60px;
+            width: 80px;
+            height: 80px;
             object-fit: contain;
             margin-bottom: 10px;
         }
 
-        .channel-info {
-            text-align: center;
-        }
-
-        .channel-name {
-            font-weight: 600;
-            margin-bottom: 5px;
-            color: #fff;
-        }
-
-        .channel-category {
-            font-size: 0.9em;
-            color: #aaa;
-        }
-
-        .live-badge {
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            background: #ff0000;
-            color: white;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.8em;
-            animation: pulse 1.5s infinite;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 10px;
-            }
-
-            #videoPlayer {
-                height: 50vh;
-            }
-
-            .channel-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
+        .channel-name { font-weight: 600; }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="player-section">
-            <div class="live-badge">بث مباشر</div>
             <video id="videoPlayer" controls autoplay playsinline></video>
-            <div class="controls-overlay"></div>
         </div>
 
         <div class="channel-grid">
-            <div class="channel-card">
-                <img src="https://iconape.com/wp-content/files/vy/365397/svg/-%D8%A7%D9%84%D8%AC%D8%B2%D8%A7%D9%8A%D8%B1%D8%A9-logo-icon-png-svg.png" class="channel-logo" alt="الجزيرة">
-                <div class="channel-info">
-                    <div class="channel-name">الجزيرة</div>
-                    <div class="channel-category">أخبار</div>
-                </div>
+            <div class="channel-card active" data-src="https://live-hls-web-aja.getaj.net/AJA/index.m3u8">
+                <img src="https://iconape.com/wp-content/files/vy/365397/svg/-%D8%A7%D9%84%D8%AC%D8%B2%D9%8A%D8%B1%D8%A9-logo-icon-png.svg" class="channel-logo" alt="الجزيرة">
+                <div class="channel-name">الجزيرة</div>
             </div>
 
-            <div class="channel-card">
+            <div class="channel-card" data-src="https://av.alarabiya.net/alarabiapublish/alarabiya.smil/playlist.m3u8">
                 <img src="https://vid.alarabiya.net/images/2016/04/01/8edd67af-f66b-4eaf-9702-840a060869aa/8edd67af-f66b-4eaf-9702-840a060869aa_16x9_1200x676.jpg" class="channel-logo" alt="العربية">
-                <div class="channel-info">
-                    <div class="channel-name">العربية</div>
-                    <div class="channel-category">أخبار</div>
-                </div>
+                <div class="channel-name">العربية</div>
             </div>
 
-            <div class="channel-card">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/2/27/AlJazeera_Mubasher.png" class="channel-logo" alt="الجزيرة مباشر">
-                <div class="channel-info">
-                    <div class="channel-name">الجزيرة مباشر</div>
-                    <div class="channel-category">أخبار</div>
-                </div>
+            <div class="channel-card" data-src="https://svs.itworkscdn.net/syriatvlive/syriatv.smil/playlist_dvr.m3u8">
+                <img src="https://www.muhtwa.com/wp-content/uploads/46-8.jpg" class="channel-logo" alt="تلفزيون سوريا">
+                <div class="channel-name">تلفزيون سوريا</div>
             </div>
 
-            <div class="channel-card">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/1/19/France24_Logo.svg" class="channel-logo" alt="فرانس 24">
-                <div class="channel-info">
-                    <div class="channel-name">فرانس 24</div>
-                    <div class="channel-category">أخبار</div>
-                </div>
+            <div class="channel-card" data-src="https://live.alarabiya.net/alarabiapublish/alhadath.smil/playlist.m3u8">
+                <img src="https://hawarnews.com/ar/uploads/images/202102/215305_heseke-ronahi-tv.jpg" class="channel-logo" alt="الحدث">
+                <div class="channel-name">الحدث</div>
             </div>
 
-            <div class="channel-card">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/7/75/RT_Arabic_logo.svg" class="channel-logo" alt="روسيا اليوم">
-                <div class="channel-info">
-                    <div class="channel-name">روسيا اليوم</div>
-                    <div class="channel-category">أخبار</div>
-                </div>
+            <div class="channel-card" data-src="https://ns2.elahmad.com/tv713_www.elahmad.com_halabtoday/index.m3u8?token=45326824b263b94ab87bfaacfb9574ab66f0bd6e-9178cd5761958b265e577eb28a26e8cc-1733438807-1733428007">
+                <img src="https://pbs.twimg.com/profile_images/1779495135841075200/aPINrLwe_400x400.png" class="channel-logo" alt="حلب اليوم">
+                <div class="channel-name">حلب اليوم</div>
             </div>
 
-            <div class="channel-card">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Dubai_TV_logo.svg" class="channel-logo" alt="دبي TV">
-                <div class="channel-info">
-                    <div class="channel-name">دبي TV</div>
-                    <div class="channel-category">منوعات</div>
-                </div>
+            <div class="channel-card" data-src="https://ronahi-tv.akamaized.net/hls/ronahi-tv.m3u8">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRT56fM1Fp5Rh1s82aY8yzCGr7kjEQNy437BQ&s" class="channel-logo" alt="روناهي">
+                <div class="channel-name">روناهي</div>
             </div>
 
-            <div class="channel-card">
-                <img src="https://upload.wikimedia.org/wikipedia/ar/5/55/MBC_1_Logo.svg" class="channel-logo" alt="MBC 1">
-                <div class="channel-info">
-                    <div class="channel-name">MBC 1</div>
-                    <div class="channel-category">منوعات</div>
-                </div>
+            <div class="channel-card" data-src="https://alarabyta.cdn.octivid.com/alaraby/smil:alaraby.stream.smil/chunklist.m3u8">
+                <img src="https://www.alaraby.com/themes/custom/arabytv/logo-print.png" class="channel-logo" alt="تلفزيون العربي">
+                <div class="channel-name">تلفزيون العربي</div>
             </div>
 
-            <div class="channel-card">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/8/8b/Rotana_Cinema_logo.png" class="channel-logo" alt="روتانا سينما">
-                <div class="channel-info">
-                    <div class="channel-name">روتانا سينما</div>
-                    <div class="channel-category">أفلام</div>
-                </div>
+            <div class="channel-card" data-src="https://stream.skynewsarabia.com/hls/sna.m3u8">
+                <img src="https://yt3.googleusercontent.com/6wh3wbMTas_FiOfcuyU-a-PSL62aeOzoNM-MDyJiUIr8HfINr_kqQlMvgYpjdi5hkVJMR7oo=s900-c-k-c0x00ffffff-no-rj" class="channel-logo" alt="سكاي نيوز عربية">
+                <div class="channel-name">سكاي نيوز عربية</div>
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const videoPlayer = document.getElementById("videoPlayer");
+            const channels = document.querySelectorAll(".channel-card");
+
+            function setActiveChannel(channel) {
+                channels.forEach(c => c.classList.remove("active"));
+                channel.classList.add("active");
+                videoPlayer.src = channel.getAttribute("data-src");
+                videoPlayer.play();
+            }
+
+            channels.forEach(channel => {
+                channel.addEventListener("click", () => setActiveChannel(channel));
+            });
+
+            const firstActive = document.querySelector(".channel-card.active");
+            if (firstActive) {
+                setActiveChannel(firstActive);
+            }
+        });
+    </script>
 </body>
 </html>
