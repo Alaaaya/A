@@ -4,155 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>بث مباشر - قنوات تلفزيونية</title>
-    <style>
-        :root {
-            --primary-color: #2196F3;
-            --secondary-color: #FF4081;
-            --bg-gradient: linear-gradient(45deg, #1a1a1a, #2d2d2d);
-            --glass-bg: rgba(255, 255, 255, 0.05);
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            font-family: 'Segoe UI', 'Tahoma', sans-serif;
-            background: var(--bg-gradient);
-            color: white;
-            min-height: 100vh;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        .player-section {
-            position: relative;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            margin-bottom: 30px;
-        }
-
-        #videoPlayer {
-            width: 100%;
-            height: 70vh;
-            background: #000;
-            object-fit: cover;
-            border-radius: 20px;
-        }
-
-        .controls-overlay {
-            position: absolute;
-            bottom: 0;
-            width: 100%;
-            background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
-            padding: 20px;
-            color: white;
-        }
-
-        .channel-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            gap: 20px;
-            padding: 20px;
-        }
-
-        .channel-card {
-            background: var(--glass-bg);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 15px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .channel-card:hover {
-            transform: translateY(-5px);
-            background: rgba(255, 255, 255, 0.1);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-        }
-
-        .channel-card.active {
-            border: 2px solid var(--primary-color);
-            background: linear-gradient(45deg, var(--primary-color), transparent);
-        }
-
-        .channel-logo {
-            width: 60px;
-            height: 60px;
-            object-fit: contain;
-            margin-bottom: 10px;
-        }
-
-        .channel-info {
-            text-align: center;
-        }
-
-        .channel-name {
-            font-weight: 600;
-            margin-bottom: 5px;
-            color: #fff;
-        }
-
-        .channel-category {
-            font-size: 0.9em;
-            color: #aaa;
-        }
-
-        .live-badge {
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            background: #ff0000;
-            color: white;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.8em;
-            animation: pulse 1.5s infinite;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 10px;
-            }
-
-            #videoPlayer {
-                height: 50vh;
-            }
-
-            .channel-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        /* تخصيص شريط التمرير */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--primary-color);
-            border-radius: 4px;
-        }
-
-    </style>
+    <!-- باقي الhead كما هو -->
 </head>
 <body>
     <div class="container">
@@ -165,6 +17,7 @@
         </div>
 
         <div class="channel-grid">
+            <!-- القناة 1 -->
             <div class="channel-card active" data-src="https://live-hls-web-aja.getaj.net/AJA/index.m3u8">
                 <img src="https://iconape.com/wp-content/files/vy/365397/svg/-%D8%A7%D9%84%D8%AC%D8%B2%D8%A7%D9%8A%D8%B1%D8%A9-logo-icon-png-svg.png" class="channel-logo" alt="الجزيرة">
                 <div class="channel-info">
@@ -173,6 +26,7 @@
                 </div>
             </div>
 
+            <!-- القناة 2 -->
             <div class="channel-card" data-src="https://av.alarabiya.net/alarabiapublish/alarabiya.smil/playlist.m3u8">
                 <img src="https://vid.alarabiya.net/images/2016/04/01/8edd67af-f66b-4eaf-9702-840a060869aa/8edd67af-f66b-4eaf-9702-840a060869aa_16x9_1200x676.jpg" class="channel-logo" alt="العربية">
                 <div class="channel-info">
@@ -181,49 +35,63 @@
                 </div>
             </div>
 
-            <!-- باقي القنوات بنفس الهيكل -->
+            <!-- القناة 3 -->
+            <div class="channel-card" data-src="https://svs.itworkscdn.net/syriatvlive/syriatv.smil/playlist_dvr.m3u8">
+                <img src="https://www.muhtwa.com/wp-content/uploads/46-8.jpg" class="channel-logo" alt="سوريا">
+                <div class="channel-info">
+                    <div class="channel-name">تلفزيون سوريا</div>
+                    <div class="channel-category">عام</div>
+                </div>
+            </div>
+
+            <!-- القناة 4 -->
+            <div class="channel-card" data-src="https://live.alarabiya.net/alarabiapublish/alhadath.smil/playlist.m3u8">
+                <img src="https://hawarnews.com/ar/uploads/images/202102/215305_heseke-ronahi-tv.jpg" class="channel-logo" alt="الحدث">
+                <div class="channel-info">
+                    <div class="channel-name">قناة الحدث</div>
+                    <div class="channel-category">أخبار</div>
+                </div>
+            </div>
+
+            <!-- القناة 5 -->
+            <div class="channel-card" data-src="https://ns2.elahmad.com/tv713_www.elahmad.com_halabtoday/index.m3u8">
+                <img src="https://pbs.twimg.com/profile_images/1779495135841075200/aPINrLwe_400x400.png" class="channel-logo" alt="حلب">
+                <div class="channel-info">
+                    <div class="channel-name">حلب اليوم</div>
+                    <div class="channel-category">محلي</div>
+                </div>
+            </div>
+
+            <!-- القناة 6 -->
+            <div class="channel-card" data-src="https://ronahi-tv.akamaized.net/hls/ronahi-tv.m3u8">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRT56fM1Fp5Rh1s82aY8yzCGr7kjEQNy437BQ&s" class="channel-logo" alt="روناهي">
+                <div class="channel-info">
+                    <div class="channel-name">روناهي</div>
+                    <div class="channel-category">ثقافة</div>
+                </div>
+            </div>
+
+            <!-- القناة 7 -->
+            <div class="channel-card" data-src="https://alarabyta.cdn.octivid.com/alaraby/smil:alaraby.stream.smil/chunklist.m3u8">
+                <img src="https://www.alaraby.com/themes/custom/arabytv/logo-print.png" class="channel-logo" alt="العربي">
+                <div class="channel-info">
+                    <div class="channel-name">العربي</div>
+                    <div class="channel-category">أخبار</div>
+                </div>
+            </div>
+
+            <!-- القناة 8 -->
+            <div class="channel-card" data-src="https://stream.skynewsarabia.com/hls/sna.m3u8">
+                <img src="https://yt3.googleusercontent.com/6wh3wbMTas_FiOfcuyU-a-PSL62aeOzoNM-MDyJiUIr8HfINr_kqQlMvgYpjdi5hkVJMR7oo=s900-c-k-c0x00ffffff-no-rj" class="channel-logo" alt="سكاي">
+                <div class="channel-info">
+                    <div class="channel-name">سكاي نيوز عربية</div>
+                    <div class="channel-category">أخبار</div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <script>
-        const videoPlayer = document.getElementById('videoPlayer');
-        const channelCards = document.querySelectorAll('.channel-card');
-        
-        // إدارة اختيار القنوات
-        channelCards.forEach(card => {
-            card.addEventListener('click', () => {
-                // إزالة النشاط من جميع البطاقات
-                channelCards.forEach(c => c.classList.remove('active'));
-                
-                // تعيين البطاقة المختارة كنشطة
-                card.classList.add('active');
-                
-                // تحميل وتشغيل الفيديو
-                const streamUrl = card.dataset.src;
-                if(Hls.isSupported()) {
-                    const hls = new Hls();
-                    hls.loadSource(streamUrl);
-                    hls.attachMedia(videoPlayer);
-                    hls.on(Hls.Events.MANIFEST_PARSED, () => videoPlayer.play());
-                } else if(videoPlayer.canPlayType('application/vnd.apple.mpegurl')) {
-                    videoPlayer.src = streamUrl;
-                    videoPlayer.play();
-                }
-            });
-        });
-
-        // التشغيل التلقائي للقناة الأولى
-        channelCards[0].click();
-
-        // إضافة دعم HLS للفيديو
-        if (typeof Hls !== 'undefined') {
-            const hls = new Hls();
-        } else {
-            console.warn('HLS.js not loaded - using native browser support');
-        }
-    </script>
-    
-    <!-- إضافة مكتبة HLS.js لتحسين دعم التشغيل -->
+    <!-- باقي الscript كما هو -->
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </body>
 </html>
