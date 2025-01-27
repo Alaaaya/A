@@ -1,93 +1,111 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Work Hours Calculator</title>
+    <title>بث مباشر - قنوات إخبارية ومسلسلات</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: #f4f4f9;
-        }
-        .container {
-            max-width: 400px;
-            margin: 0 auto;
-            background: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        h1 {
-            text-align: center;
-        }
-        label {
-            display: block;
-            margin-top: 10px;
-        }
-        input {
-            width: 100%;
-            padding: 8px;
-            margin-top: 5px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        button {
-            margin-top: 20px;
-            width: 100%;
+        /* جميع الأنماط السابقة تبقى كما هي مع الإضافات التالية */
+
+        /* أنماط التبويبات الجديدة */
+        .tabs-container {
+            margin-bottom: 30px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
             padding: 10px;
-            background-color: #007BFF;
-            color: white;
+            display: inline-flex;
+            gap: 10px;
+        }
+
+        .tab-button {
+            background: rgba(255, 255, 255, 0.1);
             border: none;
-            border-radius: 4px;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 10px;
             cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            backdrop-filter: blur(5px);
         }
-        button:hover {
-            background-color: #0056b3;
+
+        .tab-button.active {
+            background: var(--primary-color);
+            box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
         }
-        .result {
-            margin-top: 20px;
-            text-align: center;
-            font-size: 1.2em;
-            font-weight: bold;
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Work Hours Calculator</h1>
-        <label for="start-time">Start Time:</label>
-        <input type="time" id="start-time">
+        <!-- تبويبات الاختيار -->
+        <div class="tabs-container">
+            <button class="tab-button active" onclick="switchTab('news')">القنوات الإخبارية</button>
+            <button class="tab-button" onclick="switchTab('series')">قنوات المسلسلات</button>
+        </div>
 
-        <label for="end-time">End Time:</label>
-        <input type="time" id="end-time">
+        <div class="player-section">
+            <div class="loading-spinner" id="spinner"></div>
+            <video id="videoPlayer" controls playsinline></video>
+        </div>
 
-        <button onclick="calculateHours()">Calculate Hours</button>
+        <!-- قائمة القنوات الإخبارية -->
+        <div id="news-tab" class="tab-content active">
+            <div class="channel-grid">
+                <!-- القنوات الإخبارية الحالية -->
+                <div class="channel-card active" data-src="https://live-hls-web-aja.getaj.net/AJA/index.m3u8">
+                    <img src="http://3.66.87.188/img/channels/aljazeeraeng.jpg" class="channel-logo" alt="الجزيرة" loading="lazy">
+                    <div class="channel-name">الجزيرة</div>
+                </div>
 
-        <div class="result" id="result"></div>
+                <!-- باقي القنوات الإخبارية -->
+                <!-- ... -->
+                
+            </div>
+        </div>
+
+        <!-- قائمة المسلسلات (فارغة حاليا) -->
+        <div id="series-tab" class="tab-content">
+            <div class="channel-grid">
+                <!-- يمكن إضافة قنوات مسلسلات هنا لاحقا -->
+                <!-- مثال:
+                <div class="channel-card" data-src="رابط_القناة">
+                    <img src="شعار_القناة" class="channel-logo" alt="اسم القناة">
+                    <div class="channel-name">اسم القناة</div>
+                </div>
+                -->
+            </div>
+        </div>
     </div>
 
     <script>
-        function calculateHours() {
-            const startTime = document.getElementById('start-time').value;
-            const endTime = document.getElementById('end-time').value;
+        // دالة تبديل التبويبات
+        function switchTab(tabId) {
+            // إخفاء جميع المحتويات
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
 
-            if (!startTime || !endTime) {
-                document.getElementById('result').textContent = "Please enter both start and end times.";
-                return;
-            }
+            // إلغاء تنشيط جميع الأزرار
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('active');
+            });
 
-            const start = new Date(`1970-01-01T${startTime}:00`);
-            const end = new Date(`1970-01-01T${endTime}:00`);
-
-            let diff = (end - start) / (1000 * 60 * 60); // Difference in hours
-
-            if (diff < 0) {
-                diff += 24; // Adjust for times crossing midnight
-            }
-
-            document.getElementById('result').textContent = `Total Hours: ${diff.toFixed(2)}`;
+            // إظهار المحتوى المحدد وتنشيط الزر
+            document.getElementById(`${tabId}-tab`).classList.add('active');
+            event.currentTarget.classList.add('active');
         }
+
+        // بقية الكود JavaScript السابق يبقى كما هو
+        // ... 
     </script>
 </body>
 </html>
