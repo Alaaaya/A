@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تأثير الشفافية - Windows 11 Style</title>
+    <title>بث مباشر - قنوات إخبارية ومسلسلات</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -13,19 +13,36 @@
 
     <!-- شريط التنقل الشفاف -->
     <nav class="navbar">
-        شريط تنقل شفاف
+        بث مباشر - قنوات إخبارية ومسلسلات
     </nav>
 
-    <!-- تأثير الزجاج الشفاف (Blur) -->
-    <div class="glass-effect">
-        <h2>تأثير زجاجي شفاف</h2>
-        <p>هذا التأثير يشبه Windows 11 File Explorer</p>
-    </div>
+    <div class="container">
+        <div class="player-section glass-effect">
+            <video id="videoPlayer" controls autoplay playsinline></video>
+        </div>
 
-    <!-- تأثير Mica مثل Windows 11 -->
-    <div class="mica-effect">
-        <h2>تأثير Mica</h2>
-        <p>يشبه تأثير Windows 11</p>
+        <!-- قنوات الأخبار -->
+        <div class="section-title mica-effect">📺 قنوات الأخبار</div>
+        <div class="channel-grid">
+            <div class="channel-card active" data-src="https://live-hls-web-aja.getaj.net/AJA/index.m3u8">
+                <img src="http://3.66.87.188/img/channels/aljazeeraeng.jpg" class="channel-logo" alt="الجزيرة">
+                <div class="channel-name">الجزيرة</div>
+            </div>
+
+            <div class="channel-card" data-src="https://av.alarabiya.net/alarabiapublish/alarabiya.smil/playlist.m3u8">
+                <img src="https://vid.alarabiya.net/images/2016/04/01/8edd67af-f66b-4eaf-9702-840a060869aa/8edd67af-f66b-4eaf-9702-840a060869aa_16x9_1200x676.jpg" class="channel-logo" alt="العربية">
+                <div class="channel-name">العربية</div>
+            </div>
+        </div>
+
+        <!-- قنوات المسلسلات -->
+        <div class="section-title mica-effect">📺 قنوات المسلسلات</div>
+        <div class="channel-grid">
+            <div class="channel-card" data-src="https://example.com/series1.m3u8">
+                <img src="https://example.com/series1_logo.jpg" class="channel-logo" alt="مسلسل 1">
+                <div class="channel-name">مسلسل 1</div>
+            </div>
+        </div>
     </div>
 
     <script src="script.js"></script>
