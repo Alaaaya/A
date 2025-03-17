@@ -9,9 +9,9 @@
         :root {
             --primary-color: rgba(33, 150, 243, 0.9);
             --bg-gradient: linear-gradient(45deg, #0f172a, #1e293b);
-            --glass-bg: rgba(255, 255, 255, 0.1); /* شفافية أعلى */
-            --glass-border: rgba(255, 255, 255, 0.25); /* تحسين الحدود */
-            --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3); /* تحسين الظل */
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.25);
+            --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         }
 
         * {
@@ -20,18 +20,25 @@
             padding: 0;
         }
 
-        /* ✅ إصلاح الخلفية لتغطية الشاشة بالكامل */
+        /* ✅ إجبار الخلفية على تغطية الشاشة بالكامل */
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* 🔹 منع ظهور أي لون أبيض */
+        }
+
         body {
             font-family: 'Segoe UI', 'Tahoma', sans-serif;
             color: white;
             min-height: 100vh; /* ✅ يجعل الصفحة تمتد لكامل الشاشة */
-            background: url('https://i.pinimg.com/736x/a0/ad/75/a0ad758c1fe0cb8350624eecb77c27ca.jpg') 
-                        no-repeat center center fixed;
-            background-size: cover; /* ✅ يجعل الخلفية تمتد بالكامل بدون بياض */
-            background-position: center center; /* ✅ يضمن عدم وجود مساحات بيضاء */
+            height: 100vh; /* ✅ يضمن تغطية الخلفية */
             display: flex;
             justify-content: center;
             align-items: center;
+            background: url('https://i.pinimg.com/736x/a0/ad/75/a0ad758c1fe0cb8350624eecb77c27ca.jpg') 
+                        no-repeat center center fixed;
+            background-size: cover; /* ✅ تغطية كاملة بدون بياض */
         }
 
         .container {
@@ -45,7 +52,7 @@
         .channel-card,
         .section-title {
             background: var(--glass-bg);
-            backdrop-filter: blur(20px); /* تأثير الضبابية */
+            backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--glass-border);
             box-shadow: var(--glass-shadow);
@@ -65,8 +72,8 @@
         .channel-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            gap: 15px; /* 🔹 زيادة المسافة بين العناصر */
-            margin-bottom: 40px; /* 🔹 مسافة بين كل شبكة قنوات */
+            gap: 15px;
+            margin-bottom: 40px;
         }
 
         .channel-card {
@@ -77,7 +84,6 @@
             padding: 15px;
         }
 
-        /* ✅ تأثير Hover على القنوات */
         .channel-card:hover {
             background: rgba(255, 255, 255, 0.15);
             transform: translateY(-5px) scale(1.05);
@@ -115,8 +121,8 @@
             font-weight: bold;
             text-align: center;
             padding: 10px;
-            margin-top: 40px; /* 🔹 مسافة من الأعلى */
-            margin-bottom: 20px; /* 🔹 مسافة بين القوائم */
+            margin-top: 40px;
+            margin-bottom: 20px;
         }
     </style>
 </head>
