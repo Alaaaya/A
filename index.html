@@ -63,8 +63,8 @@
         .channel-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            gap: 10px;
-            margin-bottom: 40px;
+            gap: 15px; /* 🔹 زيادة المسافة بين العناصر */
+            margin-bottom: 40px; /* 🔹 مسافة بين كل شبكة قنوات */
         }
 
         .channel-card {
@@ -107,11 +107,14 @@
             letter-spacing: -0.5px;
         }
 
+        /* ✅ مسافة بين القوائم */
         .section-title {
             font-size: 1.5rem;
             font-weight: bold;
             text-align: center;
             padding: 10px;
+            margin-top: 40px; /* 🔹 مسافة من الأعلى */
+            margin-bottom: 20px; /* 🔹 مسافة بين القوائم */
         }
     </style>
 </head>
