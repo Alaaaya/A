@@ -20,13 +20,15 @@
             padding: 0;
         }
 
+        /* ✅ إصلاح الخلفية لتغطية الشاشة بالكامل */
         body {
             font-family: 'Segoe UI', 'Tahoma', sans-serif;
             color: white;
-            min-height: 100vh;
+            min-height: 100vh; /* ✅ يجعل الصفحة تمتد لكامل الشاشة */
             background: url('https://i.pinimg.com/736x/a0/ad/75/a0ad758c1fe0cb8350624eecb77c27ca.jpg') 
                         no-repeat center center fixed;
-            background-size: cover;
+            background-size: cover; /* ✅ يجعل الخلفية تمتد بالكامل بدون بياض */
+            background-position: center center; /* ✅ يضمن عدم وجود مساحات بيضاء */
             display: flex;
             justify-content: center;
             align-items: center;
