@@ -20,31 +20,31 @@
             padding: 0;
         }
 
-        /* ✅ إجبار الخلفية على تغطية الشاشة بالكامل */
+        /* ✅ إصلاح مشكلة الخلفية والتفاعل مع اللمس */
         html, body {
             height: 100%;
             margin: 0;
             padding: 0;
-            overflow: hidden; /* 🔹 منع ظهور أي لون أبيض */
         }
 
         body {
             font-family: 'Segoe UI', 'Tahoma', sans-serif;
             color: white;
-            min-height: 100vh; /* ✅ يجعل الصفحة تمتد لكامل الشاشة */
-            height: 100vh; /* ✅ يضمن تغطية الخلفية */
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            min-height: 100vh;
             background: url('https://i.pinimg.com/736x/a0/ad/75/a0ad758c1fe0cb8350624eecb77c27ca.jpg') 
                         no-repeat center center fixed;
-            background-size: cover; /* ✅ تغطية كاملة بدون بياض */
+            background-size: cover;
+            display: flex;
+            flex-direction: column; /* ✅ جعل التمرير يعمل بشكل طبيعي */
+            align-items: center;
         }
 
         .container {
             max-width: 1200px;
             width: 100%;
             padding: 20px;
+            flex: 1; /* ✅ يضمن ملء الشاشة بدون تعطيل التمرير */
+            overflow-y: auto; /* ✅ يسمح بالتمرير الطبيعي */
         }
 
         /* ✅ تصميم Glassmorphism */
