@@ -523,18 +523,6 @@
                 
                 videoPlayer.src = streamUrl;
                 videoPlayer.load();
-                
-                videoPlayer.addEventListener('canplay', function() {
-                    loadingOverlay.style.display = "none";
-                    videoPlayer.play().catch(e => {
-                        showError("تعذر التشغيل التلقائي، يرجى النقر على زر التشغيل");
-                    });
-                });
-                
-                videoPlayer.addEventListener('error', function() {
-                    loadingOverlay.style.display = "none";
-                    showError("تعذر تحميل القناة، يرجى المحاولة لاحقاً");
-                });
             }
             
             // إضافة إلى المفضلة
