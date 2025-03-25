@@ -85,37 +85,6 @@
             border-radius: 15px;
         }
 
-        /* شاشة التحميل */
-        .loading-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.7);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            border-radius: 15px;
-            z-index: 10;
-            display: none;
-        }
-
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 5px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top-color: var(--primary-color);
-            animation: spin 1s ease-in-out infinite;
-            margin-bottom: 15px;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
         /* شريط البحث */
         .search-bar {
             display: flex;
@@ -276,12 +245,6 @@
 
         <!-- مشغل الفيديو -->
         <div class="player-section">
-            <!-- شاشة التحميل -->
-            <div class="loading-overlay" id="loadingOverlay">
-                <div class="spinner"></div>
-                <p>جارٍ التحميل...</p>
-            </div>
-            
             <video id="videoPlayer" controls autoplay playsinline></video>
         </div>
 
@@ -373,7 +336,6 @@
             // العناصر الرئيسية
             const videoPlayer = document.getElementById("videoPlayer");
             const channels = document.querySelectorAll(".channel-card");
-            const loadingOverlay = document.getElementById("loadingOverlay");
             const searchInput = document.getElementById("searchInput");
             const themeToggle = document.getElementById("themeToggle");
             const languageToggle = document.getElementById("languageToggle");
@@ -389,25 +351,9 @@
                 channel.classList.add("active");
                 
                 const streamUrl = channel.getAttribute("data-src");
-                const channelName = channel.querySelector(".channel-name").textContent;
-                const channelLogo = channel.querySelector(".channel-logo").src;
-                
-                // عرض شاشة التحميل
-                loadingOverlay.style.display = "flex";
-                
                 videoPlayer.src = streamUrl;
-                videoPlayer.load();
-                
-                videoPlayer.addEventListener('canplay', function() {
-                    loadingOverlay.style.display = "none";
-                    videoPlayer.play().catch(e => {
-                        console.error("تعذر التشغيل التلقائي");
-                    });
-                });
-                
-                videoPlayer.addEventListener('error', function() {
-                    loadingOverlay.style.display = "none";
-                    console.error("تعذر تحميل القناة");
+                videoPlayer.play().catch(e => {
+                    console.error("تعذر التشغيل التلقائي");
                 });
             }
             
