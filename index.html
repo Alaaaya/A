@@ -339,9 +339,6 @@
             <i class="fas fa-exclamation-circle"></i> <span>حدث خطأ أثناء تحميل القناة</span>
         </div>
         
-        <div class="alert success" id="successAlert" style="display: none;">
-            <i class="fas fa-check-circle"></i> <span>جارٍ تشغيل القناة...</span>
-        </div>
 
         <!-- أزرار التحكم -->
         <div class="control-buttons">
@@ -505,9 +502,6 @@
                 const channelLogo = channel.querySelector(".channel-logo").src;
                 
                 // عرض شاشة التحميل
-                loadingOverlay.style.display = "flex";
-                showSuccess(`جارٍ تشغيل قناة ${channelName}...`);
-                
                 // إضافة إلى السجل التاريخي
                 addToHistory(channelName, channelLogo);
                 
