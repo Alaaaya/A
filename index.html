@@ -339,6 +339,9 @@
             <i class="fas fa-exclamation-circle"></i> <span>حدث خطأ أثناء تحميل القناة</span>
         </div>
         
+        <div class="alert success" id="successAlert" style="display: none;">
+            <i class="fas fa-check-circle"></i> <span>جارٍ تشغيل القناة...</span>
+        </div>
 
         <!-- أزرار التحكم -->
         <div class="control-buttons">
@@ -359,6 +362,16 @@
         <!-- مشغل الفيديو -->
         <div class="player-section">
             <!-- شاشة التحميل -->
+            <div class="loading-overlay" id="loadingOverlay">
+                <div class="spinner"></div>
+                <p>جارٍ التحميل...</p>
+            </div>
+            
+            <video id="videoPlayer" controls autoplay playsinline></video>
+            <button class="fullscreen-btn" id="fullscreenBtn" title="ملء الشاشة">
+                <i class="fas fa-expand"></i>
+            </button>
+        </div>
 
         <!-- عناصر تحكم مخصصة -->
         <div class="custom-controls">
@@ -502,11 +515,26 @@
                 const channelLogo = channel.querySelector(".channel-logo").src;
                 
                 // عرض شاشة التحميل
+                loadingOverlay.style.display = "flex";
+                showSuccess(`جارٍ تشغيل قناة ${channelName}...`);
+                
                 // إضافة إلى السجل التاريخي
                 addToHistory(channelName, channelLogo);
                 
                 videoPlayer.src = streamUrl;
                 videoPlayer.load();
+                
+                videoPlayer.addEventListener('canplay', function() {
+                    loadingOverlay.style.display = "none";
+                    videoPlayer.play().catch(e => {
+                        showError("تعذر التشغيل التلقائي، يرجى النقر على زر التشغيل");
+                    });
+                });
+                
+                videoPlayer.addEventListener('error', function() {
+                    loadingOverlay.style.display = "none";
+                    showError("تعذر تحميل القناة، يرجى المحاولة لاحقاً");
+                });
             }
             
             // إضافة إلى المفضلة
