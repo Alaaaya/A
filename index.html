@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>بث مباشر - قنوات إخبارية ومسلسلات</title>
-    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
             --primary-color: rgba(33, 150, 243, 0.9);
@@ -12,6 +12,8 @@
             --glass-bg: rgba(255, 255, 255, 0.1);
             --glass-border: rgba(255, 255, 255, 0.25);
             --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            --error-color: #ff4444;
+            --success-color: #00C851;
         }
 
         * {
@@ -20,7 +22,6 @@
             padding: 0;
         }
 
-        /* ✅ إصلاح مشكلة الخلفية والتفاعل مع اللمس */
         html, body {
             height: 100%;
             margin: 0;
@@ -35,7 +36,7 @@
                         no-repeat center center fixed;
             background-size: cover;
             display: flex;
-            flex-direction: column; /* ✅ جعل التمرير يعمل بشكل طبيعي */
+            flex-direction: column;
             align-items: center;
         }
 
@@ -43,11 +44,11 @@
             max-width: 1200px;
             width: 100%;
             padding: 20px;
-            flex: 1; /* ✅ يضمن ملء الشاشة بدون تعطيل التمرير */
-            overflow-y: auto; /* ✅ يسمح بالتمرير الطبيعي */
+            flex: 1;
+            overflow-y: auto;
         }
 
-        /* ✅ تصميم Glassmorphism */
+        /* تصميم Glassmorphism */
         .player-section,
         .channel-card,
         .section-title {
@@ -61,12 +62,98 @@
             transition: all 0.3s ease-in-out;
         }
 
+        .player-section {
+            position: relative;
+        }
+
         #videoPlayer {
             width: 100%;
             height: 40vh;
             background: #000;
             object-fit: cover;
             border-radius: 15px;
+        }
+
+        /* شاشة التحميل */
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            border-radius: 15px;
+            z-index: 10;
+            display: none;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s ease-in-out infinite;
+            margin-bottom: 15px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* زر ملء الشاشة */
+        .fullscreen-btn {
+            position: absolute;
+            bottom: 25px;
+            left: 25px;
+            background: rgba(0, 0, 0, 0.5);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 5;
+            transition: all 0.3s;
+        }
+
+        .fullscreen-btn:hover {
+            background: rgba(0, 0, 0, 0.8);
+            transform: scale(1.1);
+        }
+
+        /* رسائل التنبيه */
+        .alert {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            color: white;
+            z-index: 100;
+            display: none;
+            max-width: 300px;
+            animation: slideIn 0.5s forwards;
+        }
+
+        .alert.error {
+            background: var(--error-color);
+        }
+
+        .alert.success {
+            background: var(--success-color);
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
         }
 
         .channel-grid {
@@ -115,7 +202,6 @@
             letter-spacing: -0.5px;
         }
 
-        /* ✅ مسافة بين القوائم */
         .section-title {
             font-size: 1.5rem;
             font-weight: bold;
@@ -124,15 +210,49 @@
             margin-top: 5px;
             margin-bottom: 20px;
         }
+
+        /* تصميم متجاوب للهواتف */
+        @media (max-width: 768px) {
+            .channel-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            }
+            
+            .channel-logo {
+                width: 60px;
+                height: 60px;
+            }
+            
+            #videoPlayer {
+                height: 30vh;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="player-section">
-            <video id="videoPlayer" controls autoplay playsinline></video>
+        <!-- رسائل التنبيه -->
+        <div class="alert error" id="errorAlert" style="display: none;">
+            <i class="fas fa-exclamation-circle"></i> حدث خطأ أثناء تحميل القناة
+        </div>
+        
+        <div class="alert success" id="successAlert" style="display: none;">
+            <i class="fas fa-check-circle"></i> جارٍ تشغيل القناة...
         </div>
 
-        <!-- ✅ قنوات الأخبار -->‎<!-- قنوات الأخبار -->
+        <div class="player-section">
+            <!-- شاشة التحميل -->
+            <div class="loading-overlay" id="loadingOverlay">
+                <div class="spinner"></div>
+                <p>جارٍ التحميل...</p>
+            </div>
+            
+            <video id="videoPlayer" controls autoplay playsinline></video>
+            <button class="fullscreen-btn" id="fullscreenBtn" title="ملء الشاشة">
+                <i class="fas fa-expand"></i>
+            </button>
+        </div>
+
+        <!-- قنوات الأخبار -->
         <div class="section-title"> قنوات الأخبار</div>
         <div class="channel-grid">
             <div class="channel-card active" data-src="https://live-hls-web-aja.getaj.net/AJA/index.m3u8">
@@ -171,7 +291,7 @@
             </div>
         </div>
 
-‎        <!-- قنوات المسلسلات -->
+        <!-- قنوات المسلسلات -->
         <div class="section-title"> قنوات المسلسلات</div>
         <div class="channel-grid">
             <div class="channel-card" data-src="https://shls-mbc1na-prod-dub.shahid.net/out/v1/84ab37e99d6e4b16b33c6600f94f6ccb/index_7.m3u8">
@@ -190,27 +310,108 @@
                 <img src="https://example.com/series4_logo.jpg" class="channel-logo" alt="مسلسل 4">
                 <div class="channel-name">مسلسل 4</div>
             </div>
-‎            <!-- يمكنك إضافة المزيد من قنوات المسلسلات هنا -->
         </div>
-    </div>
+        
+        <!-- قسم جديد للقنوات الرياضية -->
+        <div class="section-title"> القنوات الرياضية</div>
+        <div class="channel-grid">
+            <div class="channel-card" data-src="https://example.com/sports1.m3u8">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Bein_Sports_logo.svg/1200px-Bein_Sports_logo.svg.png" class="channel-logo" alt="بي إن سبورت">
+                <div class="channel-name">بي إن سبورت</div>
+            </div>
+            <div class="channel-card" data-src="https://example.com/sports2.m3u8">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Alkass_logo.png/800px-Alkass_logo.png" class="channel-logo" alt="الكأس">
+                <div class="channel-name">قناة الكأس</div>
+            </div>
+        </div>
     </div>
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const videoPlayer = document.getElementById("videoPlayer");
             const channels = document.querySelectorAll(".channel-card");
-
+            const loadingOverlay = document.getElementById("loadingOverlay");
+            const fullscreenBtn = document.getElementById("fullscreenBtn");
+            const errorAlert = document.getElementById("errorAlert");
+            const successAlert = document.getElementById("successAlert");
+            
+            // عرض رسالة نجاح
+            function showSuccess(message) {
+                successAlert.querySelector('p').textContent = message || 'تمت العملية بنجاح';
+                successAlert.style.display = 'block';
+                setTimeout(() => {
+                    successAlert.style.display = 'none';
+                }, 3000);
+            }
+            
+            // عرض رسالة خطأ
+            function showError(message) {
+                errorAlert.querySelector('p').textContent = message || 'حدث خطأ ما';
+                errorAlert.style.display = 'block';
+                setTimeout(() => {
+                    errorAlert.style.display = 'none';
+                }, 3000);
+            }
+            
+            // تشغيل القناة
             function setActiveChannel(channel) {
                 channels.forEach(c => c.classList.remove("active"));
                 channel.classList.add("active");
-                videoPlayer.src = channel.getAttribute("data-src");
+                
+                const streamUrl = channel.getAttribute("data-src");
+                
+                // عرض شاشة التحميل
+                loadingOverlay.style.display = "flex";
+                showSuccess("جارٍ تشغيل القناة...");
+                
+                videoPlayer.src = streamUrl;
+                videoPlayer.load();
+                
+                videoPlayer.addEventListener('canplay', function() {
+                    loadingOverlay.style.display = "none";
+                    videoPlayer.play().catch(e => {
+                        showError("تعذر التشغيل التلقائي، يرجى النقر على زر التشغيل");
+                    });
+                });
+                
+                videoPlayer.addEventListener('error', function() {
+                    loadingOverlay.style.display = "none";
+                    showError("تعذر تحميل القناة، يرجى المحاولة لاحقاً");
+                });
             }
-
+            
+            // زر ملء الشاشة
+            fullscreenBtn.addEventListener('click', function() {
+                if (videoPlayer.requestFullscreen) {
+                    videoPlayer.requestFullscreen();
+                } else if (videoPlayer.webkitRequestFullscreen) {
+                    videoPlayer.webkitRequestFullscreen();
+                } else if (videoPlayer.msRequestFullscreen) {
+                    videoPlayer.msRequestFullscreen();
+                }
+            });
+            
+            // تغيير أيقونة زر ملء الشاشة عند الدخول/الخروج من وضع ملء الشاشة
+            document.addEventListener('fullscreenchange', function() {
+                if (document.fullscreenElement) {
+                    fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i>';
+                } else {
+                    fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i>';
+                }
+            });
+            
+            // تفعيل النقر على القنوات
             channels.forEach(channel => {
                 channel.addEventListener("click", function() {
                     setActiveChannel(channel);
                 });
             });
+            
+            // تشغيل القناة الأولى تلقائياً عند تحميل الصفحة
+            const defaultChannel = document.querySelector(".channel-card.active");
+            if (defaultChannel) {
+                setActiveChannel(defaultChannel);
+            }
         });
     </script>
 </body>
