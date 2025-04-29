@@ -49,22 +49,19 @@
     <input type="text" id="searchInput" placeholder="ابحث عن مسلسل...">
 </div>
 <div id="series-container">
-    <!-- هنا يتم إدخال المسلسلات ديناميكياً من JSON -->
+    <!-- سيتم ملء هذه المنطقة تلقائياً -->
 </div>
 
 <script>
-    const seriesData = [
-        // هنا يجب لصق البيانات المستخرجة من JSON مثل:
-        // {{
-        //     title: "اسم المسلسل",
-        //     portrait: "رابط الصورة",
-        //     id: 1234
-        // }},
+    const series = [
+        {{title: "House of Dragons 2", portrait: "https://media0075.elcinema.com/uploads/_315x420_c1a0f73c80bcefb5eb759af9215129800de98eea517a74fefaba00a3c317bf65.jpg", id: 5414}},
+        {{title: "The Lord of the Rings: The Rings of Power S2", portrait: "https://media0075.elcinema.com/uploads/_315x420_c373f9ade9017c124f182afb27cd72c0c57b7613c87d38b1fa366c48f399479f.jpg", id: 5419}},
+        // ... هنا باقي المسلسلات يتم إضافتها بنفس الشكل
     ];
 
     const container = document.getElementById("series-container");
 
-    seriesData.forEach(item => {
+    series.forEach(item => {
         const div = document.createElement("div");
         div.className = "item";
         div.setAttribute("data-title", item.title.toLowerCase());
@@ -79,11 +76,9 @@
         container.appendChild(div);
     });
 
-    // وظيفة البحث
     document.getElementById("searchInput").addEventListener("input", function () {
         const term = this.value.toLowerCase();
-        const items = document.querySelectorAll(".item");
-        items.forEach(item => {
+        document.querySelectorAll(".item").forEach(item => {
             const title = item.getAttribute("data-title");
             item.style.display = title.includes(term) ? "flex" : "none";
         });
