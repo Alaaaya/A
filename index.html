@@ -2,71 +2,50 @@
 <html lang="ar">
 <head>
     <meta charset="UTF-8">
-    <title>كل المسلسلات</title>
+    <title>سيرفرات المسلسلات</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            direction: rtl;
-            background: #f4f4f4;
-            padding: 20px;
-        }
-        h1 {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-        .item {
-            background: #fff;
-            margin-bottom: 20px;
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 0 5px #ccc;
-            display: flex;
-            align-items: center;
-        }
-        img {
-            width: 120px;
-            border-radius: 8px;
-            margin-left: 20px;
-        }
-        h3 {
-            margin: 0 0 10px 0;
-        }
-        a {
-            display: inline-block;
-            margin-top: 5px;
-            color: #007bff;
-            text-decoration: none;
-        }
+        body { font-family: Arial, sans-serif; direction: rtl; background: #f5f5f5; padding: 20px; }
+        h1 { color: #333; }
+        .section { margin-bottom: 25px; }
+        .server { background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 0 5px #ccc; margin-bottom: 10px; }
+        a { color: #0066cc; text-decoration: none; word-break: break-all; }
+        input[type="text"] { width: 70%; padding: 6px; margin-top: 10px; }
+        button { padding: 6px 12px; margin-top: 10px; }
     </style>
+    <script>
+        function openLink(baseUrl) {
+            const id = document.getElementById(baseUrl).value;
+            if (id) {
+                window.open(baseUrl + id, '_blank');
+            } else {
+                alert("رجاءً أدخل ID للمسلسل أو الحلقة.");
+            }
+        }
+    </script>
 </head>
 <body>
-    <h1>قائمة المسلسلات</h1>
+    <h1>روابط سيرفرات المسلسلات</h1>
 
-    <!-- كرر هذا الجزء مع كل مسلسل -->
-    <div class="item">
-        <img src="https://media0075.elcinema.com/uploads/_315x420_c373f9ade9017c124f182afb27cd72c0c57b7613c87d38b1fa366c48f399479f.jpg" alt="The Lord of the Rings">
-        <div>
-            <h3>The Lord of the Rings: The Rings of Power S2</h3>
-            <a href="https://todays-video.online/ios/getLink?id=5419" target="_blank">رابط المشاهدة</a>
+    <div class="section">
+        <div class="server">
+            <strong>رابط الحلقات حسب ID:</strong><br>
+            <input type="text" id="https://todays-video.online/ios/episodes?id=" placeholder="مثال: you2023">
+            <button onclick="openLink('https://todays-video.online/ios/episodes?id=')">افتح</button>
+        </div>
+
+        <div class="server">
+            <strong>رابط البث المباشر حسب ID:</strong><br>
+            <input type="text" id="https://todays-video.online/ios/getLink?id=" placeholder="مثال: episode001">
+            <button onclick="openLink('https://todays-video.online/ios/getLink?id=')">افتح</button>
         </div>
     </div>
 
-    <div class="item">
-        <img src="https://media0075.elcinema.com/uploads/_315x420_c1a0f73c80bcefb5eb759af9215129800de98eea517a74fefaba00a3c317bf65.jpg" alt="House of Dragons 2">
-        <div>
-            <h3>House of Dragons 2</h3>
-            <a href="https://todays-video.online/ios/getLink?id=5414" target="_blank">رابط المشاهدة</a>
-        </div>
+    <div class="section">
+        <h2>سيرفرات الفيديو المباشر:</h2>
+        <div class="server"><a href="https://elrvvmdnz.com/videos/" target="_blank">https://elrvvmdnz.com/videos/</a></div>
+        <div class="server"><a href="https://video.almanhavvly.net/videos/" target="_blank">https://video.almanhavvly.net/videos/</a></div>
+        <div class="server"><a href="https://clash.rosetvvta-one.online/videos/" target="_blank">https://clash.rosetvvta-one.online/videos/</a></div>
+        <div class="server"><a href="https://todays-video.online/ios/splash?key=e25874f2d86e061e06a571f8ef006e0b&v=betweens2" target="_blank">Splash Page</a></div>
     </div>
-
-    <div class="item">
-        <img src="https://media0075.elcinema.com/uploads/_315x420_e875bc4fddb1c32c6fe363dd3715fe148fe894cbd288bb07efe962edace5bf3c.jpg" alt="اللعب مع العيال">
-        <div>
-            <h3>اللعب مع العيال</h3>
-            <a href="https://todays-video.online/ios/getLink?id=5533" target="_blank">رابط المشاهدة</a>
-        </div>
-    </div>
-
-    <!-- كرر نفس النموذج لبقية المسلسلات -->
 </body>
 </html>
