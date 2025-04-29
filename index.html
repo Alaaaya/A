@@ -2,7 +2,7 @@
 <html lang="ar">
 <head>
     <meta charset="UTF-8">
-    <title>جميع المسلسلات</title>
+    <title>المسلسلات</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -12,7 +12,6 @@
         }
         h1 {
             text-align: center;
-            margin-bottom: 30px;
         }
         .item {
             background: #fff;
@@ -25,16 +24,13 @@
         }
         img {
             width: 100px;
-            height: auto;
-            margin-left: 20px;
             border-radius: 6px;
+            margin-left: 20px;
         }
         h3 {
             margin: 0 0 10px 0;
         }
         a {
-            display: inline-block;
-            margin-top: 8px;
             color: #007bff;
             text-decoration: none;
         }
@@ -42,19 +38,36 @@
 </head>
 <body>
 
-    <h1>قائمة المسلسلات الكاملة</h1>
+<h1>قائمة المسلسلات</h1>
+<div id="series-container">جاري التحميل...</div>
 
-    <!-- هنا يتم تكرار العناصر لكل مسلسل -->
+<script>
+    fetch("https://todays-video.online/ios/splash?key=e25874f2d86e061e06a571f8ef006e0b&v=betweens2")
+        .then(response => response.json())
+        .then(data => {
+            const container = document.getElementById("series-container");
+            container.innerHTML = "";
 
-    <div class="item">
-        <img src="رابط_الصورة" alt="عنوان المسلسل">
-        <div>
-            <h3>عنوان المسلسل</h3>
-            <a href="https://todays-video.online/ios/getLink?id=رقم_المسلسل" target="_blank">رابط المشاهدة</a>
-        </div>
-    </div>
+            data.ser_all.forEach(series => {
+                const div = document.createElement("div");
+                div.className = "item";
 
-    <!-- كرر هذا الجزء مع تغيير "رابط_الصورة" و"عنوان المسلسل" و"رقم_المسلسل" لكل عمل -->
+                div.innerHTML = `
+                    <img src="${series.portrait}" alt="${series.title}">
+                    <div>
+                        <h3>${series.title}</h3>
+                        <a href="https://todays-video.online/ios/getLink?id=${series.id}" target="_blank">رابط المشاهدة</a>
+                    </div>
+                `;
+
+                container.appendChild(div);
+            });
+        })
+        .catch(error => {
+            document.getElementById("series-container").innerText = "فشل في تحميل البيانات.";
+            console.error("خطأ في التحميل:", error);
+        });
+</script>
 
 </body>
 </html>
