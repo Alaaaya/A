@@ -2,50 +2,53 @@
 <html lang="ar">
 <head>
     <meta charset="UTF-8">
-    <title>سيرفرات المسلسلات</title>
+    <title>كل المسلسلات</title>
     <style>
-        body { font-family: Arial, sans-serif; direction: rtl; background: #f5f5f5; padding: 20px; }
-        h1 { color: #333; }
-        .section { margin-bottom: 25px; }
-        .server { background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 0 5px #ccc; margin-bottom: 10px; }
-        a { color: #0066cc; text-decoration: none; word-break: break-all; }
-        input[type="text"] { width: 70%; padding: 6px; margin-top: 10px; }
-        button { padding: 6px 12px; margin-top: 10px; }
-    </style>
-    <script>
-        function openLink(baseUrl) {
-            const id = document.getElementById(baseUrl).value;
-            if (id) {
-                window.open(baseUrl + id, '_blank');
-            } else {
-                alert("رجاءً أدخل ID للمسلسل أو الحلقة.");
-            }
+        body {
+            font-family: Arial, sans-serif;
+            direction: rtl;
+            background: #f4f4f4;
+            padding: 20px;
         }
-    </script>
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .item {
+            background: #fff;
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 0 5px #ccc;
+            display: flex;
+            align-items: center;
+        }
+        img {
+            width: 100px;
+            border-radius: 6px;
+            margin-left: 15px;
+        }
+        h3 {
+            margin: 0 0 10px 0;
+        }
+        a {
+            color: #007bff;
+            text-decoration: none;
+        }
+    </style>
 </head>
 <body>
-    <h1>روابط سيرفرات المسلسلات</h1>
+    <h1>قائمة المسلسلات الكاملة</h1>
 
-    <div class="section">
-        <div class="server">
-            <strong>رابط الحلقات حسب ID:</strong><br>
-            <input type="text" id="https://todays-video.online/ios/episodes?id=" placeholder="مثال: you2023">
-            <button onclick="openLink('https://todays-video.online/ios/episodes?id=')">افتح</button>
-        </div>
-
-        <div class="server">
-            <strong>رابط البث المباشر حسب ID:</strong><br>
-            <input type="text" id="https://todays-video.online/ios/getLink?id=" placeholder="مثال: episode001">
-            <button onclick="openLink('https://todays-video.online/ios/getLink?id=')">افتح</button>
+    <!-- كرر هذا الجزء لكل مسلسل -->
+    <div class="item">
+        <img src="رابط_الصورة" alt="عنوان المسلسل">
+        <div>
+            <h3>عنوان المسلسل</h3>
+            <a href="https://todays-video.online/ios/getLink?id=رقم_المسلسل" target="_blank">رابط المشاهدة</a>
         </div>
     </div>
 
-    <div class="section">
-        <h2>سيرفرات الفيديو المباشر:</h2>
-        <div class="server"><a href="https://elrvvmdnz.com/videos/" target="_blank">https://elrvvmdnz.com/videos/</a></div>
-        <div class="server"><a href="https://video.almanhavvly.net/videos/" target="_blank">https://video.almanhavvly.net/videos/</a></div>
-        <div class="server"><a href="https://clash.rosetvvta-one.online/videos/" target="_blank">https://clash.rosetvvta-one.online/videos/</a></div>
-        <div class="server"><a href="https://todays-video.online/ios/splash?key=e25874f2d86e061e06a571f8ef006e0b&v=betweens2" target="_blank">Splash Page</a></div>
-    </div>
+    <!-- انسخ الكتلة أعلاه وكررها مع تغيير المعلومات لكل مسلسل -->
 </body>
 </html>
