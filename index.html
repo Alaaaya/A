@@ -2,77 +2,92 @@
 <html lang="ar">
 <head>
     <meta charset="UTF-8">
-    <title>قائمة المسلسلات أوفلاين</title>
+    <title>قائمة المسلسلات</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             direction: rtl;
-            background: #f9f9f9;
+            background: #f4f4f4;
             padding: 20px;
         }
         h1 {
             text-align: center;
         }
-        .item {
-            background: #fff;
+        .search-box {
+            text-align: center;
             margin-bottom: 20px;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 0 5px rgba(0,0,0,0.1);
-            cursor: pointer;
         }
-        img {
+        .search-box input {
+            padding: 10px;
+            width: 80%;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .item {
+            background: white;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            display: flex;
+            gap: 15px;
+            box-shadow: 0 0 5px rgba(0,0,0,0.1);
+        }
+        .item img {
             width: 100px;
             border-radius: 6px;
-            margin-left: 20px;
         }
-        h3 {
-            margin: 0 0 10px 0;
-        }
-        a {
-            color: #007bff;
-            text-decoration: none;
-            display: block;
-            margin-top: 5px;
-        }
-        .episodes {
-            margin-top: 10px;
-            padding: 10px;
-            background: #eee;
-            border-radius: 6px;
+        .item h3 {
+            margin: 0;
         }
     </style>
 </head>
 <body>
 
 <h1>قائمة المسلسلات</h1>
+<div class="search-box">
+    <input type="text" id="searchInput" placeholder="ابحث عن مسلسل...">
+</div>
 <div id="series-container">
-    <!-- الكتل تمت إضافتها هنا -->
-    
-    <!-- مثال على كتلة مسلسل -->
-    <div class="item" onclick="toggleEpisodes('5419')">
-        <img src="https://media0075.elcinema.com/uploads/_315x420_c373f9ade9017c124f182afb27cd72c0c57b7613c87d38b1fa366c48f399479f.jpg" alt="The Lord of the Rings: The Rings of Power S2">
-        <div>
-            <h3>The Lord of the Rings: The Rings of Power S2</h3>
-            <a href="https://todays-video.online/ios/getLink?id=5419" target="_blank">رابط المشاهدة</a>
-        </div>
-        <div class="episodes" id="episodes-5419" style="display:none;">
-            <a href="https://todays-video.online/ios/episodes?id=5419" target="_blank">عرض الحلقات</a>
-        </div>
-    </div>
-
-    <!-- باقي المسلسلات مضافة بنفس الطريقة تلقائياً -->
+    <!-- هنا يتم إدخال المسلسلات ديناميكياً من JSON -->
 </div>
 
 <script>
-    function toggleEpisodes(id) {
-        var epDiv = document.getElementById('episodes-' + id);
-        if (epDiv.style.display === "none") {
-            epDiv.style.display = "block";
-        } else {
-            epDiv.style.display = "none";
-        }
-    }
+    const seriesData = [
+        // هنا يجب لصق البيانات المستخرجة من JSON مثل:
+        // {{
+        //     title: "اسم المسلسل",
+        //     portrait: "رابط الصورة",
+        //     id: 1234
+        // }},
+    ];
+
+    const container = document.getElementById("series-container");
+
+    seriesData.forEach(item => {
+        const div = document.createElement("div");
+        div.className = "item";
+        div.setAttribute("data-title", item.title.toLowerCase());
+        div.innerHTML = `
+            <img src="${item.portrait}" alt="${item.title}">
+            <div>
+                <h3>${item.title}</h3>
+                <a href="https://todays-video.online/ios/getLink?id=${item.id}" target="_blank">رابط المشاهدة</a>
+                <a href="https://todays-video.online/ios/episodes?id=${item.id}" target="_blank">رابط الحلقات</a>
+            </div>
+        `;
+        container.appendChild(div);
+    });
+
+    // وظيفة البحث
+    document.getElementById("searchInput").addEventListener("input", function () {
+        const term = this.value.toLowerCase();
+        const items = document.querySelectorAll(".item");
+        items.forEach(item => {
+            const title = item.getAttribute("data-title");
+            item.style.display = title.includes(term) ? "flex" : "none";
+        });
+    });
 </script>
 
 </body>
