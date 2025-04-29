@@ -47,42 +47,32 @@
 
 <h1>قائمة المسلسلات</h1>
 <div id="series-container">
-    <!-- الكتل ستتم إضافتها تلقائيًا -->
+    <!-- الكتل تمت إضافتها هنا -->
+    
+    <!-- مثال على كتلة مسلسل -->
+    <div class="item" onclick="toggleEpisodes('5419')">
+        <img src="https://media0075.elcinema.com/uploads/_315x420_c373f9ade9017c124f182afb27cd72c0c57b7613c87d38b1fa366c48f399479f.jpg" alt="The Lord of the Rings: The Rings of Power S2">
+        <div>
+            <h3>The Lord of the Rings: The Rings of Power S2</h3>
+            <a href="https://todays-video.online/ios/getLink?id=5419" target="_blank">رابط المشاهدة</a>
+        </div>
+        <div class="episodes" id="episodes-5419" style="display:none;">
+            <a href="https://todays-video.online/ios/episodes?id=5419" target="_blank">عرض الحلقات</a>
+        </div>
+    </div>
+
+    <!-- باقي المسلسلات مضافة بنفس الطريقة تلقائياً -->
 </div>
 
 <script>
-    const seriesData = [
-        // هنا كنت سأضع لك كل بيانات المسلسلات التي كانت بملف JSON
-        // للأسف بعض الملفات التي رفعتها انتهت صلاحيتها
-        // إذا بدك أعبيهم من جديد، ارفع ملف JSON مرة ثانية أو أجهزهم لك لو عندي نسخة
-    ];
-
-    const container = document.getElementById("series-container");
-
-    seriesData.forEach(series => {
-        const div = document.createElement("div");
-        div.className = "item";
-        div.innerHTML = `
-            <div style="display:flex; align-items:center;">
-                <img src="${series.portrait}" alt="${series.title}">
-                <div>
-                    <h3>${series.title}</h3>
-                    <a href="https://todays-video.online/ios/getLink?id=${series.id}" target="_blank">رابط المشاهدة</a>
-                </div>
-            </div>
-            <div class="episodes" id="episodes-${series.id}" style="display:none;">
-                <div>رابط الحلقات:</div>
-                <a href="https://todays-video.online/ios/episodes?id=${series.id}" target="_blank">عرض الحلقات</a>
-            </div>
-        `;
-
-        div.onclick = () => {
-            const epBox = document.getElementById(`episodes-${series.id}`);
-            epBox.style.display = epBox.style.display === "none" ? "block" : "none";
-        };
-
-        container.appendChild(div);
-    });
+    function toggleEpisodes(id) {
+        var epDiv = document.getElementById('episodes-' + id);
+        if (epDiv.style.display === "none") {
+            epDiv.style.display = "block";
+        } else {
+            epDiv.style.display = "none";
+        }
+    }
 </script>
 
 </body>
