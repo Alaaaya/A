@@ -2,19 +2,21 @@
 <html lang="ar">
 <head>
   <meta charset="UTF-8">
-  <title>منصة الفيديو المباشرة</title>
+  <title>منصة الفيديو - كل الحلقات</title>
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
   <style>
     body { font-family: Arial; direction: rtl; background: #f0f0f0; padding: 20px; }
-    .series { margin-bottom: 20px; background: #fff; border-radius: 6px; border: 1px solid #ddd; padding: 10px; }
-    .series img { width: 100%; height: 300px; object-fit: cover; border-radius: 4px; }
-    .series-title { font-weight: bold; font-size: 18px; margin: 10px 0; cursor: pointer; color: #333; }
+    .series { background: #fff; border: 1px solid #ddd; border-radius: 6px; padding: 10px; margin-bottom: 20px; }
+    .series img { width: 100%; height: 250px; object-fit: cover; border-radius: 4px; }
+    .series-title { font-weight: bold; font-size: 18px; margin: 10px 0; }
+    .episodes { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+    .episode { padding: 8px 12px; background: #eee; border-radius: 4px; cursor: pointer; }
     video { display: block; width: 100%; max-width: 720px; margin: 30px auto; }
   </style>
 </head>
 <body>
 
-<h2>منصة الفيديو</h2>
+<h2>منصة الفيديو - كل الحلقات</h2>
 <video id="player" controls></video>
 <div id="content"></div>
 
@@ -23,7 +25,6 @@
     {id: 5436, title: "العتاولة 2", poster: "https://media0075.elcinema.com/uploads/_315x420_c3ea99f1b5458adbc780d65cc5d68a5cf1f54f5b9b05dd75150979a47a50f99e.jpg"},
     {id: 5474, title: "شباب البومب 13", poster: "https://media0075.elcinema.com/uploads/_315x420_f0f39be50f6cf5e4a868de831d3e9fa8bf49ac63d60003c33d2631ec779fb8cd.jpg"},
     {id: 5505, title: "معاوية", poster: "https://media0075.elcinema.com/uploads/_315x420_fc089daaf230008885aeb032cb99a93f1c7bd9c91341570fef79185c1fc4eb83.jpg"}
-    // أضف المزيد هنا
   ];
 
   const container = document.getElementById("content");
@@ -32,15 +33,22 @@
   shows.forEach(show => {
     const div = document.createElement("div");
     div.className = "series";
+    
+    let episodesHtml = '';
+    for (let i = 1; i <= 10; i++) {
+      const epUrl = `https://clash.rosetta-one.online/videos/${show.id}/${show.id}_${i}_.m3u8`;
+      episodesHtml += `<div class="episode" onclick="play('${epUrl}')">حلقة ${i}</div>`;
+    }
+
     div.innerHTML = `
-      <img src="${show.poster}" alt="${show.title}" onclick="playFromId(${show.id})">
-      <div class="series-title" onclick="playFromId(${show.id})">${show.title}</div>
+      <img src="${show.poster}" alt="${show.title}">
+      <div class="series-title">${show.title}</div>
+      <div class="episodes">${episodesHtml}</div>
     `;
     container.appendChild(div);
   });
 
-  function playFromId(id) {
-    const url = `https://clash.rosetta-one.online/videos/${id}/${id}_2_.m3u8`;
+  function play(url) {
     if (Hls.isSupported()) {
       const hls = new Hls();
       hls.loadSource(url);
