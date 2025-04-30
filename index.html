@@ -1,85 +1,20 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>قائمة المسلسلات</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            direction: rtl;
-            background: #f4f4f4;
-            padding: 20px;
-        }
-        h1 {
-            text-align: center;
-        }
-        .search-box {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .search-box input {
-            padding: 10px;
-            width: 80%;
-            font-size: 16px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        .item {
-            background: white;
-            padding: 15px;
-            margin-bottom: 15px;
-            border-radius: 8px;
-            display: flex;
-            gap: 15px;
-            box-shadow: 0 0 5px rgba(0,0,0,0.1);
-        }
-        .item img {
-            width: 100px;
-            border-radius: 6px;
-        }
-        .item h3 {
-            margin: 0;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>مشاهدة الحلقات</title>
 </head>
 <body>
+  <h2>حلقات مسلسل معاوية</h2>
+  <button onclick="fetchEpisodes()">جلب الحلقات</button>
+  <pre id="result"></pre>
 
-<h1>قائمة المسلسلات</h1>
-<div class="search-box">
-    <input type="text" id="searchInput" placeholder="ابحث عن مسلسل...">
-</div>
-<div id="series-container"></div>
-
-<script>
-    const series = [
-        // هنا تم دمج البيانات بالكامل من JSON (مخفاة هنا للاختصار)
-    ];
-
-    const container = document.getElementById("series-container");
-
-    series.forEach(item => {
-        const div = document.createElement("div");
-        div.className = "item";
-        div.setAttribute("data-title", item.title.toLowerCase());
-        div.innerHTML = `
-            <img src="${item.portrait}" alt="${item.title}">
-            <div>
-                <h3>${item.title}</h3>
-                <a href="https://todays-video.online/ios/getLink?id=${item.id}" target="_blank">رابط المشاهدة</a>
-                <a href="https://todays-video.online/ios/episodes?id=${item.id}" target="_blank">رابط الحلقات</a>
-            </div>
-        `;
-        container.appendChild(div);
-    });
-
-    document.getElementById("searchInput").addEventListener("input", function () {
-        const term = this.value.toLowerCase();
-        document.querySelectorAll(".item").forEach(item => {
-            const title = item.getAttribute("data-title");
-            item.style.display = title.includes(term) ? "flex" : "none";
-        });
-    });
-</script>
-
+  <script>
+    async function fetchEpisodes() {
+      const res = await fetch('https://todays-video.online/ios/episodes?id=5505');
+      const data = await res.text();  // نستخدم text بدل json للعرض الخام
+      document.getElementById('result').innerText = data;
+    }
+  </script>
 </body>
 </html>
