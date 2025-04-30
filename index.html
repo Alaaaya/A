@@ -2,59 +2,55 @@
 <html lang="ar">
 <head>
   <meta charset="UTF-8">
-  <title>منصة الفيديو الكاملة</title>
+  <title>منصة عرض المسلسلات والأفلام</title>
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
   <style>
-    body { font-family: 'Arial', sans-serif; direction: rtl; background: #f5f5f5; padding: 20px; }
-    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; }
-    .item { background: #fff; border: 1px solid #ddd; border-radius: 5px; overflow: hidden; cursor: pointer; transition: 0.3s; text-align: center; }
-    .item:hover { box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-    .item img { width: 100%; height: 300px; object-fit: cover; }
-    .item p { padding: 10px; margin: 0; font-weight: bold; font-size: 15px; }
+    body { font-family: Arial; direction: rtl; background: #f0f0f0; padding: 20px; }
+    .series { margin-bottom: 20px; background: #fff; border-radius: 6px; border: 1px solid #ddd; padding: 10px; }
+    .series img { width: 100%; height: 300px; object-fit: cover; border-radius: 4px; }
+    .series-title { font-weight: bold; font-size: 18px; margin: 10px 0; cursor: pointer; color: #333; }
+    .episodes { display: none; margin-top: 10px; }
+    .episode { background: #f9f9f9; padding: 8px; margin: 5px 0; border-radius: 4px; cursor: pointer; }
     video { display: block; width: 100%; max-width: 720px; margin: 30px auto; }
   </style>
 </head>
 <body>
 
-  <h2>منصة الفيديو الكاملة</h2>
+  <h2>منصة عرض المسلسلات والأفلام</h2>
   <video id="player" controls></video>
-  <div class="grid" id="videoList"></div>
+  <div id="content">
+
+    <!-- مثال على مسلسل واحد -->
+    <div class="series">
+      <img src="https://media0075.elcinema.com/uploads/_315x420_fc089daaf230008885aeb032cb99a93f1c7bd9c91341570fef79185c1fc4eb83.jpg" alt="معاوية">
+      <div class="series-title" onclick="toggleEpisodes(this)">معاوية</div>
+      <div class="episodes">
+        <div class="episode" onclick="playEpisode(5505)">حلقة 1</div>
+        <div class="episode" onclick="playEpisode(5505)">حلقة 2</div>
+        <div class="episode" onclick="playEpisode(5505)">حلقة 3</div>
+      </div>
+    </div>
+
+    <!-- انسخ والصق هذا البلوك لكل مسلسل جديد وغير ID والعنوان والصورة -->
+
+  </div>
 
   <script>
-    const videos = [
-      {"id":5436,"title":"العتاولة 2","poster":"https://media0075.elcinema.com/uploads/_315x420_c3ea99f1b5458adbc780d65cc5d68a5cf1f54f5b9b05dd75150979a47a50f99e.jpg"},
-      {"id":5474,"title":"شباب البومب 13","poster":"https://media0075.elcinema.com/uploads/_315x420_f0f39be50f6cf5e4a868de831d3e9fa8bf49ac63d60003c33d2631ec779fb8cd.jpg"},
-      {"id":5493,"title":"جاك العلم ج2","poster":"https://media0075.elcinema.com/uploads/_315x420_1f25c6706be12953e60e1865382176fe282618d26299322e253f30766e1156a7.jpg"},
-      {"id":5507,"title":"نَفَس","poster":"https://media0075.elcinema.com/uploads/_315x420_e696af47d5ae4b95a5b9f9c1fb79178969de22997422a6f98b9d12e7b3b9d3e9.jpg"},
-      {"id":5479,"title":"وديمة وحليمة ج4","poster":"https://media0075.elcinema.com/uploads/_315x420_d11898125391744dc5e41081ab1c8325970558913ce39aa8028d6e419346e9ca.jpg"},
-      {"id":5430,"title":"فهد البطل","poster":"https://media0075.elcinema.com/uploads/_640x_65e9453610bed735c23e80bf957040321f719308e6f8f61495593512a46dac9b.jpg"},
-      {"id":5505,"title":"معاوية","poster":"https://media0075.elcinema.com/uploads/_315x420_fc089daaf230008885aeb032cb99a93f1c7bd9c91341570fef79185c1fc4eb83.jpg"}
-      // يمكنك إضافة باقي العناصر من الجدول كاملاً هنا...
-    ];
+    function toggleEpisodes(element) {
+      const episodes = element.nextElementSibling;
+      episodes.style.display = episodes.style.display === 'none' ? 'block' : 'none';
+    }
 
-    const container = document.getElementById('videoList');
-    const player = document.getElementById('player');
-
-    videos.forEach(video => {
-      const div = document.createElement('div');
-      div.className = 'item';
-      div.innerHTML = `
-        <img src="${video.poster}" alt="${video.title}">
-        <p>${video.title}</p>
-      `;
-      div.onclick = () => playVideo(video.id);
-      container.appendChild(div);
-    });
-
-    function playVideo(id) {
-      const url = `https://clash.rosetta-one.online/videos/${id}/${id}_2_.m3u8`;
+    function playEpisode(id) {
+      const m3u8Url = `https://clash.rosetta-one.online/videos/${id}/${id}_2_.m3u8`;
+      const player = document.getElementById('player');
       if (Hls.isSupported()) {
         const hls = new Hls();
-        hls.loadSource(url);
+        hls.loadSource(m3u8Url);
         hls.attachMedia(player);
         hls.on(Hls.Events.MANIFEST_PARSED, () => player.play());
       } else if (player.canPlayType('application/vnd.apple.mpegurl')) {
-        player.src = url;
+        player.src = m3u8Url;
         player.addEventListener('loadedmetadata', () => player.play());
       }
     }
