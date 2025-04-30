@@ -2,60 +2,68 @@
 <html lang="ar">
 <head>
   <meta charset="UTF-8">
-  <title>مسلسل بين السطور</title>
+  <title>قائمة المسلسلات</title>
   <style>
-    body { font-family: Arial, sans-serif; direction: rtl; background: #f9f9f9; padding: 20px; }
-    .episode { margin: 10px 0; padding: 10px; background: #fff; border: 1px solid #ccc; }
-    .episode img { width: 100px; vertical-align: middle; margin-left: 10px; }
-    .btn { background: #007bff; color: #fff; border: none; padding: 5px 10px; cursor: pointer; }
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f4f4f4;
+      padding: 20px;
+      direction: rtl;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 20px;
+      margin-top: 30px;
+    }
+    .card {
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      transition: transform 0.2s;
+      text-align: center;
+    }
+    .card:hover {
+      transform: scale(1.03);
+    }
+    .card img {
+      width: 100%;
+      height: 260px;
+      object-fit: cover;
+    }
+    .card h3 {
+      font-size: 16px;
+      margin: 10px;
+    }
+    .card .id {
+      font-size: 12px;
+      color: #888;
+      margin-bottom: 10px;
+    }
   </style>
 </head>
 <body>
 
-  <h1>مسلسل بين السطور - الموسم 2</h1>
-  <div id="episodes"></div>
-
-  <script>
-    const episodes = [
-      {
-        id: "ep1",
-        title: "الحلقة الأولى",
-        thumbnail: "https://example.com/thumb1.jpg",
-        duration: "42:00"
-      },
-      {
-        id: "ep2",
-        title: "الحلقة الثانية",
-        thumbnail: "https://example.com/thumb2.jpg",
-        duration: "43:00"
-      },
-      {
-        id: "ep3",
-        title: "الحلقة الثالثة",
-        thumbnail: "https://example.com/thumb3.jpg",
-        duration: "41:30"
-      }
-    ];
-
-    const container = document.getElementById("episodes");
-
-    episodes.forEach(ep => {
-      const div = document.createElement("div");
-      div.className = "episode";
-      div.innerHTML = `
-        <img src="${ep.thumbnail}" alt="${ep.title}">
-        <strong>${ep.title}</strong> - المدة: ${ep.duration}
-        <button class="btn" onclick="playEpisode('${ep.id}')">شغل الحلقة</button>
-      `;
-      container.appendChild(div);
-    });
-
-    function playEpisode(id) {
-      const streamURL = `https://todays-video.online/ios/getLink?id=${id}`;
-      alert("سيتم تشغيل: " + streamURL);
-      // لفتح الفيديو: window.open(streamURL, '_blank');
-    }
-  </script>
+  <h1>قائمة المسلسلات</h1>
+  <div class="grid">
+    <!-- نموذج لبطاقة مسلسل -->
+    <div class="card">
+      <img src="https://media0075.elcinema.com/uploads/_315x420_c373f9ade9017c124f182afb27cd72c0c57b7613c87d38b1fa366c48f399479f.jpg" alt="The Lord of the Rings">
+      <h3>The Lord of the Rings</h3>
+      <div class="id">ID: 5419</div>
+    </div>
+    <div class="card">
+      <img src="https://media0075.elcinema.com/uploads/_315x420_c1a0f73c80bcefb5eb759af9215129800de98eea517a74fefaba00a3c317bf65.jpg" alt="House of Dragons">
+      <h3>House of Dragons 2</h3>
+      <div class="id">ID: 5414</div>
+    </div>
+    <!-- كرر البلوك السابق لمسلسلات أخرى حسب الحاجة -->
+  </div>
 
 </body>
 </html>
