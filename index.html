@@ -2,63 +2,60 @@
 <html lang="ar">
 <head>
   <meta charset="UTF-8">
-  <title>منصة تشغيل الفيديو</title>
-  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+  <title>مسلسل بين السطور</title>
   <style>
-    body { font-family: Arial; direction: rtl; background: #f0f0f0; padding: 20px; }
-    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; }
-    .item { background: #fff; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; cursor: pointer; text-align: center; }
-    .item img { width: 100%; height: 300px; object-fit: cover; }
-    .item p { margin: 10px 0; font-weight: bold; }
-    video { display: block; width: 100%; max-width: 720px; margin: 30px auto; }
+    body { font-family: Arial, sans-serif; direction: rtl; background: #f9f9f9; padding: 20px; }
+    .episode { margin: 10px 0; padding: 10px; background: #fff; border: 1px solid #ccc; }
+    .episode img { width: 100px; vertical-align: middle; margin-left: 10px; }
+    .btn { background: #007bff; color: #fff; border: none; padding: 5px 10px; cursor: pointer; }
   </style>
 </head>
 <body>
 
-<h2>منصة تشغيل الفيديو</h2>
-<video id="player" controls></video>
-<div class="grid" id="content"></div>
+  <h1>مسلسل بين السطور - الموسم 2</h1>
+  <div id="episodes"></div>
 
-<script>
-  const content = document.getElementById("content");
-  const player = document.getElementById("player");
+  <script>
+    const episodes = [
+      {
+        id: "ep1",
+        title: "الحلقة الأولى",
+        thumbnail: "https://example.com/thumb1.jpg",
+        duration: "42:00"
+      },
+      {
+        id: "ep2",
+        title: "الحلقة الثانية",
+        thumbnail: "https://example.com/thumb2.jpg",
+        duration: "43:00"
+      },
+      {
+        id: "ep3",
+        title: "الحلقة الثالثة",
+        thumbnail: "https://example.com/thumb3.jpg",
+        duration: "41:30"
+      }
+    ];
 
-  fetch("https://todays-video.online/ios/splash?key=e25874f2d86e061e06a571f8ef006e0b&v=betweens2")
-    .then(res => res.json())
-    .then(data => {
-      const allItems = (data.banner || []).concat(data.ser_all || []);
-      allItems.forEach(item => {
-        const id = item.id;
-        const title = item.title;
-        const poster = item.portrait;
-        const ctg = (item.ctg || "").toString().toLowerCase();
+    const container = document.getElementById("episodes");
 
-        const url = ctg.includes("series")
-          ? `https://clash.rosetta-one.online/videos/${id}/${id}_2_.m3u8`
-          : `https://elrmdn.com/videos/${id}/${id}_1_.m3u8`;
-
-        const div = document.createElement("div");
-        div.className = "item";
-        div.innerHTML = `
-          <img src="${poster}" alt="${title}" onclick="playVideo('${url}')">
-          <p onclick="playVideo('${url}')">${title}</p>
-        `;
-        content.appendChild(div);
-      });
+    episodes.forEach(ep => {
+      const div = document.createElement("div");
+      div.className = "episode";
+      div.innerHTML = `
+        <img src="${ep.thumbnail}" alt="${ep.title}">
+        <strong>${ep.title}</strong> - المدة: ${ep.duration}
+        <button class="btn" onclick="playEpisode('${ep.id}')">شغل الحلقة</button>
+      `;
+      container.appendChild(div);
     });
 
-  function playVideo(url) {
-    if (Hls.isSupported()) {
-      const hls = new Hls();
-      hls.loadSource(url);
-      hls.attachMedia(player);
-      hls.on(Hls.Events.MANIFEST_PARSED, () => player.play());
-    } else if (player.canPlayType('application/vnd.apple.mpegurl')) {
-      player.src = url;
-      player.addEventListener('loadedmetadata', () => player.play());
+    function playEpisode(id) {
+      const streamURL = `https://todays-video.online/ios/getLink?id=${id}`;
+      alert("سيتم تشغيل: " + streamURL);
+      // لفتح الفيديو: window.open(streamURL, '_blank');
     }
-  }
-</script>
+  </script>
 
 </body>
 </html>
