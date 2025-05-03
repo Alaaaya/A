@@ -269,14 +269,6 @@
             </button>
         </div>
 
-        <!-- عناصر تحكم مخصصة -->
-        <div class="custom-controls">
-            <button id="playPauseBtn"><i class="fas fa-play"></i></button>
-            <input type="range" id="volumeSlider" min="0" max="1" step="0.1" value="1">
-            <span id="currentTime">00:00</span> / <span id="duration">00:00</span>
-            <button id="shareBtn"><i class="fas fa-share-alt"></i></button>
-        </div>
-
         <!-- القنوات المفضلة -->
         <div class="section-title" id="favoritesTitle"> القنوات المفضلة</div>
         <div class="channel-grid" id="favoritesGrid">
@@ -494,15 +486,6 @@
                     timestamp: new Date().toISOString() 
                 });
                 localStorage.setItem("history", JSON.stringify(history.slice(0, 5)));
-            }
-            
-            // تنسيق الوقت
-            function formatTime(seconds) {
-                if (isNaN(seconds)) return "00:00";
-                
-                const mins = Math.floor(seconds / 60);
-                const secs = Math.floor(seconds % 60);
-                return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
             }
             
             // البحث عن القنوات
