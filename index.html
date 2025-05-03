@@ -21,3 +21,157 @@
         }
 
         html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Tahoma', sans-serif;
+            color: white;
+            min-height: 100vh;
+            background: url('https://i.pinimg.com/736x/a0/ad/75/a0ad758c1fe0cb8350624eecb77c27ca.jpg') 
+                        no-repeat center center fixed;
+            background-size: cover;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            padding: 20px;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .player-section,
+        .channel-card,
+        .section-title {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
+            border-radius: 15px;
+            padding: 15px;
+            transition: all 0.3s ease-in-out;
+        }
+
+        #videoPlayer {
+            width: 100%;
+            height: 40vh;
+            background: #000;
+            object-fit: cover;
+            border-radius: 15px;
+        }
+
+        .channel-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+
+        .channel-card {
+            text-align: center;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            padding: 15px;
+        }
+
+        .channel-card:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+        }
+
+        .channel-card.active {
+            background: rgba(33, 150, 243, 0.15);
+            border: 1px solid rgba(33, 150, 243, 0.3);
+        }
+
+        .channel-logo {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            margin-bottom: 10px;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+            transition: transform 0.3s ease;
+        }
+
+        .channel-card:hover .channel-logo {
+            transform: scale(1.1);
+        }
+
+        .channel-name {
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.95);
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            letter-spacing: -0.5px;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-align: center;
+            padding: 10px;
+            margin-top: 5px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="player-section">
+            <video id="videoPlayer" controls autoplay playsinline></video>
+        </div>
+
+        <!-- قسم المفضلة الجديد -->
+        <div class="section-title">المفضلة</div>
+        <div class="channel-grid" id="favoritesGrid"></div>
+
+        <!-- قنوات الأخبار -->
+        <div class="section-title"> قنوات الأخبار</div>
+        <div class="channel-grid" id="newsChannels">
+            <!-- المحتوى الأصلي بالكامل هنا (قنوات الأخبار) -->
+        </div>
+
+        <!-- قنوات المسلسلات -->
+        <div class="section-title"> قنوات المسلسلات</div>
+        <div class="channel-grid" id="seriesChannels">
+            <!-- المحتوى الأصلي بالكامل هنا (قنوات المسلسلات) -->
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const videoPlayer = document.getElementById("videoPlayer");
+            const channels = document.querySelectorAll(".channel-card");
+            const favoritesGrid = document.getElementById("favoritesGrid");
+
+            function setActiveChannel(channel) {
+                channels.forEach(c => c.classList.remove("active"));
+                channel.classList.add("active");
+                videoPlayer.src = channel.getAttribute("data-src");
+            }
+
+            channels.forEach(channel => {
+                channel.addEventListener("click", function() {
+                    setActiveChannel(channel);
+                });
+
+                channel.addEventListener("dblclick", function() {
+                    if (![...favoritesGrid.children].some(fav => fav.getAttribute("data-src") === channel.getAttribute("data-src"))) {
+                        const favoriteChannel = channel.cloneNode(true);
+                        favoriteChannel.addEventListener("click", () => setActiveChannel(favoriteChannel));
+                        favoritesGrid.appendChild(favoriteChannel);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
