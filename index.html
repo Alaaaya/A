@@ -238,31 +238,6 @@
             background: var(--primary-color);
             border-radius: 3px;
         }
-
-        /* أزرار التحكم */
-        .control-buttons {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-        }
-
-        .theme-toggle, .language-toggle {
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            color: inherit;
-            padding: 8px 15px;
-            border-radius: 20px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.3s;
-        }
-
-        .theme-toggle:hover, .language-toggle:hover {
-            background: rgba(255, 255, 255, 0.2);
-        }
-
         /* تصميم متجاوب للهواتف */
         @media (max-width: 768px) {
             .channel-grid {
@@ -328,16 +303,6 @@
 </head>
 <body>
     <div class="container">
-        <!-- أزرار التحكم -->
-        <div class="control-buttons">
-            <button class="theme-toggle" id="themeToggle">
-                <i class="fas fa-moon"></i> <span>الوضع الليلي</span>
-            </button>
-            <button class="language-toggle" id="languageToggle">
-                <i class="fas fa-language"></i> <span>English</span>
-            </button>
-        </div>
-
         <!-- شريط البحث -->
         <div class="search-bar">
             <input type="text" id="searchInput" placeholder="ابحث عن قناة...">
@@ -346,27 +311,7 @@
 
         <!-- مشغل الفيديو -->
         <div class="player-section">
-            <!-- شاشة التحميل -->
-            <div class="loading-overlay" id="loadingOverlay">
-                <div class="spinner"></div>
-                <p>جارٍ التحميل...</p>
-            </div>
-            
-            <video id="videoPlayer" controls autoplay playsinline></video>
-            <button class="fullscreen-btn" id="fullscreenBtn" title="ملء الشاشة">
-                <i class="fas fa-expand"></i>
-            </button>
-        </div>
-
-        <!-- عناصر تحكم مخصصة -->
-        <div class="custom-controls">
-            <button id="playPauseBtn"><i class="fas fa-play"></i></button>
-            <input type="range" id="volumeSlider" min="0" max="1" step="0.1" value="1">
-            <span id="currentTime">00:00</span> / <span id="duration">00:00</span>
-            <button id="shareBtn"><i class="fas fa-share-alt"></i></button>
-        </div>
-
-        <!-- القنوات المفضلة -->
+               <!-- القنوات المفضلة -->
         <div class="section-title" id="favoritesTitle"> القنوات المفضلة</div>
         <div class="channel-grid" id="favoritesGrid">
             <!-- سيتم ملؤها ديناميكيًا -->
