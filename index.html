@@ -3,11 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>بث مباشر - قنوات إخبارية</title>
-  <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-  />
+  <title>بث مباشر - قنوات عربية</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <style>
     :root {
       --primary-color: #2196f3;
@@ -156,8 +153,11 @@
     <div class="section-title">القنوات المفضلة</div>
     <div class="channel-grid" id="favoritesGrid"></div>
 
+    <div class="section-title">سجل المشاهدة</div>
+    <div class="channel-grid" id="historyGrid"></div>
+
     <div class="section-title">قنوات الأخبار</div>
-    <div class="channel-grid" id="channelGrid">
+    <div class="channel-grid" id="newsGrid">
       <div class="channel-card" data-id="aljazeera" data-src="https://live-hls-web-aja.getaj.net/AJA/index.m3u8">
         <i class="fas fa-star favorite-icon"></i>
         <img src="https://iconape.com/wp-content/files/kt/20448/png/Aljazeera-01.png" class="channel-logo">
@@ -169,23 +169,49 @@
         <div class="channel-name">العربية</div>
       </div>
     </div>
+
+    <div class="section-title">قنوات المسلسلات</div>
+    <div class="channel-grid" id="seriesGrid">
+      <div class="channel-card" data-id="mbc1" data-src="https://shls-mbc1na-prod-dub.shahid.net/out/v1/84ab37e99d6e4b16b33c6600f94f6ccb/index_7.m3u8">
+        <i class="fas fa-star favorite-icon"></i>
+        <img src="https://upload.wikimedia.org/wikipedia/commons/8/81/Mbc1logo.png" class="channel-logo">
+        <div class="channel-name">MBC 1</div>
+      </div>
+    </div>
+
+    <div class="section-title">قنوات رياضية</div>
+    <div class="channel-grid" id="sportsGrid">
+      <div class="channel-card" data-id="beinsports" data-src="https://example.com/sports1.m3u8">
+        <i class="fas fa-star favorite-icon"></i>
+        <img src="https://upload.wikimedia.org/wikipedia/commons/a/a9/Bein_Sports_logo.svg" class="channel-logo">
+        <div class="channel-name">بي إن سبورت</div>
+      </div>
+    </div>
   </div>
 
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       const videoPlayer = document.getElementById("videoPlayer");
-      const channels = document.querySelectorAll(".channel-card");
-      const favoritesGrid = document.getElementById("favoritesGrid");
       const searchInput = document.getElementById("searchInput");
       const themeToggle = document.getElementById("themeToggle");
+      const favoritesGrid = document.getElementById("favoritesGrid");
+      const historyGrid = document.getElementById("historyGrid");
+      const allChannels = document.querySelectorAll(".channel-card");
 
       let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+      let history = JSON.parse(localStorage.getItem("history")) || [];
 
       function setActiveChannel(channel) {
-        channels.forEach(c => c.classList.remove("active"));
+        allChannels.forEach(c => c.classList.remove("active"));
         channel.classList.add("active");
-        videoPlayer.src = channel.getAttribute("data-src");
+        const src = channel.getAttribute("data-src");
+        const name = channel.querySelector(".channel-name").textContent;
+        const logo = channel.querySelector(".channel-logo").src;
+        videoPlayer.src = src;
         videoPlayer.play().catch(() => alert("اضغط للتشغيل"));
+
+        addToHistory(name, logo);
+        updateHistory();
       }
 
       function toggleFavorite(channel) {
@@ -201,16 +227,22 @@
         updateFavorites();
       }
 
+      function addToHistory(name, logo) {
+        history.unshift({ name, logo, time: new Date().toISOString() });
+        history = history.slice(0, 6);
+        localStorage.setItem("history", JSON.stringify(history));
+      }
+
       function updateFavorites() {
         favoritesGrid.innerHTML = "";
-        favorites.forEach(favId => {
-          const original = document.querySelector(`.channel-card[data-id="${favId}"]`);
+        favorites.forEach(id => {
+          const original = document.querySelector(`.channel-card[data-id="${id}"]`);
           if (original) {
             const clone = original.cloneNode(true);
             clone.classList.remove("active");
             favoritesGrid.appendChild(clone);
             clone.addEventListener("click", () => setActiveChannel(original));
-            clone.querySelector(".favorite-icon").addEventListener("click", (e) => {
+            clone.querySelector(".favorite-icon").addEventListener("click", e => {
               e.stopPropagation();
               toggleFavorite(original);
             });
@@ -218,9 +250,27 @@
         });
       }
 
-      channels.forEach(channel => {
+      function updateHistory() {
+        historyGrid.innerHTML = "";
+        history.forEach(item => {
+          const div = document.createElement("div");
+          div.className = "channel-card";
+          div.innerHTML = `
+            <img src="${item.logo}" class="channel-logo">
+            <div class="channel-name">${item.name}</div>
+          `;
+          div.addEventListener("click", () => {
+            const original = [...allChannels].find(c => c.querySelector(".channel-name").textContent === item.name);
+            if (original) setActiveChannel(original);
+          });
+          historyGrid.appendChild(div);
+        });
+      }
+
+      allChannels.forEach(channel => {
         channel.addEventListener("click", () => setActiveChannel(channel));
-        channel.querySelector(".favorite-icon").addEventListener("click", (e) => {
+        const icon = channel.querySelector(".favorite-icon");
+        icon.addEventListener("click", e => {
           e.stopPropagation();
           toggleFavorite(channel);
         });
@@ -233,7 +283,7 @@
 
       searchInput.addEventListener("input", () => {
         const value = searchInput.value.toLowerCase();
-        channels.forEach(channel => {
+        allChannels.forEach(channel => {
           const name = channel.querySelector(".channel-name").textContent.toLowerCase();
           channel.style.display = name.includes(value) ? "block" : "none";
         });
@@ -244,8 +294,9 @@
       });
 
       updateFavorites();
-      const defaultChannel = document.querySelector(".channel-card");
-      if (defaultChannel) setActiveChannel(defaultChannel);
+      updateHistory();
+      const first = document.querySelector(".channel-card");
+      if (first) setActiveChannel(first);
     });
   </script>
 </body>
