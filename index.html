@@ -2,7 +2,7 @@
 <html lang="ar">
 <head>
   <meta charset="UTF-8">
-  <title>جميع قنوات IPTV</title>
+  <title>جميع قنوات IPTV (ثابت)</title>
   <style>
     body { font-family: sans-serif; direction: rtl; padding: 20px; }
     h1 { text-align: center; }
@@ -12,7 +12,6 @@
     .channel-link:hover { text-decoration: underline; }
     #player { width: 100%; max-width: 720px; height: 405px; margin: 20px auto; display: block; background: #000; }
   </style>
-  <!-- مكتبة hls.js لتشغيل HLS على جميع المتصفحات -->
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
 <body>
@@ -20,74 +19,61 @@
   <h1>جميع قنوات IPTV</h1>
   <video id="player" controls></video>
   <ul id="channels">
-    <li>جارٍ تحميل القنوات، انتظر لحظة...</li>
+    <!-- القنوات الثابتة السابقة -->
+    <li>
+      <a class="channel-link"
+         data-url="https://assets-iptv2022.cdnvideo.ru/live/101/index.m3u8">
+        القناة الأولى HD
+      </a>
+    </li>
+    <li>
+      <a class="channel-link"
+         data-url="https://assets-iptv2022.cdnvideo.ru/live/102/index.m3u8">
+        القناة الرياضية
+      </a>
+    </li>
+    <li>
+      <a class="channel-link"
+         data-url="https://assets-iptv2022.cdnvideo.ru/live/103/index.m3u8">
+        قناة الأخبار
+      </a>
+    </li>
+    <li>
+      <a class="channel-link"
+         data-url="https://assets-iptv2022.cdnvideo.ru/live/104/index.m3u8">
+        قناة الأطفال
+      </a>
+    </li>
+
+    <!-- القناة المكتشفة حديثاً -->
+    <li>
+      <a class="channel-link"
+         data-url="https://helga.iptv2022.com/Al_Jazeera/index.m3u8">
+        Al Jazeera
+      </a>
+    </li>
   </ul>
 
   <script>
-    const primaryAPI  = 'https://info.iptv2022.com/api/getPlaylist';
-    const fallbackAPI = 'https://pl.iptv2021.com/api/getPlaylist';
-    const listEl      = document.getElementById('channels');
-    const player      = document.getElementById('player');
+    const player = document.getElementById('player');
 
-    // تحميل القنوات من API معيّن
-    async function fetchChannels(api) {
-      const res = await fetch(api, { headers: { 'Accept': 'application/json' } });
-      if (!res.ok) throw new Error(`API failed: ${res.status}`);
-      const { data } = await res.json();
-      return data.channels;
-    }
-
-    // المحاولة الأوليّة ثم الاحتياطيّة
-    async function loadAllChannels() {
-      try {
-        return await fetchChannels(primaryAPI);
-      } catch (e1) {
-        console.warn('الرئيسي فشل:', e1);
-        try {
-          return await fetchChannels(fallbackAPI);
-        } catch (e2) {
-          console.error('الاحتياطي فشل:', e2);
-          throw new Error('تعذر جلب قائمة القنوات من كلا الخادمين');
+    document.querySelectorAll('.channel-link').forEach(a => {
+      a.addEventListener('click', e => {
+        e.preventDefault();
+        const url = a.dataset.url;
+        if (Hls.isSupported()) {
+          const hls = new Hls();
+          hls.loadSource(url);
+          hls.attachMedia(player);
+          hls.on(Hls.Events.MANIFEST_PARSED, () => player.play());
+        } else if (player.canPlayType('application/vnd.apple.mpegurl')) {
+          player.src = url;
+          player.play();
+        } else {
+          alert('هذا المتصفح لا يدعم تشغيل HLS.');
         }
-      }
-    }
-
-    // عرض كل القنوات
-    function render(channels) {
-      listEl.innerHTML = '';
-      channels.forEach(ch => {
-        const li = document.createElement('li');
-        const a  = document.createElement('a');
-        a.textContent = ch.name;
-        a.className   = 'channel-link';
-        a.dataset.url = ch.stream_url;
-        a.onclick = () => play(ch.stream_url);
-        li.appendChild(a);
-        listEl.appendChild(li);
       });
-    }
-
-    // تشغيل قناة
-    function play(url) {
-      if (Hls.isSupported()) {
-        const hls = new Hls();
-        hls.loadSource(url);
-        hls.attachMedia(player);
-        hls.on(Hls.Events.MANIFEST_PARSED, () => player.play());
-      } else if (player.canPlayType('application/vnd.apple.mpegurl')) {
-        player.src = url;
-        player.play();
-      } else {
-        alert('المتصفح لا يدعم HLS.');
-      }
-    }
-
-    // تنفيذ
-    loadAllChannels()
-      .then(render)
-      .catch(err => {
-        listEl.innerHTML = `<li style="color:red;">${err.message}</li>`;
-      });
+    });
   </script>
 
 </body>
