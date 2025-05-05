@@ -2,79 +2,73 @@
 <html lang="ar">
 <head>
   <meta charset="UTF-8">
-  <title>قائمة قنوات IPTV</title>
+  <title>جميع قنوات IPTV</title>
   <style>
     body { font-family: sans-serif; direction: rtl; padding: 20px; }
     h1 { text-align: center; }
     #channels { list-style: none; padding: 0; }
-    #channels li { margin: 10px 0; }
-    .channel-link { text-decoration: none; color: #0066cc; }
+    #channels li { margin: 8px 0; }
+    .channel-link { text-decoration: none; color: #0066cc; cursor: pointer; }
     .channel-link:hover { text-decoration: underline; }
-    #player { width: 100%; max-width: 640px; margin: 20px auto; display: block; }
+    #player { width: 100%; max-width: 720px; height: 405px; margin: 20px auto; display: block; background: #000; }
   </style>
-  <!-- تضمين مكتبة hls.js لتشغيل HLS في المستعرضات التي لا تدعم الفيديو مباشرة -->
+  <!-- مكتبة hls.js لتشغيل HLS على جميع المتصفحات -->
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
 <body>
 
-  <h1>قائمة قنوات IPTV</h1>
+  <h1>جميع قنوات IPTV</h1>
   <video id="player" controls></video>
   <ul id="channels">
-    <li>جارٍ تحميل القنوات…</li>
+    <li>جارٍ تحميل القنوات، انتظر لحظة...</li>
   </ul>
 
   <script>
-    const primaryAPI    = 'https://info.iptv2022.com/api/getPlaylist';
-    const fallbackAPI   = 'https://pl.iptv2021.com/api/getPlaylist';
-    const player        = document.getElementById('player');
-    const listContainer = document.getElementById('channels');
+    const primaryAPI  = 'https://info.iptv2022.com/api/getPlaylist';
+    const fallbackAPI = 'https://pl.iptv2021.com/api/getPlaylist';
+    const listEl      = document.getElementById('channels');
+    const player      = document.getElementById('player');
 
-    // دالة لتحميل قائمة القنوات من خادم معيّن
-    async function loadChannels(apiUrl) {
-      const res = await fetch(apiUrl, { headers: { Accept: 'application/json' } });
-      if (!res.ok) throw new Error('API error ' + res.status);
-      const json = await res.json();
-      return json.data.channels;
+    // تحميل القنوات من API معيّن
+    async function fetchChannels(api) {
+      const res = await fetch(api, { headers: { 'Accept': 'application/json' } });
+      if (!res.ok) throw new Error(`API failed: ${res.status}`);
+      const { data } = await res.json();
+      return data.channels;
     }
 
-    // محاولة جلب القنوات من الرئيسي ثم الاحتياطي
-    async function init() {
+    // المحاولة الأوليّة ثم الاحتياطيّة
+    async function loadAllChannels() {
       try {
-        const channels = await loadChannels(primaryAPI);
-        renderChannelList(channels);
-      } catch (e) {
-        console.warn('الرئيسي فشل:', e);
+        return await fetchChannels(primaryAPI);
+      } catch (e1) {
+        console.warn('الرئيسي فشل:', e1);
         try {
-          const channels = await loadChannels(fallbackAPI);
-          renderChannelList(channels);
+          return await fetchChannels(fallbackAPI);
         } catch (e2) {
           console.error('الاحتياطي فشل:', e2);
-          listContainer.innerHTML = '<li>تعذّر تحميل قائمة القنوات من كلا الخادمين.</li>';
+          throw new Error('تعذر جلب قائمة القنوات من كلا الخادمين');
         }
       }
     }
 
-    // عرض القائمة في الصفحة
-    function renderChannelList(channels) {
-      listContainer.innerHTML = '';
+    // عرض كل القنوات
+    function render(channels) {
+      listEl.innerHTML = '';
       channels.forEach(ch => {
         const li = document.createElement('li');
         const a  = document.createElement('a');
         a.textContent = ch.name;
-        a.href        = '#';
         a.className   = 'channel-link';
         a.dataset.url = ch.stream_url;
-        a.onclick = e => {
-          e.preventDefault();
-          playStream(e.target.dataset.url);
-        };
+        a.onclick = () => play(ch.stream_url);
         li.appendChild(a);
-        listContainer.appendChild(li);
+        listEl.appendChild(li);
       });
     }
 
-    // تشغيل مسار HLS في عنصر الفيديو
-    function playStream(url) {
+    // تشغيل قناة
+    function play(url) {
       if (Hls.isSupported()) {
         const hls = new Hls();
         hls.loadSource(url);
@@ -84,12 +78,16 @@
         player.src = url;
         player.play();
       } else {
-        alert('هذا المتصفح لا يدعم تشغيل HLS بشكل مباشر.');
+        alert('المتصفح لا يدعم HLS.');
       }
     }
 
-    // بدء العملية
-    init();
+    // تنفيذ
+    loadAllChannels()
+      .then(render)
+      .catch(err => {
+        listEl.innerHTML = `<li style="color:red;">${err.message}</li>`;
+      });
   </script>
 
 </body>
