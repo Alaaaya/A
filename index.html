@@ -1,420 +1,96 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>بث مباشر – قنوات إخبارية ومسلسلات</title>
-
-  <!-- PWA manifest & icons -->
-  <link rel="manifest" href="manifest.json" />
-  <link rel="icon" href="icons/icon-192.png" sizes="192x192" />
-  <link rel="apple-touch-icon" href="icons/icon-192.png" />
-
-  <!-- Font Awesome & HLS.js & WebTorrent -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-  <script src="https://cdn.jsdelivr.net/npm/webtorrent@latest/webtorrent.min.js"></script>
-
+  <meta charset="UTF-8">
+  <title>قائمة قنوات IPTV</title>
   <style>
-    :root {
-      --primary-color: rgba(33,150,243,0.9);
-      --bg-gradient: linear-gradient(45deg,#0f172a,#1e293b);
-      --glass-bg: rgba(255,255,255,0.1);
-      --glass-border: rgba(255,255,255,0.25);
-      --glass-shadow: 0 8px 32px rgba(0,0,0,0.3);
-      --error-color: #ff4444;
-      --success-color: #00C851;
-      --favorite-color: #ffd700;
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { height: 100%; }
-    body {
-      font-family: 'Segoe UI','Tahoma',sans-serif;
-      color: #fff;
-      background: var(--bg-gradient);
-      display: flex; flex-direction: column; align-items: center;
-      transition: .3s ease;
-    }
-    body.light-mode {
-      --glass-bg: rgba(255,255,255,0.8);
-      --glass-border: rgba(0,0,0,0.1);
-      color: #333;
-      background: #f5f5f5;
-    }
-    .container { max-width:1200px; width:100%; padding:20px; flex:1; overflow-y:auto; }
-
-    .alert {
-      position: fixed; top:20px; right:20px;
-      padding:15px; border-radius:5px; color:#fff; display:none;
-      z-index:100; max-width:300px; animation:slideIn .5s forwards;
-    }
-    .alert.error { background: var(--error-color); }
-    .alert.success { background: var(--success-color); }
-    @keyframes slideIn {
-      from { transform: translateX(100%); opacity:0 }
-      to   { transform: translateX(0);   opacity:1 }
-    }
-
-    .control-buttons {
-      display:flex; justify-content:space-between; margin-bottom:20px;
-    }
-    .theme-toggle,.language-toggle {
-      background: var(--glass-bg); border:1px solid var(--glass-border);
-      padding:8px 15px; border-radius:20px; cursor:pointer;
-      display:flex; align-items:center; gap:8px;
-    }
-
-    .search-bar {
-      display:flex; align-items:center; background:var(--glass-bg);
-      border:1px solid var(--glass-border); border-radius:15px;
-      padding:10px; margin-bottom:20px;
-    }
-    .search-bar input {
-      flex:1; background:transparent; border:none; font-size:16px; color:inherit;
-    }
-    .search-bar input::placeholder { color:rgba(255,255,255,.7); }
-    .search-bar i { margin-left:10px; }
-
-    .player-section {
-      position:relative; margin-bottom:20px;
-      background: var(--glass-bg); border:1px solid var(--glass-border);
-      box-shadow: var(--glass-shadow); border-radius:15px;
-      padding:15px;
-    }
-    #videoPlayer {
-      width:100%; height:40vh; background:#000; object-fit:cover; border-radius:15px;
-    }
-    .loading-overlay {
-      position:absolute; top:0; left:0; right:0; bottom:0;
-      background:rgba(0,0,0,.7); display:none;
-      justify-content:center; align-items:center; flex-direction:column;
-      border-radius:15px; z-index:10;
-    }
-    .progress-bar {
-      width:0%; height:5px; background:var(--primary-color);
-      border-radius:0 0 15px 15px; margin-bottom:10px;
-    }
-    .custom-controls {
-      display:flex; flex-wrap:wrap; gap:10px; margin-top:10px;
-    }
-    .custom-controls button,
-    .custom-controls select {
-      background:var(--glass-bg); border:1px solid var(--glass-border);
-      padding:8px 12px; border-radius:8px; cursor:pointer; font-size:1rem;
-    }
-
-    .section-title {
-      font-size:1.5rem; font-weight:bold; text-align:center;
-      background:var(--glass-bg); border:1px solid var(--glass-border);
-      box-shadow:var(--glass-shadow); border-radius:15px;
-      padding:10px; margin:20px 0 10px;
-    }
-
-    .channel-grid {
-      display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
-      gap:15px; margin-bottom:40px;
-    }
-    .channel-card {
-      position:relative; text-align:center; padding:15px;
-      background:var(--glass-bg); border:1px solid var(--glass-border);
-      box-shadow:var(--glass-shadow); border-radius:15px;
-      cursor:pointer; transition:.3s;
-    }
-    .channel-card:hover {
-      transform:translateY(-5px) scale(1.05);
-      box-shadow:0 12px 40px rgba(0,0,0,.35);
-    }
-    .channel-card.active {
-      background:rgba(33,150,243,.15);
-      border-color:rgba(33,150,243,.3);
-    }
-    .favorite-icon {
-      position:absolute; top:5px; left:5px;
-      color:rgba(255,255,255,.3); font-size:1.2rem; cursor:pointer;
-      transition:.3s;
-    }
-    .channel-card.favorite .favorite-icon { color:var(--favorite-color); }
-    .channel-logo {
-      width:80px; height:80px; object-fit:contain; margin-bottom:10px;
-      transition:.3s;
-    }
-    .channel-card:hover .channel-logo { transform:scale(1.1); }
-    .channel-name {
-      font-weight:700; letter-spacing:-.5px;
-      text-shadow:0 2px 4px rgba(0,0,0,.2);
-    }
-
-    .epg-section {
-      background:var(--glass-bg); border:1px solid var(--glass-border);
-      box-shadow:var(--glass-shadow); border-radius:15px;
-      padding:20px; margin-top:40px;
-    }
-    .epg-section h2 { text-align:center; margin-bottom:10px; }
-    .epg-section ul { list-style:none; padding:0; }
-    .epg-section li { margin-bottom:8px; }
-
-    @media(max-width:768px) {
-      #videoPlayer { height:30vh; }
-      .channel-grid { grid-template-columns:repeat(auto-fill,minmax(120px,1fr)); }
-      .channel-logo { width:60px; height:60px; }
-      .section-title { font-size:1.2rem; }
-    }
+    body { font-family: sans-serif; direction: rtl; padding: 20px; }
+    h1 { text-align: center; }
+    #channels { list-style: none; padding: 0; }
+    #channels li { margin: 10px 0; }
+    .channel-link { text-decoration: none; color: #0066cc; }
+    .channel-link:hover { text-decoration: underline; }
+    #player { width: 100%; max-width: 640px; margin: 20px auto; display: block; }
   </style>
+  <!-- تضمين مكتبة hls.js لتشغيل HLS في المستعرضات التي لا تدعم الفيديو مباشرة -->
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
 <body>
-  <div class="container">
-    <div class="alert error" id="errorAlert"><i class="fas fa-exclamation-circle"></i> <span></span></div>
-    <div class="alert success" id="successAlert"><i class="fas fa-check-circle"></i> <span></span></div>
 
-    <div class="control-buttons">
-      <button class="theme-toggle" id="themeToggle"><i class="fas fa-moon"></i> <span>الوضع الليلي</span></button>
-      <button class="language-toggle" id="languageToggle"><i class="fas fa-language"></i> <span>English</span></button>
-    </div>
-
-    <div class="search-bar" role="search">
-      <input list="channelsList" id="searchInput" placeholder="ابحث عن قناة…" aria-label="بحث عن قناة">
-      <datalist id="channelsList"></datalist>
-      <i class="fas fa-search"></i>
-    </div>
-
-    <div class="player-section" aria-label="مشغل الفيديو">
-      <div class="loading-overlay" id="loadingOverlay">
-        <div class="progress-bar" id="progressBar"></div>
-        <p id="loadingText">جارٍ التحميل…</p>
-      </div>
-      <video id="videoPlayer" controls autoplay playsinline></video>
-      <div class="custom-controls">
-        <button id="pipBtn" aria-label="Picture-in-Picture">PiP</button>
-        <button id="audioOnlyBtn" aria-pressed="false" aria-label="وضع الصوت فقط">Audio Only</button>
-        <select id="qualitySelect" aria-label="اختيار جودة البث"></select>
-        <button id="fullscreenBtn" aria-label="ملء الشاشة"><i class="fas fa-expand"></i></button>
-        <button id="shareBtn" aria-label="مشاركة"><i class="fas fa-share-alt"></i></button>
-      </div>
-      <track id="subtitleTrack" label="العربية" kind="subtitles" srclang="ar" default>
-    </div>
-
-    <div class="section-title" id="favoritesTitle">القنوات المفضلة</div>
-    <div class="channel-grid" id="favoritesGrid"></div>
-
-    <div class="section-title">قنوات الأخبار</div>
-    <div class="channel-grid" id="newsGrid">
-      <!-- قنوات الأخبار: انسخ هنا جميع القنوات -->
-      <div class="channel-card" data-src="https://live-hls-web-aja.getaj.net/AJA/index.m3u8" data-id="aljazeera">
-        <i class="fas fa-star favorite-icon"></i>
-        <img class="channel-logo" src="https://iconape.com/wp-content/files/kt/20448/png/Aljazeera-01.png" alt="الجزيرة">
-        <div class="channel-name">الجزيرة</div>
-      </div>
-      <!-- ... أضف باقي القنوات -->
-    </div>
-
-    <div class="section-title">قنوات المسلسلات</div>
-    <div class="channel-grid" id="seriesGrid">
-      <!-- انسخ هنا قنوات المسلسلات -->
-    </div>
-
-    <div class="section-title">القنوات الرياضية</div>
-    <div class="channel-grid" id="sportsGrid">
-      <!-- انسخ هنا قنوات رياضية -->
-    </div>
-
-    <section class="epg-section" aria-labelledby="epg-title">
-      <h2 id="epg-title">دليل البرامج</h2>
-      <ul id="epgList"></ul>
-    </section>
-  </div>
+  <h1>قائمة قنوات IPTV</h1>
+  <video id="player" controls></video>
+  <ul id="channels">
+    <li>جارٍ تحميل القنوات…</li>
+  </ul>
 
   <script>
-    // Service Worker
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('service-worker.js').catch(console.error);
+    const primaryAPI    = 'https://info.iptv2022.com/api/getPlaylist';
+    const fallbackAPI   = 'https://pl.iptv2021.com/api/getPlaylist';
+    const player        = document.getElementById('player');
+    const listContainer = document.getElementById('channels');
+
+    // دالة لتحميل قائمة القنوات من خادم معيّن
+    async function loadChannels(apiUrl) {
+      const res = await fetch(apiUrl, { headers: { Accept: 'application/json' } });
+      if (!res.ok) throw new Error('API error ' + res.status);
+      const json = await res.json();
+      return json.data.channels;
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
-      const videoPlayer   = document.getElementById('videoPlayer');
-      const channels      = document.querySelectorAll('.channel-card');
-      const loadingOverlay= document.getElementById('loadingOverlay');
-      const progressBar   = document.getElementById('progressBar');
-      const pipBtn        = document.getElementById('pipBtn');
-      const audioBtn      = document.getElementById('audioOnlyBtn');
-      const qualitySelect = document.getElementById('qualitySelect');
-      const shareBtn      = document.getElementById('shareBtn');
-      const subtitleTrack = document.getElementById('subtitleTrack');
-      const epgList       = document.getElementById('epgList');
-      const datalist      = document.getElementById('channelsList');
-      const searchInput   = document.getElementById('searchInput');
-      const themeToggle   = document.getElementById('themeToggle');
-      const languageToggle= document.getElementById('languageToggle');
-      const favoritesGrid = document.getElementById('favoritesGrid');
-      const favoritesTitle= document.getElementById('favoritesTitle');
-      const errorAlert    = document.getElementById('errorAlert');
-      const successAlert  = document.getElementById('successAlert');
-
-      let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
-
-      function showAlert(el, msg) {
-        el.querySelector('span').textContent = msg;
-        el.style.display = 'flex';
-        setTimeout(() => el.style.display = 'none', 3000);
-      }
-
-      function showOverlay(show) {
-        loadingOverlay.style.display = show ? 'flex' : 'none';
-      }
-
-      function setActiveChannel(channel) {
-        channels.forEach(c => c.classList.remove('active'));
-        channel.classList.add('active');
-        const url = channel.dataset.src;
-        showOverlay(true);
-        // HLS.js
-        if (Hls.isSupported()) {
-          const hls = new Hls();
-          hls.loadSource(url);
-          hls.attachMedia(videoPlayer);
-          hls.on(Hls.Events.MANIFEST_PARSED, (evt, data) => {
-            qualitySelect.innerHTML = '';
-            data.levels.forEach((lvl,i) => {
-              const opt = document.createElement('option');
-              opt.value = i; opt.textContent = lvl.height + 'p';
-              qualitySelect.appendChild(opt);
-            });
-            qualitySelect.onchange = () => { hls.currentLevel = +qualitySelect.value; };
-            showOverlay(false);
-            showAlert(successAlert, 'جارٍ تشغيل قناة ' + channel.querySelector('.channel-name').textContent);
-          });
-        } else {
-          videoPlayer.src = url;
-          videoPlayer.addEventListener('loadedmetadata', () => {
-            showOverlay(false);
-            showAlert(successAlert, 'جارٍ تشغيل قناة ' + channel.querySelector('.channel-name').textContent);
-          }, { once:true });
+    // محاولة جلب القنوات من الرئيسي ثم الاحتياطي
+    async function init() {
+      try {
+        const channels = await loadChannels(primaryAPI);
+        renderChannelList(channels);
+      } catch (e) {
+        console.warn('الرئيسي فشل:', e);
+        try {
+          const channels = await loadChannels(fallbackAPI);
+          renderChannelList(channels);
+        } catch (e2) {
+          console.error('الاحتياطي فشل:', e2);
+          listContainer.innerHTML = '<li>تعذّر تحميل قائمة القنوات من كلا الخادمين.</li>';
         }
-        subtitleTrack.src = 'subtitles/arabic.vtt';
-        addToHistory(channel.querySelector('.channel-name').textContent);
       }
+    }
 
-      function toggleFavorite(channel) {
-        const id = channel.dataset.id;
-        if (favorites.includes(id)) {
-          favorites = favorites.filter(x=>x!==id);
-          showAlert(successAlert, 'تمت إزالة القناة من المفضلة');
-        } else {
-          favorites.push(id);
-          showAlert(successAlert, 'تمت إضافة القناة إلى المفضلة');
-        }
-        localStorage.setItem('favorites', JSON.stringify(favorites));
-        updateFavorites();
-      }
-
-      function updateFavorites() {
-        favoritesGrid.innerHTML = '';
-        if (!favorites.length) {
-          favoritesTitle.style.display = 'none'; return;
-        }
-        favoritesTitle.style.display = 'block';
-        favorites.forEach(id => {
-          const orig = document.querySelector(`.channel-card[data-id="${id}"]`);
-          if (orig) {
-            const clone = orig.cloneNode(true);
-            clone.classList.remove('active');
-            clone.addEventListener('click', ()=> setActiveChannel(orig));
-            clone.querySelector('.favorite-icon')
-                 .addEventListener('click', e=>{ e.stopPropagation(); toggleFavorite(orig); });
-            favoritesGrid.appendChild(clone);
-          }
-        });
-      }
-
-      function addToHistory(name) {
-        const hist = JSON.parse(localStorage.getItem('history')) || [];
-        hist.unshift({ name, time: new Date().toISOString() });
-        localStorage.setItem('history', JSON.stringify(hist.slice(0,5)));
-      }
-
-      // Populate EPG
-      const epgData = [
-        { channel:'الجزيرة', time:'18:00', program:'نشرة الأخبار' },
-        { channel:'العربية', time:'19:00', program:'الراصد' },
-        { channel:'MBC 1', time:'20:00', program:'مسلسل رمضاني' }
-      ];
-      epgData.forEach(item => {
+    // عرض القائمة في الصفحة
+    function renderChannelList(channels) {
+      listContainer.innerHTML = '';
+      channels.forEach(ch => {
         const li = document.createElement('li');
-        li.textContent = `${item.time} – ${item.channel}: ${item.program}`;
-        epgList.appendChild(li);
+        const a  = document.createElement('a');
+        a.textContent = ch.name;
+        a.href        = '#';
+        a.className   = 'channel-link';
+        a.dataset.url = ch.stream_url;
+        a.onclick = e => {
+          e.preventDefault();
+          playStream(e.target.dataset.url);
+        };
+        li.appendChild(a);
+        listContainer.appendChild(li);
       });
+    }
 
-      // Autocomplete & Search
-      channels.forEach(c => {
-        const opt = document.createElement('option');
-        opt.value = c.querySelector('.channel-name').textContent;
-        datalist.appendChild(opt);
-        c.addEventListener('click', ()=> setActiveChannel(c));
-        c.querySelector('.favorite-icon')
-         .addEventListener('click', e=>{ e.stopPropagation(); toggleFavorite(c); });
-        if (favorites.includes(c.dataset.id)) c.classList.add('favorite');
-      });
-      searchInput.addEventListener('input', () => {
-        const term = searchInput.value.trim().toLowerCase();
-        channels.forEach(c => {
-          c.style.display = c.querySelector('.channel-name').textContent.toLowerCase().includes(term)
-                           ? 'block' : 'none';
-        });
-      });
+    // تشغيل مسار HLS في عنصر الفيديو
+    function playStream(url) {
+      if (Hls.isSupported()) {
+        const hls = new Hls();
+        hls.loadSource(url);
+        hls.attachMedia(player);
+        hls.on(Hls.Events.MANIFEST_PARSED, () => player.play());
+      } else if (player.canPlayType('application/vnd.apple.mpegurl')) {
+        player.src = url;
+        player.play();
+      } else {
+        alert('هذا المتصفح لا يدعم تشغيل HLS بشكل مباشر.');
+      }
+    }
 
-      // Video events
-      videoPlayer.addEventListener('progress', () => {
-        if (videoPlayer.buffered.length && videoPlayer.duration) {
-          const end = videoPlayer.buffered.end(videoPlayer.buffered.length-1);
-          progressBar.style.width = ((end/videoPlayer.duration)*100)+'%';
-        }
-      });
-      videoPlayer.addEventListener('waiting', ()=> showOverlay(true));
-      videoPlayer.addEventListener('playing',()=> showOverlay(false));
-
-      // PiP
-      pipBtn.onclick = async () => {
-        if (videoPlayer !== document.pictureInPictureElement)
-          await videoPlayer.requestPictureInPicture();
-        else await document.exitPictureInPicture();
-      };
-      // Audio Only
-      audioBtn.onclick = () => {
-        const muted = videoPlayer.muted;
-        videoPlayer.muted = !muted;
-        audioBtn.setAttribute('aria-pressed', String(!muted));
-      };
-      // Share
-      shareBtn.onclick = async () => {
-        if (navigator.share) {
-          try { await navigator.share({ title:document.title, url:location.href }); }
-          catch{} 
-        } else {
-          showAlert(errorAlert,'المشاركة غير مدعومة');
-        }
-      };
-
-      // Theme & Language
-      themeToggle.onclick = () => {
-        document.body.classList.toggle('light-mode');
-        themeToggle.innerHTML = document.body.classList.contains('light-mode')
-          ? '<i class="fas fa-sun"></i> <span>الوضع النهاري</span>'
-          : '<i class="fas fa-moon"></i> <span>الوضع الليلي</span>';
-      };
-      languageToggle.onclick = () => {
-        const isAr = document.documentElement.lang==='ar';
-        document.documentElement.lang = isAr?'en':'ar';
-        document.documentElement.dir  = isAr?'ltr':'rtl';
-        languageToggle.innerHTML = isAr
-          ? '<i class="fas fa-language"></i> <span>العربية</span>'
-          : '<i class="fas fa-language"></i> <span>English</span>';
-        document.title = isAr
-          ? 'Live Streaming – News & Series'
-          : 'بث مباشر – قنوات إخبارية ومسلسلات';
-      };
-
-      updateFavorites();
-      if (channels[0]) setActiveChannel(channels[0]);
-    });
+    // بدء العملية
+    init();
   </script>
+
 </body>
 </html>
