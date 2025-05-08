@@ -88,36 +88,33 @@
             object-fit: cover;
             border-radius: 15px;
         }
-
-        /* شاشة التحميل */
-        .loading-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.7);
+        /* شريط البحث */
+        .search-bar {
             display: flex;
-            justify-content: center;
             align-items: center;
-            flex-direction: column;
-            border-radius: 15px;
-            z-index: 10;
-            display: none;
+            margin-bottom: 20px;
         }
 
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 5px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top-color: var(--primary-color);
-            animation: spin 1s ease-in-out infinite;
-            margin-bottom: 15px;
+        .search-bar input {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            background: transparent;
+            color: inherit;
+            font-size: 16px;
+            border-radius: 8px;
         }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+        .search-bar input:focus {
+            outline: 2px solid var(--primary-color);
+        }
+
+        .search-bar input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .search-bar i {
+            margin-left: 10px;
         }
 
         /* عناصر التحكم */
@@ -349,6 +346,8 @@
 </head>
 <body>
     <div class="container">
+        <!-- رسائل التنبيه -->ة
+
         <!-- أزرار التحكم -->
         <div class="control-buttons">
             <button class="theme-toggle" id="themeToggle">
@@ -374,6 +373,9 @@
             </div>
             
             <video id="videoPlayer" controls autoplay playsinline></video>
+            <button class="fullscreen-btn" id="fullscreenBtn" title="ملء الشاشة">
+                <i class="fas fa-expand"></i>
+            </button>
         </div>
 
         <!-- عناصر تحكم مخصصة -->
@@ -473,6 +475,9 @@
             const videoPlayer = document.getElementById("videoPlayer");
             const channels = document.querySelectorAll(".channel-card");
             const loadingOverlay = document.getElementById("loadingOverlay");
+            const fullscreenBtn = document.getElementById("fullscreenBtn");
+            const errorAlert = document.getElementById("errorAlert");
+            const successAlert = document.getElementById("successAlert");
             const searchInput = document.getElementById("searchInput");
             const playPauseBtn = document.getElementById("playPauseBtn");
             const volumeSlider = document.getElementById("volumeSlider");
@@ -487,6 +492,24 @@
             // تهيئة المفضلة
             let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
             
+            // عرض رسالة نجاح
+            function showSuccess(message) {
+                successAlert.querySelector('span').textContent = message || 'تمت العملية بنجاح';
+                successAlert.style.display = 'flex';
+                setTimeout(() => {
+                    successAlert.style.display = 'none';
+                }, 3000);
+            }
+            
+            // عرض رسالة خطأ
+            function showError(message) {
+                errorAlert.querySelector('span').textContent = message || 'حدث خطأ ما';
+                errorAlert.style.display = 'flex';
+                setTimeout(() => {
+                    errorAlert.style.display = 'none';
+                }, 3000);
+            }
+            
             // تشغيل القناة
             function setActiveChannel(channel) {
                 channels.forEach(c => c.classList.remove("active"));
@@ -498,6 +521,7 @@
                 
                 // عرض شاشة التحميل
                 loadingOverlay.style.display = "flex";
+                showSuccess(`جارٍ تشغيل قناة ${channelName}...`);
                 
                 // إضافة إلى السجل التاريخي
                 addToHistory(channelName, channelLogo);
@@ -508,13 +532,13 @@
                 videoPlayer.addEventListener('canplay', function() {
                     loadingOverlay.style.display = "none";
                     videoPlayer.play().catch(e => {
-                        console.error("تعذر التشغيل التلقائي");
+                        showError("تعذر التشغيل التلقائي، يرجى النقر على زر التشغيل");
                     });
                 });
                 
                 videoPlayer.addEventListener('error', function() {
                     loadingOverlay.style.display = "none";
-                    console.error("تعذر تحميل القناة");
+                    showError("تعذر تحميل القناة، يرجى المحاولة لاحقاً");
                 });
             }
             
@@ -526,9 +550,11 @@
                 if (isFavorite) {
                     favorites = favorites.filter(id => id !== channelId);
                     channel.classList.remove("favorite");
+                    showSuccess("تمت إزالة القناة من المفضلة");
                 } else {
                     favorites.push(channelId);
                     channel.classList.add("favorite");
+                    showSuccess("تمت إضافة القناة إلى المفضلة");
                 }
                 
                 localStorage.setItem("favorites", JSON.stringify(favorites));
@@ -628,6 +654,16 @@
                 videoPlayer.volume = volumeSlider.value;
             });
             
+            fullscreenBtn.addEventListener("click", function() {
+                if (videoPlayer.requestFullscreen) {
+                    videoPlayer.requestFullscreen();
+                } else if (videoPlayer.webkitRequestFullscreen) {
+                    videoPlayer.webkitRequestFullscreen();
+                } else if (videoPlayer.msRequestFullscreen) {
+                    videoPlayer.msRequestFullscreen();
+                }
+            });
+            
             shareBtn.addEventListener("click", function() {
                 if (navigator.share) {
                     navigator.share({
@@ -635,11 +671,11 @@
                         text: 'انضم لمشاهدة البث المباشر',
                         url: window.location.href
                     }).catch(() => {
-                        console.log("تم إلغاء المشاركة");
+                        showError("تم إلغاء المشاركة");
                     });
                 } else {
                     navigator.clipboard.writeText(window.location.href);
-                    console.log("تم نسخ الرابط إلى الحافظة");
+                    showSuccess("تم نسخ الرابط إلى الحافظة");
                 }
             });
             
