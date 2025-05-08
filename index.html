@@ -1,233 +1,206 @@
-<html dir="ltr" lang="en"><head>
-<meta charset="UTF-8">
-<title>Watch Free Live TV Channels Worldwide</title>
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بث مباشر - قنوات إخبارية ومسلسلات</title>
+    <style>
+        :root {
+            --primary-color: rgba(33, 150, 243, 0.9);
+            --bg-gradient: linear-gradient(45deg, #0f172a, #1e293b);
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+        }
 
-<!-- Meta Description (English) -->
-<meta name="description" content="Watch free live TV channels from all over the world without interruptions. The website offers free live streaming of top Arabic, European, American, Asian, and international channels, including sports, news, and entertainment channels.">
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
-<!-- Meta Description (Arabic) -->
-<meta name="description" content="شاهد قنوات التلفزيون المباشرة المجانية من جميع أنحاء العالم بدون تقطيع. يقدم الموقع بثًا مباشرًا مجانيًا لأفضل القنوات العربية، الأوروبية، الأمريكية، الآسيوية، والعالمية، بما في ذلك القنوات الرياضية، الإخبارية، والترفيهية.">
+        body {
+            font-family: 'Segoe UI', 'Tahoma', sans-serif;
+            background: var(--bg-gradient);
+            color: white;
+            min-height: 100vh;
+        }
 
-<!-- Meta Description (French) -->
-<meta name="description" content="Regardez gratuitement des chaînes de télévision en direct du monde entier sans interruption. Le site propose la diffusion en direct gratuite des meilleures chaînes arabes, européennes, américaines, asiatiques et internationales, y compris les chaînes de sport, d'actualités et de divertissement.">
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
 
-<!-- Meta Description (German) -->
-<meta name="description" content="Sehen Sie sich kostenlose Live-TV-Sender aus der ganzen Welt ohne Unterbrechungen an. Die Website bietet kostenloses Live-Streaming der besten arabischen, europäischen, amerikanischen, asiatischen und internationalen Sender, einschließlich Sport-, Nachrichten- und Unterhaltungssender.">
+        .player-section {
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
+            margin-bottom: 30px;
+        }
 
-<!-- Meta Keywords -->
-<meta name="keywords" content="free live stream, global TV channels, international channels, free sports channels, free news channels, free entertainment channels, free Arabic channels, free European channels, free American channels, free Asian channels, free live TV">
+        #videoPlayer {
+            width: 100%;
+            height: 40vh;
+            background: #000;
+            object-fit: cover;
+            border-radius: 20px;
+        }
 
-<!-- Open Graph -->
-<meta property="og:title" content="Watch Free Live TV Channels from Around the World | High-Quality Streaming">
-<meta property="og:description" content="Watch free live TV channels from all over the world without interruptions. The website offers free live streaming of top Arabic, European, American, Asian, and international channels, including sports, news, and entertainment channels.">
-<meta property="og:url" content="https://www.web24iptv.online">
-<meta property="og:type" content="website">
+        .channel-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 40px;
+        }
 
-<!-- Twitter Card -->
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Watch Free Live TV Channels from Around the World | High-Quality Streaming">
-<meta name="twitter:description" content="Watch free live TV channels from all over the world without interruptions. The website offers free live streaming of top Arabic, European, American, Asian, and international channels, including sports, news, and entertainment channels.">
+        .channel-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
+            border-radius: 15px;
+            padding: 15px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
 
-<meta name="robots" content="index, follow">
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "WebSite",
-  "name": "Free Live TV Streaming",
-  "url": "https://www.web24iptv.online",
-  "description": "Watch free live TV channels from around the world without interruptions. Includes sports, news, and entertainment channels.",
-  "potentialAction": {
-    "@type": "SearchAction",
-    "target": "https://www.web24iptv.online/?s={search_term_string}",
-    "query-input": "required name=search_term_string"
-  }
-}
-</script>
+        .channel-card:hover {
+            background: rgba(255, 255, 255, 0.12);
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+        }
 
-<link rel="stylesheet" href="/css/ltr/home.css">
-<link rel="stylesheet" media="screen and (max-width: 1024px)" href="/css/ltr/1024.css">
-<link rel="stylesheet" media="screen and (max-width: 620px)" href="/css/ltr/620.css">
-<link rel="stylesheet" media="screen and (max-width: 500px)" href="/css/ltr/500.css">
-<link rel="stylesheet" media="screen and (max-width: 400px)" href="/css/ltr/400.css">
-<link rel="stylesheet" media="screen and (max-width: 390px)" href="/css/ltr/390.css">
-<link rel="stylesheet" media="screen and (max-width: 330px)" href="/css/ltr/330.css">
-<link rel="stylesheet" media="screen and (max-width: 300px)" href="/css/ltr/300.css">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-<meta name="theme-color" content="#0078d4">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta content="never" name="referrer">
-<link rel="icon" href="/img/ico/web24iptv.ico">
-<!-- Google tag (gtag.js) -->
-<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-88VFXKK5DP"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+        .channel-card.active {
+            background: rgba(33, 150, 243, 0.15);
+            border: 1px solid rgba(33, 150, 243, 0.3);
+        }
 
-  gtag('config', 'G-88VFXKK5DP');
-</script>
-<script async="" src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4340512247217943" crossorigin="anonymous"></script></head>
+        .channel-logo {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            margin-bottom: 10px;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+            transition: transform 0.3s ease;
+        }
+
+        .channel-card:hover .channel-logo {
+            transform: scale(1.1);
+        }
+
+        .channel-name {
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.95);
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            letter-spacing: -0.5px;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-align: center;
+            padding: 10px;
+            background: var(--glass-bg);
+            border-radius: 10px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
+        }
+    </style>
+</head>
 <body>
-<header>
-<a href="/">web24 iptv</a>
-</header>
+    <div class="container">
+        <div class="player-section">
+            <video id="videoPlayer" controls autoplay playsinline></video>
+        </div>
 
-<nav> 
-<ul>
-<li><a href="/">HOME</a></li>
-<li><a href="/files/ltr/home/about">ABOUT</a></li>
-<li><a href="/files/ltr/home/privacy-policy">PRIVACY</a></li>
-</ul>    
-</nav>
+        <!-- قنوات الأخبار -->
+        <div class="section-title">📺 قنوات الأخبار</div>
+        <div class="channel-grid">
+            <div class="channel-card active" data-src="https://live-hls-web-aja.getaj.net/AJA/index.m3u8">
+                <img src="http://3.66.87.188/img/channels/aljazeeraeng.jpg" class="channel-logo" alt="الجزيرة">
+                <div class="channel-name">الجزيرة</div>
+            </div>
 
+            <div class="channel-card" data-src="https://av.alarabiya.net/alarabiapublish/alarabiya.smil/playlist.m3u8">
+                <img src="https://vid.alarabiya.net/images/2016/04/01/8edd67af-f66b-4eaf-9702-840a060869aa/8edd67af-f66b-4eaf-9702-840a060869aa_16x9_1200x676.jpg" class="channel-logo" alt="العربية">
+                <div class="channel-name">العربية</div>
+            </div>
 
-<section>  
-<article>
+            <div class="channel-card" data-src="https://svs.itworkscdn.net/syriatvlive/syriatv.smil/playlist_dvr.m3u8">
+                <img src="https://www.muhtwa.com/wp-content/uploads/46-8.jpg" class="channel-logo" alt="تلفزيون سوريا">
+                <div class="channel-name">تلفزيون سوريا</div>
+            </div>
 
+            <div class="channel-card" data-src="https://live.alarabiya.net/alarabiapublish/alhadath.smil/playlist.m3u8">
+                <img src="https://i.ytimg.com/vi/uUcuqc0akIg/hqdefault.jpg?sqp=-oaymwEXCOADEI4CSFryq4qpAwkIARUAAIhCGAE=&rs=AOn4CLCfbwaK_9joImfFnfta_aWz3e3UOw" class="channel-logo" alt="الحدث">
+                <div class="channel-name">الحدث</div>
+            </div>
 
-<h1>Watch Free Live TV Channels Worldwide | HD Streaming</h1>
+            <div class="channel-card" data-src="https://ronahi-tv.akamaized.net/hls/ronahi-tv.m3u8">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRT56fM1Fp5Rh1s82aY8yzCGr7kjEQNy437BQ&s" class="channel-logo" alt="روناهي">
+                <div class="channel-name">روناهي</div>
+            </div>
 
-<div class="grid-station-hub" id="channelContainer">
-<a href="/ar" class="stream-box">
-            <img src="/img/home/ar.webp" alt="Watch live broadcast of Arabic Channels" title="Watch live broadcast of Arabic Channels" class="stream-thumb">
-            <div class="stream-title">Arabic Channels</div>
-        </a><a href="/news" class="stream-box">
-            <img src="/img/home/news.webp" alt="Watch live broadcast of Global News Channels" title="Watch live broadcast of Global News Channels" class="stream-thumb">
-            <div class="stream-title">Global News Channels</div>
-        </a><a href="/us" class="stream-box">
-            <img src="/img/home/us.webp" alt="Watch live broadcast of American Channels" title="Watch live broadcast of American Channels" class="stream-thumb">
-            <div class="stream-title">American Channels</div>
-        </a><a href="/de" class="stream-box">
-            <img src="/img/home/de.webp" alt="Watch live broadcast of German Channels" title="Watch live broadcast of German Channels" class="stream-thumb">
-            <div class="stream-title">German Channels</div>
-        </a><a href="/gb" class="stream-box">
-            <img src="/img/home/gb.webp" alt="Watch live broadcast of British Channels" title="Watch live broadcast of British Channels" class="stream-thumb">
-            <div class="stream-title">British Channels</div>
-        </a><a href="/fr" class="stream-box">
-            <img src="/img/home/fr.webp" alt="Watch live broadcast of French Channels" title="Watch live broadcast of French Channels" class="stream-thumb">
-            <div class="stream-title">French Channels</div>
-        </a><a href="/uk" class="stream-box">
-            <img src="/img/home/uk.webp" alt="Watch live broadcast of Ukrainian Channels" title="Watch live broadcast of Ukrainian Channels" class="stream-thumb">
-            <div class="stream-title">Ukrainian Channels</div>
-        </a><a href="/tr" class="stream-box">
-            <img src="/img/home/tr.webp" alt="Watch live broadcast of Turkish Channels" title="Watch live broadcast of Turkish Channels" class="stream-thumb">
-            <div class="stream-title">Turkish Channels</div>
-        </a><a href="/fa-af" class="stream-box">
-            <img src="/img/home/fa-af.webp" alt="Watch live broadcast of Afghan Channels" title="Watch live broadcast of Afghan Channels" class="stream-thumb">
-            <div class="stream-title">Afghan Channels</div>
-        </a><a href="/sports" class="stream-box">
-            <img src="/img/home/sports.webp" alt="Watch live broadcast of Free Sports Channels" title="Watch live broadcast of Free Sports Channels" class="stream-thumb">
-            <div class="stream-title">Free Sports Channels</div>
-        </a></div>
+            <div class="channel-card" data-src="https://alarabyta.cdn.octivid.com/alaraby/smil:alaraby.stream.smil/chunklist.m3u8">
+                <img src="https://www.alaraby.com/themes/custom/arabytv/logo-print.png" class="channel-logo" alt="تلفزيون العربي">
+                <div class="channel-name">تلفزيون العربي</div>
+            </div>
 
-<div class="load-section">
-    <button class="btn-load-wave" id="loadMoreBtn" style="display: none;">More »</button>
-</div>
+            <div class="channel-card" data-src="https://stream.skynewsarabia.com/hls/sna.m3u8">
+                <img src="https://yt3.googleusercontent.com/6wh3wbMTas_FiOfcuyU-a-PSL62aeOzoNM-MDyJiUIr8HfINr_kqQlMvgYpjdi5hkVJMR7oo=s900-c-k-c0x00ffffff-no-rj" class="channel-logo" alt="سكاي نيوز عربية">
+                <div class="channel-name">سكاي نيوز عربية</div>
+            </div>
+        </div>
 
-<script>
-const jsonFile = '/files/ch/json/lang.json'; 
+        <!-- قنوات المسلسلات -->
+        <div class="section-title">📺 قنوات المسلسلات</div>
+        <div class="channel-grid">
+            <div class="channel-card" data-src="https://example.com/series1.m3u8">
+                <img src="https://example.com/series1_logo.jpg" class="channel-logo" alt="مسلسل 1">
+                <div class="channel-name">مسلسل 1</div>
+            </div>
+            <div class="channel-card" data-src="https://example.com/series2.m3u8">
+                <img src="https://example.com/series2_logo.jpg" class="channel-logo" alt="مسلسل 2">
+                <div class="channel-name">مسلسل 2</div>
+            </div>
+            <div class="channel-card" data-src="https://example.com/series3.m3u8">
+                <img src="https://example.com/series3_logo.jpg" class="channel-logo" alt="مسلسل 3">
+                <div class="channel-name">مسلسل 3</div>
+            </div>
+            <div class="channel-card" data-src="https://example.com/series4.m3u8">
+                <img src="https://example.com/series4_logo.jpg" class="channel-logo" alt="مسلسل 4">
+                <div class="channel-name">مسلسل 4</div>
+            </div>
+            <!-- يمكنك إضافة المزيد من قنوات المسلسلات هنا -->
+        </div>
+    </div>
 
-const container = document.getElementById("channelContainer");
-const loadMoreBtn = document.getElementById("loadMoreBtn");
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const videoPlayer = document.getElementById("videoPlayer");
+            const channels = document.querySelectorAll(".channel-card");
 
-let channels = [];
-let currentIndex = 0;
-const channelsPerLoad = 20;
+            function setActiveChannel(channel) {
+                channels.forEach(c => c.classList.remove("active"));
+                channel.classList.add("active");
+                videoPlayer.src = channel.getAttribute("data-src");
+            }
 
-function loadChannels() {
-    if (channels.length === 0) {
-        fetch(jsonFile)
-        .then(response => response.json())
-        .then(data => {
-            channels = data;
-            displayChannels();
-        })
-        .catch(error => console.error("Error loading JSON:", error));
-    } else {
-        displayChannels();
-    }
-}
-
-function displayChannels() {
-    const endIndex = currentIndex + channelsPerLoad;
-    for (let i = currentIndex; i < endIndex && i < channels.length; i++) {
-        const ch = channels[i];
-        const channelElement = document.createElement("a");
-        channelElement.href = ch.link;
-        channelElement.classList.add("stream-box");
-
-        const imgAlt = `Watch live broadcast of ${ch.title}`;
-        channelElement.innerHTML = `
-            <img src="${ch.img}" alt="${imgAlt}" title="${imgAlt}" class="stream-thumb">
-            <div class="stream-title">${ch.title}</div>
-        `;
-
-        container.appendChild(channelElement);
-    }
-
-    currentIndex = endIndex;
-
-    if (currentIndex >= channels.length) {
-        loadMoreBtn.style.display = "none";
-    }
-}
-
-loadChannels();
-
-loadMoreBtn.addEventListener("click", loadChannels);
-</script>
-
-
-
-
-<h2>Watch Free Live TV Channels from Around the World in HD</h2>
-<p>Explore a wide variety of live TV channels from different countries and regions, all available for free streaming in high-definition. Enjoy your favorite shows, sports, news, and more, anytime and anywhere!</p>
-
-
-<h3>Stream High-Quality Live TV Channels from Different Countries</h3>
-<p>Discover a diverse range of live TV channels from various regions and countries, all accessible for free in HD streaming. Watch your favorite shows, sports events, news, and entertainment content anytime, anywhere, in high-definition quality.</p>
-
-
-
-</article>
-</section>
-
-<aside>
-
-
- 
-
-
-<ul class="ultext">
-<li> <a href="/">Home</a></li>
-<li> <a href="/files/ltr/home/about">About Us</a></li>
-<li> <a href="/files/ltr/home/contact">Contact Us</a></li>
-<li> <a href="/files/ltr/home/privacy-policy">Privacy Policy</a></li>
-<li> <a href="/files/ltr/home/dmca">DMCA</a></li>
-</ul>
-<div class="site-visits">
-<a href="https://www.easycounter.com/" target="_blank">
-<img alt="Free Hit Counter" border="0" width="112px" height="21px" src="https://www.easycounter.com/counter.php?mhmd199611">
-</a>
-<br>
-<b>Site Visits</b>
-</div>
-
-</aside>
-
-<footer>
-<p>
-<b>Web24iptv</b> offers free live streaming of <b>Arabic channels</b>, <b>global news channels</b>,  
-<b>American TV channels</b>, <b>German channels</b>, <b>French channels</b>, <b>Ukrainian channels</b>,  
-<b>Turkish channels</b>, <b>Kurdish channels</b>, <b>Afghan channels</b>, and more.  
-Watch <b>sports channels</b> from around the world, including major leagues and events, all for free with no subscription required.  
-Our platform provides high-quality, uninterrupted streaming, fully compatible with all devices and operating systems, including  
-Windows, Mac, Android, iOS, Smart TVs, and more. Enjoy seamless viewing anytime, anywhere!
-</p>
-web24iptv
-</footer>
-
-<br class="annule"> 
-<script src="/js/ekler.js"> </script>
-
-</body></html>
+            channels.forEach(channel => {
+                channel.addEventListener("click", function() {
+                    setActiveChannel(channel);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
