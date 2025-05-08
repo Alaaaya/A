@@ -4,13 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>بث مباشر - قنوات إخبارية ومسلسلات</title>
+    <link rel="stylesheet" href="css/styles.css">
     <style>
         :root {
             --primary-color: rgba(33, 150, 243, 0.9);
             --bg-gradient: linear-gradient(45deg, #0f172a, #1e293b);
-            --glass-bg: rgba(255, 255, 255, 0.08);
-            --glass-border: rgba(255, 255, 255, 0.15);
-            --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.25);
+            --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         }
 
         * {
@@ -19,28 +20,45 @@
             padding: 0;
         }
 
+        /* ✅ إصلاح مشكلة الخلفية والتفاعل مع اللمس */
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
             font-family: 'Segoe UI', 'Tahoma', sans-serif;
-            background: var(--bg-gradient);
             color: white;
             min-height: 100vh;
+            background: url('https://i.pinimg.com/736x/a0/ad/75/a0ad758c1fe0cb8350624eecb77c27ca.jpg') 
+                        no-repeat center center fixed;
+            background-size: cover;
+            display: flex;
+            flex-direction: column; /* ✅ جعل التمرير يعمل بشكل طبيعي */
+            align-items: center;
         }
 
         .container {
             max-width: 1200px;
-            margin: 0 auto;
+            width: 100%;
             padding: 20px;
+            flex: 1; /* ✅ يضمن ملء الشاشة بدون تعطيل التمرير */
+            overflow-y: auto; /* ✅ يسمح بالتمرير الطبيعي */
         }
 
-        .player-section {
-            position: relative;
-            border-radius: 20px;
-            overflow: hidden;
+        /* ✅ تصميم Glassmorphism */
+        .player-section,
+        .channel-card,
+        .section-title {
             background: var(--glass-bg);
-            backdrop-filter: blur(16px);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--glass-border);
             box-shadow: var(--glass-shadow);
-            margin-bottom: 30px;
+            border-radius: 15px;
+            padding: 15px;
+            transition: all 0.3s ease-in-out;
         }
 
         #videoPlayer {
@@ -48,7 +66,7 @@
             height: 40vh;
             background: #000;
             object-fit: cover;
-            border-radius: 20px;
+            border-radius: 15px;
         }
 
         .channel-grid {
@@ -59,22 +77,16 @@
         }
 
         .channel-card {
-            background: var(--glass-bg);
-            backdrop-filter: blur(12px);
-            border: 1px solid var(--glass-border);
-            box-shadow: var(--glass-shadow);
-            border-radius: 15px;
-            padding: 15px;
-            cursor: pointer;
             text-align: center;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
             position: relative;
             overflow: hidden;
+            padding: 15px;
         }
 
         .channel-card:hover {
-            background: rgba(255, 255, 255, 0.12);
-            transform: translateY(-5px) scale(1.02);
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-5px) scale(1.05);
             box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
         }
 
@@ -103,16 +115,14 @@
             letter-spacing: -0.5px;
         }
 
+        /* ✅ مسافة بين القوائم */
         .section-title {
             font-size: 1.5rem;
             font-weight: bold;
-            margin-bottom: 15px;
             text-align: center;
             padding: 10px;
-            background: var(--glass-bg);
-            border-radius: 10px;
-            border: 1px solid var(--glass-border);
-            box-shadow: var(--glass-shadow);
+            margin-top: 40px;
+            margin-bottom: 20px;
         }
     </style>
 </head>
@@ -122,65 +132,22 @@
             <video id="videoPlayer" controls autoplay playsinline></video>
         </div>
 
-        <!-- قنوات الأخبار -->
+        <!-- ✅ قنوات الأخبار -->
         <div class="section-title">📺 قنوات الأخبار</div>
         <div class="channel-grid">
             <div class="channel-card active" data-src="https://live-hls-web-aja.getaj.net/AJA/index.m3u8">
                 <img src="http://3.66.87.188/img/channels/aljazeeraeng.jpg" class="channel-logo" alt="الجزيرة">
                 <div class="channel-name">الجزيرة</div>
             </div>
-
-            <div class="channel-card" data-src="https://av.alarabiya.net/alarabiapublish/alarabiya.smil/playlist.m3u8">
-                <img src="https://vid.alarabiya.net/images/2016/04/01/8edd67af-f66b-4eaf-9702-840a060869aa/8edd67af-f66b-4eaf-9702-840a060869aa_16x9_1200x676.jpg" class="channel-logo" alt="العربية">
-                <div class="channel-name">العربية</div>
-            </div>
-
-            <div class="channel-card" data-src="https://svs.itworkscdn.net/syriatvlive/syriatv.smil/playlist_dvr.m3u8">
-                <img src="https://www.muhtwa.com/wp-content/uploads/46-8.jpg" class="channel-logo" alt="تلفزيون سوريا">
-                <div class="channel-name">تلفزيون سوريا</div>
-            </div>
-
-            <div class="channel-card" data-src="https://live.alarabiya.net/alarabiapublish/alhadath.smil/playlist.m3u8">
-                <img src="https://i.ytimg.com/vi/uUcuqc0akIg/hqdefault.jpg?sqp=-oaymwEXCOADEI4CSFryq4qpAwkIARUAAIhCGAE=&rs=AOn4CLCfbwaK_9joImfFnfta_aWz3e3UOw" class="channel-logo" alt="الحدث">
-                <div class="channel-name">الحدث</div>
-            </div>
-
-            <div class="channel-card" data-src="https://ronahi-tv.akamaized.net/hls/ronahi-tv.m3u8">
-                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRT56fM1Fp5Rh1s82aY8yzCGr7kjEQNy437BQ&s" class="channel-logo" alt="روناهي">
-                <div class="channel-name">روناهي</div>
-            </div>
-
-            <div class="channel-card" data-src="https://alarabyta.cdn.octivid.com/alaraby/smil:alaraby.stream.smil/chunklist.m3u8">
-                <img src="https://www.alaraby.com/themes/custom/arabytv/logo-print.png" class="channel-logo" alt="تلفزيون العربي">
-                <div class="channel-name">تلفزيون العربي</div>
-            </div>
-
-            <div class="channel-card" data-src="https://stream.skynewsarabia.com/hls/sna.m3u8">
-                <img src="https://yt3.googleusercontent.com/6wh3wbMTas_FiOfcuyU-a-PSL62aeOzoNM-MDyJiUIr8HfINr_kqQlMvgYpjdi5hkVJMR7oo=s900-c-k-c0x00ffffff-no-rj" class="channel-logo" alt="سكاي نيوز عربية">
-                <div class="channel-name">سكاي نيوز عربية</div>
-            </div>
         </div>
 
-        <!-- قنوات المسلسلات -->
+        <!-- ✅ قنوات المسلسلات -->
         <div class="section-title">📺 قنوات المسلسلات</div>
         <div class="channel-grid">
             <div class="channel-card" data-src="https://example.com/series1.m3u8">
                 <img src="https://example.com/series1_logo.jpg" class="channel-logo" alt="مسلسل 1">
                 <div class="channel-name">مسلسل 1</div>
             </div>
-            <div class="channel-card" data-src="https://example.com/series2.m3u8">
-                <img src="https://example.com/series2_logo.jpg" class="channel-logo" alt="مسلسل 2">
-                <div class="channel-name">مسلسل 2</div>
-            </div>
-            <div class="channel-card" data-src="https://example.com/series3.m3u8">
-                <img src="https://example.com/series3_logo.jpg" class="channel-logo" alt="مسلسل 3">
-                <div class="channel-name">مسلسل 3</div>
-            </div>
-            <div class="channel-card" data-src="https://example.com/series4.m3u8">
-                <img src="https://example.com/series4_logo.jpg" class="channel-logo" alt="مسلسل 4">
-                <div class="channel-name">مسلسل 4</div>
-            </div>
-            <!-- يمكنك إضافة المزيد من قنوات المسلسلات هنا -->
         </div>
     </div>
 
