@@ -88,6 +88,38 @@
             object-fit: cover;
             border-radius: 15px;
         }
+
+        /* شاشة التحميل */
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            border-radius: 15px;
+            z-index: 10;
+            display: none;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s ease-in-out infinite;
+            margin-bottom: 15px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
         /* شريط البحث */
         .search-bar {
             display: flex;
@@ -346,7 +378,14 @@
 </head>
 <body>
     <div class="container">
-        <!-- رسائل التنبيه -->ة
+        <!-- رسائل التنبيه -->
+        <div class="alert error" id="errorAlert" style="display: none;">
+            <i class="fas fa-exclamation-circle"></i> <span>حدث خطأ أثناء تحميل القناة</span>
+        </div>
+        
+        <div class="alert success" id="successAlert" style="display: none;">
+            <i class="fas fa-check-circle"></i> <span>جارٍ تشغيل القناة...</span>
+        </div>
 
         <!-- أزرار التحكم -->
         <div class="control-buttons">
