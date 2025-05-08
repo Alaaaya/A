@@ -120,6 +120,57 @@
             to { transform: rotate(360deg); }
         }
 
+        /* زر ملء الشاشة */
+        .fullscreen-btn {
+            position: absolute;
+            bottom: 25px;
+            left: 25px;
+            background: rgba(0, 0, 0, 0.5);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 5;
+            transition: all 0.3s;
+        }
+
+        .fullscreen-btn:hover {
+            background: rgba(0, 0, 0, 0.8);
+            transform: scale(1.1);
+        }
+
+        /* رسائل التنبيه */
+        .alert {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            color: white;
+            z-index: 100;
+            display: none;
+            max-width: 300px;
+            animation: slideIn 0.5s forwards;
+        }
+
+        .alert.error {
+            background: var(--error-color);
+        }
+
+        .alert.success {
+            background: var(--success-color);
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
         /* شريط البحث */
         .search-bar {
             display: flex;
@@ -378,6 +429,14 @@
 </head>
 <body>
     <div class="container">
+        <!-- رسائل التنبيه -->
+        <div class="alert error" id="errorAlert" style="display: none;">
+            <i class="fas fa-exclamation-circle"></i> <span>حدث خطأ أثناء تحميل القناة</span>
+        </div>
+        
+        <div class="alert success" id="successAlert" style="display: none;">
+            <i class="fas fa-check-circle"></i> <span>جارٍ تشغيل القناة...</span>
+        </div>
 
         <!-- أزرار التحكم -->
         <div class="control-buttons">
@@ -397,6 +456,17 @@
 
         <!-- مشغل الفيديو -->
         <div class="player-section">
+            <!-- شاشة التحميل -->
+            <div class="loading-overlay" id="loadingOverlay">
+                <div class="spinner"></div>
+                <p>جارٍ التحميل...</p>
+            </div>
+            
+            <video id="videoPlayer" controls autoplay playsinline></video>
+            <button class="fullscreen-btn" id="fullscreenBtn" title="ملء الشاشة">
+                <i class="fas fa-expand"></i>
+            </button>
+        </div>
 
         <!-- القنوات المفضلة -->
         <div class="section-title" id="favoritesTitle"> القنوات المفضلة</div>
