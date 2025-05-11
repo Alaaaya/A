@@ -3,47 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بث مباشر - قنوات إخبارية</title>
+    <title>بث مباشر - قنوات مضمونة</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, sans-serif;
-            background-color: #0f172a;
+            background: #1a1a1a;
             color: white;
             margin: 0;
-            padding: 0;
+            padding: 20px;
         }
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 20px;
         }
         .player-section {
             margin-bottom: 30px;
         }
         #videoPlayer {
             width: 100%;
-            max-height: 500px;
+            height: 60vh;
             background: black;
-            border-radius: 8px;
+            border-radius: 10px;
         }
         .channel-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
             gap: 15px;
-            margin: 20px 0;
         }
         .channel-card {
             background: rgba(255,255,255,0.1);
             padding: 15px;
             border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s;
             text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
         }
         .channel-card:hover {
             transform: translateY(-5px);
-            background: rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.15);
         }
         .channel-logo {
             width: 80px;
@@ -52,161 +50,78 @@
             margin-bottom: 10px;
         }
         .alert {
-            color: #ff9800;
+            color: #ff6b6b;
             text-align: center;
-            margin: 15px 0;
-        }
-        .loading {
-            text-align: center;
-            margin: 20px 0;
+            padding: 15px;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- مشغل الفيديو -->
         <div class="player-section">
             <video id="videoPlayer" controls></video>
         </div>
-        
-        <!-- حالة التحميل -->
-        <div class="loading" id="loadingState">
-            <i class="fas fa-spinner fa-spin"></i> جاري تحميل القنوات...
+
+        <div class="channel-grid" id="channelsContainer">
+            <!-- القنوات المضمنة مباشرة -->
+            <div class="channel-card" data-src="https://live-hls-web-aja.getaj.net/AJA/index.m3u8">
+                <img src="https://iconape.com/wp-content/files/kt/20448/png/Aljazeera-01.png" 
+                     class="channel-logo" 
+                     alt="الجزيرة"
+                     onerror="this.src='https://via.placeholder.com/80?text=الجزيرة'">
+                <h3>الجزيرة</h3>
+            </div>
+
+            <div class="channel-card" data-src="https://av.alarabiya.net/alarabiapublish/alarabiya.smil/playlist.m3u8">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Al-Arabiya_new_logo.svg/2560px-Al-Arabiya_new_logo.svg.png" 
+                     class="channel-logo" 
+                     alt="العربية"
+                     onerror="this.src='https://via.placeholder.com/80?text=العربية'">
+                <h3>العربية</h3>
+            </div>
+
+            <div class="channel-card" data-src="https://shls-mbc1na-prod-dub.shahid.net/out/v1/84ab37e99d6e4b16b33c6600f94f6ccb/index_7.m3u8">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/8/81/Mbc1logo.png" 
+                     class="channel-logo" 
+                     alt="MBC 1"
+                     onerror="this.src='https://via.placeholder.com/80?text=MBC1'">
+                <h3>MBC 1</h3>
+            </div>
         </div>
-        
-        <!-- قائمة القنوات -->
-        <div class="channel-grid" id="channelsContainer"></div>
-        
-        <!-- رسائل النظام -->
-        <div class="alert" id="alertMessage"></div>
+
+        <div class="alert" id="systemAlert"></div>
     </div>
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const videoPlayer = document.getElementById("videoPlayer");
-            const channelsContainer = document.getElementById("channelsContainer");
-            const alertMessage = document.getElementById("alertMessage");
-            const loadingState = document.getElementById("loadingState");
-            
-            // القنوات الاحتياطية المؤكدة العمل
-            const backupChannels = [
-                {
-                    name: "الجزيرة",
-                    url: "https://live-hls-web-aja.getaj.net/AJA/index.m3u8",
-                    logo: "https://iconape.com/wp-content/files/kt/20448/png/Aljazeera-01.png",
-                    category: "أخبار"
-                },
-                {
-                    name: "العربية",
-                    url: "https://av.alarabiya.net/alarabiapublish/alarabiya.smil/playlist.m3u8",
-                    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Al-Arabiya_new_logo.svg/2560px-Al-Arabiya_new_logo.svg.png",
-                    category: "أخبار"
-                },
-                {
-                    name: "MBC 1",
-                    url: "https://shls-mbc1na-prod-dub.shahid.net/out/v1/84ab37e99d6e4b16b33c6600f94f6ccb/index_7.m3u8",
-                    logo: "https://upload.wikimedia.org/wikipedia/commons/8/81/Mbc1logo.png",
-                    category: "ترفيه"
-                }
-            ];
-            
-            // دالة رئيسية لتحميل القنوات
-            async function loadAllChannels() {
-                loadingState.style.display = 'block';
-                
-                try {
-                    // المحاولة 1: من URL مباشر
-                    await tryLoadChannels('https://jzu4.github.io/files/json/rives.json');
-                    
-                    // المحاولة 2: من RawGit
-                    if (channelsContainer.children.length === 0) {
-                        await tryLoadChannels('https://raw.githubusercontent.com/jzu4/jzu4.github.io/main/files/json/rives.json');
-                    }
-                    
-                    // المحاولة 3: من بديل آخر
-                    if (channelsContainer.children.length === 0) {
-                        await tryLoadChannels('https://cdn.jsdelivr.net/gh/jzu4/jzu4.github.io/files/json/rives.json');
-                    }
-                    
-                    // إذا فشلت جميع المحاولات
-                    if (channelsContainer.children.length === 0) {
-                        throw new Error('فشل تحميل القنوات من جميع المصادر');
-                    }
-                    
-                } catch (error) {
-                    console.error('حدث خطأ:', error);
-                    displayChannels(backupChannels);
-                    alertMessage.innerHTML = 'يتم عرض قنوات احتياطية مؤقتاً';
-                } finally {
-                    loadingState.style.display = 'none';
-                }
-            }
-            
-            // دالة محاولة تحميل القنوات من مصدر معين
-            async function tryLoadChannels(url) {
-                try {
-                    const response = await fetch(url);
-                    if (!response.ok) throw new Error('خطأ في الشبكة');
-                    
-                    const data = await response.json();
-                    if (!data.channels || data.channels.length === 0) {
-                        throw new Error('لا توجد قنوات في الملف');
-                    }
-                    
-                    displayChannels(data.channels);
-                    return true;
-                } catch (error) {
-                    console.error(`فشل تحميل من ${url}:`, error);
-                    return false;
-                }
-            }
-            
-            // عرض القنوات في الواجهة
-            function displayChannels(channels) {
-                channelsContainer.innerHTML = '';
-                
-                channels.forEach(channel => {
-                    if (!channel.url || !channel.name) return;
-                    
-                    const card = document.createElement('div');
-                    card.className = 'channel-card';
-                    card.innerHTML = `
-                        <img src="${channel.logo || 'https://via.placeholder.com/80?text=LOGO'}" 
-                             class="channel-logo" 
-                             alt="${channel.name}"
-                             onerror="this.src='https://via.placeholder.com/80?text=LOGO'">
-                        <h3>${channel.name}</h3>
-                    `;
-                    
-                    card.addEventListener('click', () => {
-                        playChannel(channel.url, channel.name);
-                    });
-                    
-                    channelsContainer.appendChild(card);
+            const channels = document.querySelectorAll(".channel-card");
+            const alertBox = document.getElementById("systemAlert");
+
+            // تشغيل القناة الأولى تلقائيًا
+            setTimeout(() => {
+                playChannel(channels[0].dataset.src, channels[0].querySelector("h3").textContent);
+            }, 1000);
+
+            // إضافة أحداث النقر للقنوات
+            channels.forEach(channel => {
+                channel.addEventListener("click", () => {
+                    playChannel(channel.dataset.src, channel.querySelector("h3").textContent);
                 });
-                
-                if (channels.length > 0) {
-                    playChannel(channels[0].url, channels[0].name);
-                }
-            }
-            
-            // تشغيل القناة المحددة
+            });
+
+            // دالة تشغيل القناة
             function playChannel(url, name) {
-                if (!url) return;
-                
-                videoPlayer.src = url;
-                videoPlayer.load();
-                
-                videoPlayer.play().catch(e => {
-                    alertMessage.innerHTML = `
-                        <i class="fas fa-info-circle"></i> 
-                        يرجى النقر على زر التشغيل لمشاهدة ${name}
-                    `;
-                });
+                try {
+                    videoPlayer.src = url;
+                    videoPlayer.load();
+                    videoPlayer.play().catch(e => {
+                        alertBox.innerHTML = `<i class="fas fa-info-circle"></i> يرجى النقر على زر التشغيل لمشاهدة ${name}`;
+                    });
+                } catch (error) {
+                    alertBox.innerHTML = `<i class="fas fa-exclamation-triangle"></i> حدث خطأ في تشغيل القناة`;
+                }
             }
-            
-            // بدء تحميل القنوات
-            loadAllChannels();
         });
     </script>
 </body>
