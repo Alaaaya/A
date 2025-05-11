@@ -1,143 +1,144 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <!-- ... (أبقى جزء الـ head كما هو تماماً) ... -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بث مباشر - قنوات إخبارية ومسلسلات</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* أنماط CSS الأساسية */
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background-color: #0f172a;
+            color: white;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        #videoPlayer {
+            width: 100%;
+            max-height: 500px;
+            background: black;
+        }
+        .channel-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .channel-card {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .channel-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255,255,255,0.2);
+        }
+        .channel-logo {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <!-- ... (أبقى الأجزاء الثابتة كما هي) ... -->
+        <h1>بث مباشر</h1>
         
-        <div id="dynamicSections"></div>
+        <div class="player-section">
+            <video id="videoPlayer" controls></video>
+        </div>
+        
+        <div class="channel-grid" id="channelsContainer">
+            <!-- سيتم ملؤها بالجافاسكريبت -->
+        </div>
     </div>
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            // ... (أبقى المتغيرات والدوال المساعدة كما هي) ...
+            // العناصر الرئيسية
+            const videoPlayer = document.getElementById("videoPlayer");
+            const channelsContainer = document.getElementById("channelsContainer");
             
-            // دالة لتحميل القنوات مع حلول بديلة
+            // بيانات القنوات الاحتياطية
+            const backupChannels = [
+                {
+                    name: "الجزيرة",
+                    url: "https://live-hls-web-aja.getaj.net/AJA/index.m3u8",
+                    logo: "https://iconape.com/wp-content/files/kt/20448/png/Aljazeera-01.png",
+                    category: "أخبار"
+                },
+                {
+                    name: "العربية",
+                    url: "https://av.alarabiya.net/alarabiapublish/alarabiya.smil/playlist.m3u8",
+                    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Al-Arabiya_new_logo.svg/2560px-Al-Arabiya_new_logo.svg.png",
+                    category: "أخبار"
+                }
+            ];
+            
+            // دالة لتحميل القنوات
             async function loadChannels() {
                 try {
-                    // المحاولة الأولى: جلب القنوات من الرابط الأصلي
-                    await loadChannelsFromJSON('https://jzu4.github.io/files/json/rives.json');
-                    
-                    // إذا لم يتم تحميل أي قنوات (المصفوفة فارغة)
-                    if (allChannels.length === 0) {
-                        throw new Error('لم يتم تحميل أي قنوات');
-                    }
-                } catch (error) {
-                    console.error('فشل تحميل القنوات من المصدر الأول:', error);
-                    
-                    try {
-                        // المحاولة الثانية: جلب من نسخة احتياطية
-                        await loadChannelsFromJSON('https://raw.githubusercontent.com/jzu4/jzu4.github.io/main/files/json/rives.json');
-                        
-                        if (allChannels.length === 0) {
-                            // المحاولة الثالثة: استخدام قنوات افتراضية مدمجة
-                            loadDefaultChannels();
-                        }
-                    } catch (fallbackError) {
-                        console.error('فشل تحميل القنوات من المصدر الاحتياطي:', fallbackError);
-                        loadDefaultChannels();
-                    }
-                }
-            }
-            
-            // دالة لتحميل القنوات من JSON
-            async function loadChannelsFromJSON(url) {
-                try {
-                    const response = await fetch(url);
-                    if (!response.ok) throw new Error('فشل في جلب البيانات');
-                    
+                    // المحاولة الأولى: جلب من الموقع الرئيسي
+                    const response = await fetch('https://jzu4.github.io/files/json/rives.json');
                     const data = await response.json();
-                    if (!data.channels || !Array.isArray(data.channels)) throw new Error('هيكل JSON غير صحيح');
                     
-                    // تصنيف القنوات حسب الفئة
-                    const categories = {};
-                    data.channels.forEach(channel => {
-                        if (!channel.category || !channel.url) return;
-                        
-                        if (!categories[channel.category]) {
-                            categories[channel.category] = [];
-                        }
-                        categories[channel.category].push(channel);
-                    });
-                    
-                    // إنشاء الأقسام ديناميكياً
-                    createDynamicSections(categories);
-                    
+                    if (data.channels && data.channels.length > 0) {
+                        displayChannels(data.channels);
+                    } else {
+                        throw new Error('لا توجد قنوات متاحة');
+                    }
                 } catch (error) {
-                    console.error('حدث خطأ في تحميل القنوات:', error);
-                    throw error; // نعيد رمي الخطأ للتعامل معه في الدالة الأم
+                    console.error('خطأ في التحميل:', error);
+                    // استخدام القنوات الاحتياطية
+                    displayChannels(backupChannels);
+                    channelsContainer.innerHTML += `<p style="color:red">يتم عرض قنوات احتياطية بسبب مشكلة في التحميل</p>`;
                 }
             }
             
-            // دالة لتحميل قنوات افتراضية عند فشل جميع المصادر
-            function loadDefaultChannels() {
-                const defaultChannels = {
-                    "أخبار": [
-                        {
-                            name: "الجزيرة",
-                            url: "https://live-hls-web-aja.getaj.net/AJA/index.m3u8",
-                            logo: "https://iconape.com/wp-content/files/kt/20448/png/Aljazeera-01.png"
-                        },
-                        {
-                            name: "العربية",
-                            url: "https://av.alarabiya.net/alarabiapublish/alarabiya.smil/playlist.m3u8",
-                            logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Al-Arabiya_new_logo.svg/2560px-Al-Arabiya_new_logo.svg.png"
-                        }
-                    ],
-                    "رياضية": [
-                        {
-                            name: "بي إن سبورت 1",
-                            url: "https://stream.sainaertebat.com/hls2/bein1.m3u8",
-                            logo: "https://jzu4.github.io/files/img/IMG_6703.png"
-                        }
-                    ]
-                };
+            // دالة لعرض القنوات
+            function displayChannels(channels) {
+                channelsContainer.innerHTML = '';
                 
-                createDynamicSections(defaultChannels);
-                dynamicSections.innerHTML += '<p style="color: #ff6b6b; text-align: center;">يتم عرض قنوات افتراضية بسبب مشكلة في التحميل</p>';
-            }
-            
-            // دالة لإنشاء الأقسام ديناميكياً
-            function createDynamicSections(categories) {
-                dynamicSections.innerHTML = '';
-                
-                for (const [category, channels] of Object.entries(categories)) {
-                    const section = document.createElement('div');
-                    section.innerHTML = `
-                        <div class="section-title">${category}</div>
-                        <div class="channel-grid" id="${category.replace(/\s+/g, '-')}-grid"></div>
+                channels.forEach(channel => {
+                    const channelCard = document.createElement('div');
+                    channelCard.className = 'channel-card';
+                    channelCard.innerHTML = `
+                        <img src="${channel.logo}" class="channel-logo" alt="${channel.name}">
+                        <h3>${channel.name}</h3>
                     `;
-                    dynamicSections.appendChild(section);
                     
-                    const grid = section.querySelector('.channel-grid');
-                    channels.forEach(channel => {
-                        const card = createChannelCard(channel);
-                        grid.appendChild(card);
-                        allChannels.push(card);
+                    channelCard.addEventListener('click', () => {
+                        playChannel(channel.url);
                     });
-                }
+                    
+                    channelsContainer.appendChild(channelCard);
+                });
                 
-                if (allChannels.length > 0) {
-                    setActiveChannel(allChannels[0]);
+                // تشغيل أول قناة تلقائياً
+                if (channels.length > 0) {
+                    playChannel(channels[0].url);
                 }
-                
-                updateFavoritesDisplay();
             }
             
-            // ... (أبقى بقية الدوال كما هي) ...
-            
-            // تهيئة التطبيق
-            function initialize() {
-                setupSearch();
-                setupFullscreen();
-                setupThemeToggle();
-                setupLanguageToggle();
-                loadChannels(); // استبدلنا loadChannelsFromJSON بـ loadChannels
+            // دالة لتشغيل القناة
+            function playChannel(streamUrl) {
+                videoPlayer.src = streamUrl;
+                videoPlayer.load();
+                videoPlayer.play().catch(e => {
+                    console.log('التشغيل التلقائي غير مسموح:', e);
+                });
             }
             
-            initialize();
+            // بدء التحميل
+            loadChannels();
         });
     </script>
 </body>
