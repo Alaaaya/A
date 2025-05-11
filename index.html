@@ -18,12 +18,6 @@
             margin: 0 auto;
             padding: 20px;
         }
-        .breaking-news {
-            background-color: #d32f2f;
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-        }
         .player-section {
             margin-bottom: 30px;
         }
@@ -62,28 +56,28 @@
             text-align: center;
             margin: 15px 0;
         }
+        .loading {
+            text-align: center;
+            margin: 20px 0;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- قسم الأخبار العاجلة -->
-        <div class="breaking-news">
-            <h2><i class="fas fa-bell"></i> عاجل</h2>
-            <p>مصدر رسمي سوري للجزيرة: تم نقل الرفات إلى الولايات المتحدة لإجراء فحص الحمض النووي لتحديد هوياتها</p>
-            <p>قانون مصدوق: مشكلة 4000 فلسطيني فقدوا البصر بسبب الاعتداءات</p>
-        </div>
-        
         <!-- مشغل الفيديو -->
         <div class="player-section">
             <video id="videoPlayer" controls></video>
         </div>
         
-        <!-- قائمة القنوات -->
-        <div class="channel-grid" id="channelsContainer">
-            <!-- سيتم ملؤها بالجافاسكريبت -->
+        <!-- حالة التحميل -->
+        <div class="loading" id="loadingState">
+            <i class="fas fa-spinner fa-spin"></i> جاري تحميل القنوات...
         </div>
         
-        <!-- رسالة التحذير -->
+        <!-- قائمة القنوات -->
+        <div class="channel-grid" id="channelsContainer"></div>
+        
+        <!-- رسائل النظام -->
         <div class="alert" id="alertMessage"></div>
     </div>
 
@@ -92,62 +86,103 @@
             const videoPlayer = document.getElementById("videoPlayer");
             const channelsContainer = document.getElementById("channelsContainer");
             const alertMessage = document.getElementById("alertMessage");
+            const loadingState = document.getElementById("loadingState");
             
-            // القنوات الاحتياطية
+            // القنوات الاحتياطية المؤكدة العمل
             const backupChannels = [
                 {
                     name: "الجزيرة",
                     url: "https://live-hls-web-aja.getaj.net/AJA/index.m3u8",
-                    logo: "https://iconape.com/wp-content/files/kt/20448/png/Aljazeera-01.png"
+                    logo: "https://iconape.com/wp-content/files/kt/20448/png/Aljazeera-01.png",
+                    category: "أخبار"
                 },
                 {
                     name: "العربية",
                     url: "https://av.alarabiya.net/alarabiapublish/alarabiya.smil/playlist.m3u8",
-                    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Al-Arabiya_new_logo.svg/2560px-Al-Arabiya_new_logo.svg.png"
+                    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Al-Arabiya_new_logo.svg/2560px-Al-Arabiya_new_logo.svg.png",
+                    category: "أخبار"
                 },
                 {
-                    name: "الحدث",
-                    url: "https://live.alarabiya.net/alarabiapublish/alhadath.smil/playlist.m3u8",
-                    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/Al_Hadath_TV_logo_2023.svg/1200px-Al_Hadath_TV_logo_2023.svg.png"
+                    name: "MBC 1",
+                    url: "https://shls-mbc1na-prod-dub.shahid.net/out/v1/84ab37e99d6e4b16b33c6600f94f6ccb/index_7.m3u8",
+                    logo: "https://upload.wikimedia.org/wikipedia/commons/8/81/Mbc1logo.png",
+                    category: "ترفيه"
                 }
             ];
             
-            // تحميل القنوات
-            async function loadChannels() {
+            // دالة رئيسية لتحميل القنوات
+            async function loadAllChannels() {
+                loadingState.style.display = 'block';
+                
                 try {
-                    const response = await fetch('https://raw.githubusercontent.com/jzu4/jzu4.github.io/main/files/json/rives.json');
-                    const data = await response.json();
+                    // المحاولة 1: من URL مباشر
+                    await tryLoadChannels('https://jzu4.github.io/files/json/rives.json');
                     
-                    if (data.channels && data.channels.length > 0) {
-                        displayChannels(data.channels);
-                    } else {
-                        throw new Error('لا توجد قنوات متاحة');
+                    // المحاولة 2: من RawGit
+                    if (channelsContainer.children.length === 0) {
+                        await tryLoadChannels('https://raw.githubusercontent.com/jzu4/jzu4.github.io/main/files/json/rives.json');
                     }
+                    
+                    // المحاولة 3: من بديل آخر
+                    if (channelsContainer.children.length === 0) {
+                        await tryLoadChannels('https://cdn.jsdelivr.net/gh/jzu4/jzu4.github.io/files/json/rives.json');
+                    }
+                    
+                    // إذا فشلت جميع المحاولات
+                    if (channelsContainer.children.length === 0) {
+                        throw new Error('فشل تحميل القنوات من جميع المصادر');
+                    }
+                    
                 } catch (error) {
-                    console.error('خطأ في التحميل:', error);
+                    console.error('حدث خطأ:', error);
                     displayChannels(backupChannels);
-                    alertMessage.innerHTML = '<i class="fas fa-exclamation-triangle"></i> يتم عرض قنوات احتياطية بسبب مشكلة في التحميل';
+                    alertMessage.innerHTML = 'يتم عرض قنوات احتياطية مؤقتاً';
+                } finally {
+                    loadingState.style.display = 'none';
                 }
             }
             
-            // عرض القنوات
+            // دالة محاولة تحميل القنوات من مصدر معين
+            async function tryLoadChannels(url) {
+                try {
+                    const response = await fetch(url);
+                    if (!response.ok) throw new Error('خطأ في الشبكة');
+                    
+                    const data = await response.json();
+                    if (!data.channels || data.channels.length === 0) {
+                        throw new Error('لا توجد قنوات في الملف');
+                    }
+                    
+                    displayChannels(data.channels);
+                    return true;
+                } catch (error) {
+                    console.error(`فشل تحميل من ${url}:`, error);
+                    return false;
+                }
+            }
+            
+            // عرض القنوات في الواجهة
             function displayChannels(channels) {
                 channelsContainer.innerHTML = '';
                 
                 channels.forEach(channel => {
-                    const channelCard = document.createElement('div');
-                    channelCard.className = 'channel-card';
-                    channelCard.innerHTML = `
-                        <img src="${channel.logo}" class="channel-logo" alt="${channel.name}" 
+                    if (!channel.url || !channel.name) return;
+                    
+                    const card = document.createElement('div');
+                    card.className = 'channel-card';
+                    card.innerHTML = `
+                        <img src="${channel.logo || 'https://via.placeholder.com/80?text=LOGO'}" 
+                             class="channel-logo" 
+                             alt="${channel.name}"
                              onerror="this.src='https://via.placeholder.com/80?text=LOGO'">
                         <h3>${channel.name}</h3>
                     `;
                     
-                    channelCard.addEventListener('click', () => {
+                    card.addEventListener('click', () => {
                         playChannel(channel.url, channel.name);
                     });
                     
-                    channelsContainer.appendChild(channelCard);
+                    channelsContainer.appendChild(card);
                 });
                 
                 if (channels.length > 0) {
@@ -155,18 +190,23 @@
                 }
             }
             
-            // تشغيل القناة
-            function playChannel(streamUrl, channelName) {
-                videoPlayer.src = streamUrl;
+            // تشغيل القناة المحددة
+            function playChannel(url, name) {
+                if (!url) return;
+                
+                videoPlayer.src = url;
                 videoPlayer.load();
+                
                 videoPlayer.play().catch(e => {
-                    console.log('التشغيل التلقائي غير مسموح:', e);
-                    alertMessage.innerHTML = `<i class="fas fa-info-circle"></i> يرجى النقر على زر التشغيل لمشاهدة قناة ${channelName}`;
+                    alertMessage.innerHTML = `
+                        <i class="fas fa-info-circle"></i> 
+                        يرجى النقر على زر التشغيل لمشاهدة ${name}
+                    `;
                 });
             }
             
-            // بدء التحميل
-            loadChannels();
+            // بدء تحميل القنوات
+            loadAllChannels();
         });
     </script>
 </body>
