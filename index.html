@@ -14,8 +14,6 @@
             --glass-bg: rgba(255, 255, 255, 0.1);
             --glass-border: rgba(255, 255, 255, 0.25);
             --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            --error-color: #ff4444;
-            --success-color: #00C851;
             --favorite-color: #ffd700;
         }
 
@@ -63,8 +61,7 @@
         .player-section,
         .channel-card,
         .section-title,
-        .search-bar,
-        .custom-controls {
+        .search-bar {
             background: var(--glass-bg);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
@@ -89,37 +86,6 @@
             border-radius: 15px;
         }
 
-        /* شاشة التحميل */
-        .loading-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.7);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            border-radius: 15px;
-            z-index: 10;
-            display: none;
-        }
-
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 5px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top-color: var(--primary-color);
-            animation: spin 1s ease-in-out infinite;
-            margin-bottom: 15px;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
         /* زر ملء الشاشة */
         .fullscreen-btn {
             position: absolute;
@@ -142,33 +108,6 @@
         .fullscreen-btn:hover {
             background: rgba(0, 0, 0, 0.8);
             transform: scale(1.1);
-        }
-
-        /* رسائل التنبيه */
-        .alert {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 15px;
-            border-radius: 5px;
-            color: white;
-            z-index: 100;
-            display: none;
-            max-width: 300px;
-            animation: slideIn 0.5s forwards;
-        }
-
-        .alert.error {
-            background: var(--error-color);
-        }
-
-        .alert.success {
-            background: var(--success-color);
-        }
-
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
         }
 
         /* شريط البحث */
@@ -198,54 +137,6 @@
 
         .search-bar i {
             margin-left: 10px;
-        }
-
-        /* عناصر التحكم */
-        .custom-controls {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px;
-            background: rgba(0, 0, 0, 0.7);
-            margin-top: 10px;
-            border-radius: 10px;
-        }
-
-        .custom-controls button {
-            background: none;
-            border: none;
-            color: white;
-            cursor: pointer;
-            font-size: 16px;
-            width: 30px;
-            height: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            transition: background 0.2s;
-        }
-
-        .custom-controls button:hover {
-            background: rgba(255, 255, 255, 0.2);
-        }
-
-        .custom-controls input[type="range"] {
-            flex: 1;
-            height: 5px;
-            -webkit-appearance: none;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 5px;
-            outline: none;
-        }
-
-        .custom-controls input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 15px;
-            height: 15px;
-            background: var(--primary-color);
-            border-radius: 50%;
-            cursor: pointer;
         }
 
         /* شبكة القنوات */
@@ -384,17 +275,6 @@
                 font-size: 1.2rem;
             }
 
-            .custom-controls {
-                padding: 8px;
-                gap: 5px;
-            }
-
-            .custom-controls button {
-                width: 25px;
-                height: 25px;
-                font-size: 14px;
-            }
-
             .search-bar input {
                 font-size: 14px;
                 padding: 8px;
@@ -414,14 +294,6 @@
             background: rgba(0, 0, 0, 0.05);
         }
 
-        body.light-mode .custom-controls {
-            background: rgba(0, 0, 0, 0.1);
-        }
-
-        body.light-mode .custom-controls button {
-            color: #333;
-        }
-
         body.light-mode .search-bar input::placeholder {
             color: rgba(0, 0, 0, 0.5);
         }
@@ -429,15 +301,6 @@
 </head>
 <body>
     <div class="container">
-        <!-- رسائل التنبيه -->
-        <div class="alert error" id="errorAlert" style="display: none;">
-            <i class="fas fa-exclamation-circle"></i> <span>حدث خطأ أثناء تحميل القناة</span>
-        </div>
-        
-        <div class="alert success" id="successAlert" style="display: none;">
-            <i class="fas fa-check-circle"></i> <span>جارٍ تشغيل القناة...</span>
-        </div>
-
         <!-- أزرار التحكم -->
         <div class="control-buttons">
             <button class="theme-toggle" id="themeToggle">
@@ -456,12 +319,6 @@
 
         <!-- مشغل الفيديو -->
         <div class="player-section">
-            <!-- شاشة التحميل -->
-            <div class="loading-overlay" id="loadingOverlay">
-                <div class="spinner"></div>
-                <p>جارٍ التحميل...</p>
-            </div>
-            
             <video id="videoPlayer" controls autoplay playsinline></video>
             <button class="fullscreen-btn" id="fullscreenBtn" title="ملء الشاشة">
                 <i class="fas fa-expand"></i>
@@ -556,16 +413,8 @@
             // العناصر الرئيسية
             const videoPlayer = document.getElementById("videoPlayer");
             const channels = document.querySelectorAll(".channel-card");
-            const loadingOverlay = document.getElementById("loadingOverlay");
             const fullscreenBtn = document.getElementById("fullscreenBtn");
-            const errorAlert = document.getElementById("errorAlert");
-            const successAlert = document.getElementById("successAlert");
             const searchInput = document.getElementById("searchInput");
-            const playPauseBtn = document.getElementById("playPauseBtn");
-            const volumeSlider = document.getElementById("volumeSlider");
-            const currentTimeEl = document.getElementById("currentTime");
-            const durationEl = document.getElementById("duration");
-            const shareBtn = document.getElementById("shareBtn");
             const themeToggle = document.getElementById("themeToggle");
             const languageToggle = document.getElementById("languageToggle");
             const favoritesGrid = document.getElementById("favoritesGrid");
@@ -573,24 +422,6 @@
             
             // تهيئة المفضلة
             let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
-            
-            // عرض رسالة نجاح
-            function showSuccess(message) {
-                successAlert.querySelector('span').textContent = message || 'تمت العملية بنجاح';
-                successAlert.style.display = 'flex';
-                setTimeout(() => {
-                    successAlert.style.display = 'none';
-                }, 3000);
-            }
-            
-            // عرض رسالة خطأ
-            function showError(message) {
-                errorAlert.querySelector('span').textContent = message || 'حدث خطأ ما';
-                errorAlert.style.display = 'flex';
-                setTimeout(() => {
-                    errorAlert.style.display = 'none';
-                }, 3000);
-            }
             
             // تشغيل القناة
             function setActiveChannel(channel) {
@@ -601,27 +432,12 @@
                 const channelName = channel.querySelector(".channel-name").textContent;
                 const channelLogo = channel.querySelector(".channel-logo").src;
                 
-                // عرض شاشة التحميل
-                loadingOverlay.style.display = "flex";
-                showSuccess(`جارٍ تشغيل قناة ${channelName}...`);
-                
                 // إضافة إلى السجل التاريخي
                 addToHistory(channelName, channelLogo);
                 
                 videoPlayer.src = streamUrl;
                 videoPlayer.load();
-                
-                videoPlayer.addEventListener('canplay', function() {
-                    loadingOverlay.style.display = "none";
-                    videoPlayer.play().catch(e => {
-                        showError("تعذر التشغيل التلقائي، يرجى النقر على زر التشغيل");
-                    });
-                });
-                
-                videoPlayer.addEventListener('error', function() {
-                    loadingOverlay.style.display = "none";
-                    showError("تعذر تحميل القناة، يرجى المحاولة لاحقاً");
-                });
+                videoPlayer.play().catch(e => console.log("التشغيل التلقائي غير مسموح"));
             }
             
             // إضافة إلى المفضلة
@@ -632,11 +448,9 @@
                 if (isFavorite) {
                     favorites = favorites.filter(id => id !== channelId);
                     channel.classList.remove("favorite");
-                    showSuccess("تمت إزالة القناة من المفضلة");
                 } else {
                     favorites.push(channelId);
                     channel.classList.add("favorite");
-                    showSuccess("تمت إضافة القناة إلى المفضلة");
                 }
                 
                 localStorage.setItem("favorites", JSON.stringify(favorites));
@@ -687,15 +501,6 @@
                 localStorage.setItem("history", JSON.stringify(history.slice(0, 5)));
             }
             
-            // تنسيق الوقت
-            function formatTime(seconds) {
-                if (isNaN(seconds)) return "00:00";
-                
-                const mins = Math.floor(seconds / 60);
-                const secs = Math.floor(seconds % 60);
-                return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-            }
-            
             // البحث عن القنوات
             searchInput.addEventListener("input", () => {
                 const searchTerm = searchInput.value.toLowerCase();
@@ -705,37 +510,6 @@
                 });
             });
             
-            // أحداث الفيديو
-            videoPlayer.addEventListener("play", () => {
-                playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
-            });
-            
-            videoPlayer.addEventListener("pause", () => {
-                playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
-            });
-            
-            videoPlayer.addEventListener("timeupdate", () => {
-                currentTimeEl.textContent = formatTime(videoPlayer.currentTime);
-                durationEl.textContent = formatTime(videoPlayer.duration);
-            });
-            
-            videoPlayer.addEventListener("volumechange", () => {
-                volumeSlider.value = videoPlayer.volume;
-            });
-            
-            // أحداث الأزرار
-            playPauseBtn.addEventListener("click", () => {
-                if (videoPlayer.paused) {
-                    videoPlayer.play();
-                } else {
-                    videoPlayer.pause();
-                }
-            });
-            
-            volumeSlider.addEventListener("input", () => {
-                videoPlayer.volume = volumeSlider.value;
-            });
-            
             fullscreenBtn.addEventListener("click", function() {
                 if (videoPlayer.requestFullscreen) {
                     videoPlayer.requestFullscreen();
@@ -743,21 +517,6 @@
                     videoPlayer.webkitRequestFullscreen();
                 } else if (videoPlayer.msRequestFullscreen) {
                     videoPlayer.msRequestFullscreen();
-                }
-            });
-            
-            shareBtn.addEventListener("click", function() {
-                if (navigator.share) {
-                    navigator.share({
-                        title: 'شاهد هذه القناة',
-                        text: 'انضم لمشاهدة البث المباشر',
-                        url: window.location.href
-                    }).catch(() => {
-                        showError("تم إلغاء المشاركة");
-                    });
-                } else {
-                    navigator.clipboard.writeText(window.location.href);
-                    showSuccess("تم نسخ الرابط إلى الحافظة");
                 }
             });
             
@@ -808,7 +567,6 @@
             });
             
             // تحديث عناصر التحكم الأولية
-            volumeSlider.value = videoPlayer.volume;
             updateFavoritesDisplay();
             
             // تشغيل القناة الأولى تلقائياً عند تحميل الصفحة
