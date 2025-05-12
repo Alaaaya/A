@@ -352,53 +352,56 @@
             const favoritesGrid = document.getElementById("favoritesGrid");
             const favoritesTitle = document.getElementById("favoritesTitle");
             const fullscreenBtn = document.getElementById("fullscreenBtn");
-            const jsonUrl = 'https://jzu4.github.io/files/json/rives.json'; // رابط ملف JSON الخاص بك
 
-            let channelsData = []; // لتخزين بيانات القنوات التي تم جلبها
-            let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
-
-            // دالة لجلب وعرض القنوات من ملف JSON
-            function fetchAndDisplayChannels() {
-                fetch(jsonUrl)
-                    .then(response => response.json())
-                    .then(data => {
-                        channelsData = data.channels; // الوصول إلى مصفوفة القنوات داخل الكائن
-                        displayChannels(data.channels); // تمرير مصفوفة القنوات للدالة
-                        updateFavoritesDisplay(); // تحديث عرض المفضلة بعد جلب القنوات
-                        // تشغيل القناة الأولى تلقائياً عند تحميل الصفحة (إذا كانت موجودة)
-                        if (data.channels.length > 0) {
-                            const firstChannelData = data.channels[0];
-                            const firstChannel = document.querySelector(`.channel-card[data-id="${firstChannelData.url}"]`);
-                            if (firstChannel) {
-                                setActiveChannel(firstChannel);
-                            } else {
-                                // إذا لم يتم العثور على العنصر بعد الإنشاء الديناميكي، قم بتشغيله هنا
-                                const firstDynamicallyCreatedChannel = document.querySelector(`#${sanitizeId(firstChannelData.name)}`);
-                                if (firstDynamicallyCreatedChannel) {
-                                    setActiveChannel(firstDynamicallyCreatedChannel);
-                                }
-                            }
-                        }
-                    })
-                    .catch(error => {
-                        console.error("حدث خطأ أثناء جلب بيانات القنوات:", error);
-                        // يمكنك هنا عرض رسالة خطأ للمستخدم
-                    });
-            }
-
-            // دالة لتنظيف اسم القناة لإنشاء معرف فريد
-            function sanitizeId(name) {
-                return name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-            }
-
-            // دالة لعرض القنوات بناءً على البيانات
-            function displayChannels(channels) {
-                newsGrid.innerHTML = '';
-                seriesGrid.innerHTML = '';
-                sportsGrid.innerHTML = '';
-
-                channels.forEach(channelData => {
-                    const channelCard = document.createElement('div');
-                    channelCard.classList.add('channel-card');
-                    channelCard.setAttribute('data-src', channelData.url);
-                    channelCard.setAttribute('data-id
+            const channelsData = [
+                {
+                    "name": "beIN SPORTS HD1",
+                    "url": "https://stream.sainaertebat.com/hls2/bein1.m3u8",
+                    "logo": "https://jzu4.github.io/files/img/IMG_6703.png",
+                    "category": "BeIN Sports"
+                },
+                {
+                    "name": "beIN SPORTS HD2",
+                    "url": "https://cdn1-europe.mgmlcdn.s-cloudflare.com:25463/xH5gc4mOg8vw4txxz36/240_.m3u8?",
+                    "logo": "https://jzu4.github.io/files/img/IMG_6703.png",
+                    "category": "BeIN Sports"
+                },
+                {
+                    "name": "beIN SPORTS HD3",
+                    "url": "https://cdn1-europe.mgmlcdn.s-cloudflare.com:25463/xH5gc4mOg8vw4txxz36/241_.m3u8?",
+                    "logo": "https://jzu4.github.io/files/img/IMG_6703.png",
+                    "category": "BeIN Sports"
+                },
+                {
+                    "name": "beIN SPORTS HD4",
+                    "url": "https://cdn1-europe.mgmlcdn.s-cloudflare.com:25463/xH5gc4mOg8vw4txxz36/1_.m3u8?",
+                    "logo": "https://jzu4.github.io/files/img/IMG_6703.png",
+                    "category": "BeIN Sports"
+                },
+                {
+                    "name": "beIN SPORTS HD5",
+                    "url": "https://cdn1-europe.mgmlcdn.s-cloudflare.com:25463/xH5gc4mOg8vw4txxz36/32_.m3u8?",
+                    "logo": "https://jzu4.github.io/files/img/IMG_6703.png",
+                    "category": "BeIN Sports"
+                },
+                {
+                    "name": "SSC 1",
+                    "url": "https://stream.sainaertebat.com/hls2/ssc1.m3u8",
+                    "logo": "https://jzu4.github.io/files/img/504D5767-2196-4154-8F97-58961653DCB7.png",
+                    "category": "SSC"
+                },
+                {
+                    "name": "SSC 2",
+                    "url": "https://cdn1-europe.mgmlcdn.s-cloudflare.com:25463/xH5gc4mOg8vw4txxz36/163_.m3u8?",
+                    "logo": "https://jzu4.github.io/files/img/504D5767-2196-4154-8F97-58961653DCB7.png",
+                    "category": "SSC"
+                },
+                {
+                    "name": "SSC 3",
+                    "url": "https://cdn1-europe.mgmlcdn.s-cloudflare.com:25463/xH5gc4mOg8vw4txxz36/147_.m3u8?",
+                    "logo": "https://jzu4.github.io/files/img/504D5767-2196-4154-8F97-58961653DCB7.png",
+                    "category": "SSC"
+                },
+                {
+                    "name": "SSC 4",
+                    "url": "https://https://cdn1-
