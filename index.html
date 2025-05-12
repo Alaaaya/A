@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بث مباشر - قنوات عربية</title>
+    <title>بث مباشر - قنوات إخبارية ومسلسلات</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <meta name="description" content="موقع بث مباشر لمجموعة متنوعة من القنوات العربية">
-    <meta name="keywords" content="بث مباشر, قنوات عربية, أخبار, رياضة, مسلسلات, أفلام">
+    <meta name="description" content="موقع بث مباشر للقنوات الإخبارية والمسلسلات العربية">
+    <meta name="keywords" content="بث مباشر, قنوات عربية, الجزيرة, العربية, مسلسلات">
     <style>
         :root {
             --primary-color: rgba(33, 150, 243, 0.9);
@@ -33,7 +33,7 @@
             font-family: 'Segoe UI', 'Tahoma', sans-serif;
             color: white;
             min-height: 100vh;
-            background: url('https://i.pinimg.com/736x/a0/ad/75/a0ad758c1fe0cb8350624eecb77c27ca.jpg')
+            background: url('https://i.pinimg.com/736x/a0/ad/75/a0ad758c1fe0cb8350624eecb77c27ca.jpg') 
                         no-repeat center center fixed;
             background-size: cover;
             display: flex;
@@ -260,17 +260,17 @@
             .channel-grid {
                 grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
             }
-
+            
             .channel-logo {
                 width: 60px;
                 height: 60px;
             }
-
+            
             #videoPlayer {
                 height: 30vh;
                 min-height: 200px;
             }
-
+            
             .section-title {
                 font-size: 1.2rem;
             }
@@ -301,6 +301,7 @@
 </head>
 <body>
     <div class="container">
+        <!-- أزرار التحكم -->
         <div class="control-buttons">
             <button class="theme-toggle" id="themeToggle">
                 <i class="fas fa-moon"></i> <span>الوضع الليلي</span>
@@ -310,11 +311,13 @@
             </button>
         </div>
 
+        <!-- شريط البحث -->
         <div class="search-bar">
             <input type="text" id="searchInput" placeholder="ابحث عن قناة...">
             <i class="fas fa-search"></i>
         </div>
 
+        <!-- مشغل الفيديو -->
         <div class="player-section">
             <video id="videoPlayer" controls autoplay playsinline></video>
             <button class="fullscreen-btn" id="fullscreenBtn" title="ملء الشاشة">
@@ -322,80 +325,244 @@
             </button>
         </div>
 
+        <!-- القنوات المفضلة -->
         <div class="section-title" id="favoritesTitle"> القنوات المفضلة</div>
         <div class="channel-grid" id="favoritesGrid">
-            </div>
+            <!-- سيتم ملؤها ديناميكيًا -->
+        </div>
 
+        <!-- قنوات الأخبار -->
         <div class="section-title"> قنوات الأخبار</div>
         <div class="channel-grid" id="newsGrid">
+            <div class="channel-card" data-src="https://live-hls-web-aja.getaj.net/AJA/index.m3u8" data-id="aljazeera">
+                <i class="fas fa-star favorite-icon"></i>
+                <img src="https://iconape.com/wp-content/files/kt/20448/png/Aljazeera-01.png" class="channel-logo" alt="الجزيرة">
+                <div class="channel-name">الجزيرة</div>
             </div>
 
+            <div class="channel-card" data-src="https://av.alarabiya.net/alarabiapublish/alarabiya.smil/playlist.m3u8" data-id="alarabiya">
+                <i class="fas fa-star favorite-icon"></i>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Al-Arabiya_new_logo.svg/2560px-Al-Arabiya_new_logo.svg.png" class="channel-logo" alt="العربية">
+                <div class="channel-name">العربية</div>
+            </div>
+
+            <div class="channel-card" data-src="https://svs.itworkscdn.net/syriatvlive/syriatv.smil/playlist_dvr.m3u8" data-id="syriatv">
+                <i class="fas fa-star favorite-icon"></i>
+                <img src="https://play-lh.googleusercontent.com/ihmGKNbRH9VO9NwrYuLl9L3I-3TbP7VVxKFBqfKeSKqYexLzXFADU_c8lHakvtQdgOc2" class="channel-logo" alt="تلفزيون سوريا">
+                <div class="channel-name">تلفزيون سوريا</div>
+            </div>
+
+            <div class="channel-card" data-src="https://live.alarabiya.net/alarabiapublish/alhadath.smil/playlist.m3u8" data-id="alhadath">
+                <i class="fas fa-star favorite-icon"></i>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/Al_Hadath_TV_logo_2023.svg/1200px-Al_Hadath_TV_logo_2023.svg.png" class="channel-logo" alt="الحدث">
+                <div class="channel-name">الحدث</div>
+            </div>
+
+            <div class="channel-card" data-src="https://ronahi-tv.akamaized.net/hls/ronahi-tv.m3u8" data-id="ronahi">
+                <i class="fas fa-star favorite-icon"></i>
+                <img src="https://play-lh.googleusercontent.com/ebDDyV2oDJPtR0s6arYpUbpQVEEHf4gcFa3hwiNJlpa5ckHSbILMe5B42ovk8BwdB8oN=w240-h480-rw" class="channel-logo" alt="روناهي">
+                <div class="channel-name">روناهي</div>
+            </div>
+
+            <div class="channel-card" data-src="https://alarabyta.cdn.octivid.com/alaraby/smil:alaraby.stream.smil/chunklist.m3u8" data-id="alaraby">
+                <i class="fas fa-star favorite-icon"></i>
+                <img src="https://www.alaraby.com/themes/custom/arabytv/logo-print.png" class="channel-logo" alt="تلفزيون العربي">
+                <div class="channel-name">تلفزيون العربي</div>
+            </div>
+
+            <div class="channel-card" data-src="https://stream.skynewsarabia.com/hls/sna.m3u8" data-id="skynews">
+                <i class="fas fa-star favorite-icon"></i>
+                <img src="https://news.elsob7.com/wp-content/uploads/2024/05/%D9%82%D9%86%D8%A7%D8%A9-%D8%B3%D9%83%D8%A7%D9%8A-%D9%86%D9%8A%D9%88%D8%B2-%D8%B9%D8%B1%D8%A8%D9%8A%D8%A9.webp" class="channel-logo" alt="سكاي نيوز عربية">
+                <div class="channel-name">سكاي نيوز عربية</div>
+            </div>
+        </div>
+
+        <!-- قنوات المسلسلات -->
         <div class="section-title"> قنوات المسلسلات</div>
         <div class="channel-grid" id="seriesGrid">
+            <div class="channel-card" data-src="https://shls-mbc1na-prod-dub.shahid.net/out/v1/84ab37e99d6e4b16b33c6600f94f6ccb/index_7.m3u8" data-id="mbc1">
+                <i class="fas fa-star favorite-icon"></i>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/8/81/Mbc1logo.png" class="channel-logo" alt="MBC 1">
+                <div class="channel-name">MBC 1</div>
             </div>
-
-        <div class="section-title"> القنوات الرياضية</div>
-        <div class="channel-grid" id="sportsGrid">
+            <div class="channel-card" data-src="https://mbc1-enc.edgenextcdn.net/out/v1/b0b3a0e6750d4408bb86d703d5feffd1/index_26.m3u8" data-id="mbcdrama">
+                <i class="fas fa-star favorite-icon"></i>
+                <img src="https://jzu4.github.io/files/img/0F612822-AEA9-4991-AEBA-2D499CCBCC7D.png" class="channel-logo" alt="MBC Drama">
+                <div class="channel-name">MBC Drama</div>
             </div>
-    </div>
+            <div class="channel-card" data-src="https://mbcplusdrama-prod-dub-enc.edgenextcdn.net/out/v1/97ca0ce6fc6142f4b14c0a694af59eab/index.m3u8" data-id="mbcplusdrama">
+                <i class="fas fa-star favorite-icon"></i>
+                <img src="https://i.imgur.com/lxWdjXG.png" class="channel-logo" alt="MBC Plus Drama">
+                <div class="channel-name">MBC Plus Drama</div>
+            </div>
+            <div class="channel-card" data-src="https://shls-live-enc.edgenextcdn.net/out/v1/948c54279b594944adde578c95f1d7d1/index.m3u8" data-id="babalhara">
+                <i class="fas fa-star favorite-icon"></i>
+                <img src="https://i.imgur.com/QtlnZbq.png" class="channel-logo" alt="باب الحارة">
+                <div class="channel-name">باب الحارة</div>
+            </div>
+        </div>
+        
+        <!-- القنوات الرياضية -->
+        <div class="section-title"> قنوات BeIN Sports</div>
+        <div class="channel-grid" id="beinsportsGrid">
+            <div class="channel-card" data-src="https://stream.sainaertebat.com/hls2/bein1.m3u8" data-id="beinsports1">
+                <i class="fas fa-star favorite-icon"></i>
+                <img src="https://jzu4.github.io/files/img/IMG_6703.png" class="channel-logo" alt="beIN SPORTS HD1">
+                <div class="channel-name">beIN SPORTS HD1</div>
+            </div>
+            <div class="channel-card" data-src="https://cdn1-europe.mgmlcdn.s-cloudflare.com:25463/xH5gc4mOg8vw4txxz36/240_.m3u8?" data-id="beinsports2">
+                <i class="fas fa-star favorite-icon"></i>
+                <img src="https://jzu4.github.io/files/img/IMG_6703.png" class="channel-logo" alt="beIN SPORTS HD2">
+                <div class="channel-name">beIN SPORTS HD2</div>
+            </div>
+            <div class="channel-card" data-src="https://cdn1-europe.mgmlcdn.s-cloudflare.com:25463/xH5gc4mOg8vw4txxz36/241_.m3u8?" data-id="beinsports3">
+                <i class="fas fa-star favorite-icon"></i>
+                <img src="https://jzu4.github.io/files/img/IMG_6703.png" class="channel-logo" alt="beIN SPORTS HD3">
+                <div class="channel-name">beIN SPORTS HD3</div>
+            </div>
+            <div class="channel-card" data-src="https://cdn1-europe.mgmlcdn.s-cloudflare.com:25463/xH5gc4mOg8vw4txxz36/1_.m3u8?" data-id="beinsports4">
+                <i class="fas fa-star favorite-icon"></i>
+                <img src="https://jzu4.github.io/files/img/IMG_6703.png" class="channel-logo" alt="beIN SPORTS HD4">
+                <div class="channel-name">beIN SPORTS HD4</div>
+            </div>
+            <div class="channel-card" data-src="https://cdn1-europe.mgmlcdn.s-cloudflare.com:25463/xH5gc4mOg8vw4txxz36/32_.m3u8?" data-id="beinsports5">
+                <i class="fas fa-star favorite-icon"></i>
+                <img src="https://jzu4.github.io/files/img/IMG_6703.png" class="channel-logo" alt="beIN SPORTS HD5">
+                <div class="channel-name">beIN SPORTS HD5</div>
+            </div>
+        </div>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            // العناصر الرئيسية
-            const videoPlayer = document.getElementById("videoPlayer");
-            const newsGrid = document.getElementById("newsGrid");
-            const seriesGrid = document.getElementById("seriesGrid");
-            const sportsGrid = document.getElementById("sportsGrid");
-            const searchInput = document.getElementById("searchInput");
-            const themeToggle = document.getElementById("themeToggle");
-            const languageToggle = document.getElementById("languageToggle");
-            const favoritesGrid = document.getElementById("favoritesGrid");
-            const favoritesTitle = document.getElementById("favoritesTitle");
-            const fullscreenBtn = document.getElementById("fullscreenBtn");
+        <!-- قنوات SSC -->
+        <div class="section-title"> قنوات SSC</div>
+        <div class="channel-grid" id="sscGrid">
+            <div class="channel-card" data-src="https://stream.sainaertebat.com/hls2/ssc1.m3u8" data-id="ssc1">
+                <i class="fas fa-star favorite-icon"></i>
+                <img src="https://jzu4.github.io/files/img/504D5767-2196-4154-8F97-58961653DCB7.png" class="channel-logo" alt="SSC 1">
+                <div class="channel-name">SSC 1</div>
+            </div>
+            <div class="channel-card" data-src="https://cdn1-europe.mgmlcdn.s-cloudflare.com:25463/xH5gc4mOg8vw4txxz36/163_.m3u8?" data-id="ssc2">
+                <i class="fas fa-star favorite-icon"></i>
+                <img src="https://jzu4.github.io/files/img/504D5767-2196-4154-8F97-58961653DCB7.png" class="channel-logo" alt="SSC 2">
+                <div class="channel-name">SSC 2</div>
+            </div>
+            <div class="channel-card" data-src="https://cdn1-europe.mgmlcdn.s-cloudflare.com:25463/xH5gc4mOg8vw4txxz36/147_.m3u8?" data-id="ssc3">
+                <i class="fas fa-star favorite-icon"></i>
+                <img src="https://jzu4.github.io/files/img/504D5767-2196-4154-8F97-58961653DCB7.png" class="channel-logo" alt="SSC 3">
+                <div class="channel-name">SSC 3</div>
+            </div>
+            <div class="channel-card" data-src="https://cdn1-europe.mgmlcdn.s-cloudflare.com:25463/xH5gc4mOg8vw4txxz36/178_.m3u8?" data-id="ssc4">
+                <i class="fas fa-star favorite-icon"></i>
+                <img src="https://jzu4.github.io/files/img/504D5767-2196-4154-8F97-58961653DCB7.png" class="channel-logo" alt="SSC 4">
+                <div class="channel-name">SSC 4</div>
+            </div>
+            <div class="channel-card" data-src="https://cdn1-europe.mgmlcdn.s-cloudflare.com:25463/xH5gc4mOg8vw4txxz36/179_.m3u8" data-id="ssc5">
+                <i class="fas fa-star favorite-icon"></i>
+                <img src="https://jzu4.github.io/files/img/504D5767-2196-4154-8F97-58961653DCB7.png" class="channel-logo" alt="SSC 5">
+                <div class="channel-name">SSC 5</div>
+            </div>
+            <div class="channel-card" data-src="https://cdn1-europe.mgmlcdn.s-cloudflare.com:25463/xH5gc4mOg8vw4txxz36/193_.m3u8?" data-id="sscextra1">
+                <i class="fas fa-star favorite-icon"></i>
+                <img src="https://jzu4.github.io/files/img/504D5767-2196-4154-8F97-58961653DCB7.png" class="channel-logo" alt="SSC Extra1">
+                <div class="channel-name">SSC Extra1</div>
+            </div>
+            <div class="channel-card" data-src="https://cdn1-europe.mgmlcdn.s-cloudflare.com:25463/xH5gc4mOg8vw4txxz36/226_.m3u8?" data-id="sscextra2">
+                <i class="fas fa-star favorite-icon"></i>
+                <img src="https://jzu4.github.io/files/img/504D5767-2196-4154-8F97-58961653DCB7.png" class="channel-logo" alt="SSC Extra2">
+                <div class="channel-name">SSC Extra2</div>
+            </div>
+        </div>
 
-            const channelsData = [
-                {
-                    "name": "beIN SPORTS HD1",
-                    "url": "https://stream.sainaertebat.com/hls2/bein1.m3u8",
-                    "logo": "https://jzu4.github.io/files/img/IMG_6703.png",
-                    "category": "BeIN Sports"
-                },
-                {
-                    "name": "beIN SPORTS HD2",
-                    "url": "https://cdn1-europe.mgmlcdn.s-cloudflare.com:25463/xH5gc4mOg8vw4txxz36/240_.m3u8?",
-                    "logo": "https://jzu4.github.io/files/img/IMG_6703.png",
-                    "category": "BeIN Sports"
-                },
-                {
-                    "name": "beIN SPORTS HD3",
-                    "url": "https://cdn1-europe.mgmlcdn.s-cloudflare.com:25463/xH5gc4mOg8vw4txxz36/241_.m3u8?",
-                    "logo": "https://jzu4.github.io/files/img/IMG_6703.png",
-                    "category": "BeIN Sports"
-                },
-                {
-                    "name": "beIN SPORTS HD4",
-                    "url": "https://cdn1-europe.mgmlcdn.s-cloudflare.com:25463/xH5gc4mOg8vw4txxz36/1_.m3u8?",
-                    "logo": "https://jzu4.github.io/files/img/IMG_6703.png",
-                    "category": "BeIN Sports"
-                },
-                {
-                    "name": "beIN SPORTS HD5",
-                    "url": "https://cdn1-europe.mgmlcdn.s-cloudflare.com:25463/xH5gc4mOg8vw4txxz36/32_.m3u8?",
-                    "logo": "https://jzu4.github.io/files/img/IMG_6703.png",
-                    "category": "BeIN Sports"
-                },
-                {
-                    "name": "SSC 1",
-                    "url": "https://stream.sainaertebat.com/hls2/ssc1.m3u8",
-                    "logo": "https://jzu4.github.io/files/img/504D5767-2196-4154-8F97-58961653DCB7.png",
-                    "category": "SSC"
-                },
-                {
-                    "name": "SSC 2",
-                    "url": "https://cdn1-europe.mgmlcdn.s-cloudflare.com:25463/xH5gc4mOg8vw4txxz36/163_.m3u8?",
-                    "logo": "https://jzu4.github.io/files/img/504D5767-2196-4154-8F97-58961653DCB7.png",
-                    "category": "SSC"
-                },
-                {
-                    "name": "SSC 3",
-                    "url": "https://cdn1-europe.mgmlcdn.s-cloudflare.com:25463/xH5gc4mOg8vw4txxz36/147
+        <!-- قنوات الكأس -->
+        <div class="section-title"> قنوات الكأس</div>
+        <div class="channel-grid" id="alkassGrid">
+            <div class="channel-card" data-src="https://liveakgr.alkassdigital.net/hls/live/2097037/Alkass1mhua/master540.m3u8" data-id="alkass1">
+                <i class="fas fa-star favorite-icon"></i>
+                <img src="https://jzu4.github.io/files/img/BC9A0963-3088-4828-9423-1D36C0E7AA3B.png" class="channel-logo" alt="الكأس 1">
+                <div class="channel-name">الكأس 1</div>
+            </div>
+            <div class="channel-card" data-src="https://liveakgrns.alkassdigital.net/hls/live/2097037/Alkass2hef/master.m3u8" data-id="alkass2">
+                <i class="fas fa-star favorite-icon"></i>
+                <img src="https://jzu4.github.io/files/img/BC9A0963-3088-4828-9423-1D36C0E7AA3B.png" class="channel-logo" alt="الكأس 2">
+                <div class="channel-name">الكأس 2</div>
+            </div>
+            <div class="channel-card" data-src="https://liveakgrns.alkassdigital.net/hls/live/2097037/Alkass3vak/master450.m3u8" data-id="alkass3">
+                <i class="fas fa-star favorite-icon"></i>
+                <img src="https://jzu4.github.io/files/img/BC9A0963-3088-4828-9423-1D36C0E7AA3B.png" class="channel-logo" alt="الكأس 3">
+                <div class="channel-name">الكأس 3</div>
+            </div>
+            <div class="channel-card" data-src="https://liveakgrns.alkassdigital.net/hls/live/2097037/Alkass4cna/master.m3u8?hdnts=exp=1745087816~hmac=7fc9dde9a9c284d979a714ac190781c5f518dd213fb88ecc6b131fdc0375075c" data-id="alkass4">
+                <i class="fas fa-star favorite-icon"></i>
+                <img src="https://jzu4.github.io/files/img/BC9A0963-3088-4828-9423-1D36C0E7AA3B.png" class="channel-logo" alt="الكأس 4">
+                <div class="channel-name">الكأس 4</div>
+            </div>
+            <div class="channel-card" data-src="https://liveakgrns.alkassdigital.net/hls/live/2097037/Alkass5nnha/master.m3u8?hdnts=exp=1745087578~hmac=1487fa77f6f245d6601e36f6b92cfdfb6771f67062159be28d906eb760d48eb4" data-id="alkass5">
+                <i class="fas fa-star favorite-icon"></i>
+                <img src="https://jzu4.github.io/files/img/BC9A0963-3088-4828-9423-1D36C0E7AA3B.png" class="channel-logo" alt="الكأس 5">
+                <div class="channel-name">الكأس 5</div>
+            </div>
+            <div class="channel-card" data-src="https://liveakgrns.alkassdigital.net/hls/live/2097037/Alkass6buzay/master.m3u8?hdnts=exp=1745087828~hmac=33b218e1deffc6ddcbf3ae8d94909bb8e232b594334e1316755299a44d6bdd7e" data-id="alkass6">
+                <i class="fas fa-star favorite-icon"></i>
+                <img src="https://jzu4.github.io/files/img/BC9A0963-3088-4828-9423-1D36C0E7AA3B.png" class="channel-logo" alt="الكأس 6">
+                <div class="channel-name">الكأس 6</div>
+            </div>
+            <div class="channel-card" data-src="https://liveakgrns.alkassdigital.net/hls/live/2097037/Alkass8hef/master.m3u8?hdnts=exp=1745087833~hmac=609a6a291b7032513972fe8b5fb76360ad02b9570c7c709501aa7680cc2650a3" data-id="alkass8">
+                <i class="fas fa-star favorite-icon"></i>
+                <img src="https://jzu4.github.io/files/img/BC9A0963-3088-4828-9423-1D36C0E7AA3B.png" class="channel-logo" alt="الكأس 8">
+                <div class="channel-name">الكأس 8</div>
+            </div>
+        </div>
+
+        <!-- قنوات السعودية -->
+        <div class="section-title"> قنوات السعودية</div>
+        <div class="channel-grid" id="saudiGrid">
+            <div class="channel-card" data-src="https://cdn-globecast.akamaized.net/live/eds/saudi_tv/hls_roku/index.m3u8" data-id="saudiatv">
+                <i class="fas fa-star favorite-icon"></i>
+                <img src="https://i.imgur.com/GRQTndk.png" class="channel-logo" alt="السعودية">
+                <div class="channel-name">السعودية</div>
+            </div>
+            <div class="channel-card" data-src="https://shd-gcp-live.edgenextcdn.net/live/bitmovin-ksa-now/71ed3aa814c643306c0a8bc4fcc7d17f/index.m3u8" data-id="saudiatv2">
+                <i class="fas fa-star favorite-icon"></i>
+                <img src="https://i.imgur.com/sEOjApe.png" class="channel-logo" alt="السعودية الثانيه">
+                <div class="channel-name">السعودية الثانيه</div>
+            </div>
+            <div class="channel-card" data-src="https://shd-gcp-live.edgenextcdn.net/live/bitmovin-sbc/90e09c0c28db26435799b4a14892a167/index.m3u8" data-id="sbc">
+                <i class="fas fa-star favorite-icon"></i>
+                <img src="https://i.imgur.com/9JSQglj.png" class="channel-logo" alt="SBC">
+                <div class="channel-name">SBC</div>
+            </div>
+            <div class="channel-card" data-src="https://al-ekhbaria-prod-dub.shahid.net/out/v1/ef87956651694f4ba2ccc16e852dbb95/index.m3u8" data-id="dhikrayat">
+                <i class="fas fa-star favorite-icon"></i>
+                <img src="https://i.imgur.com/AKa1X9d.png" class="channel-logo" alt="ذكريات">
+                <div class="channel-name">ذكريات</div>
+            </div>
+            <div class="channel-card" data-src="https://cdn-globecast.akamaized.net/live/eds/al_ekhbariya/hls_roku/index.m3u8" data-id="alekhbariya">
+                <i class="fas fa-star favorite-icon"></i>
+                <img src="https://i.imgur.com/WcRlHQm.png" class="channel-logo" alt="الاخبارية">
+                <div class="channel-name">الاخبارية</div>
+            </div>
+            <div class="channel-card" data-src="http://m.live.net.sa:1935/live/quran/gmswf.m3u8" data-id="quran">
+                <i class="fas fa-star favorite-icon"></i>
+                <img src="https://i.imgur.com/A2fJysM.png" class="channel-logo" alt="القران الكريم">
+                <div class="channel-name">القران الكريم</div>
+            </div>
+            <div class="channel-card" data-src="http://m.live.net.sa:1935/live/sunnah/playlist.m3u8" data-id="sunnah">
+                <i class="fas fa-star favorite-icon"></i>
+                <img src="https://i.imgur.com/S6LcTJv.png" class="channel-logo" alt="السنة النبوية">
+                <div class="channel-name">السنة النبوية</div>
+            </div>
+            <div class="channel-card" data-src="https://playlist.fasttvcdn.com/pl/dlkqw1ftuvuuzkcb4pxdcg/Iqraafasttv3/playlist.m3u8" data-id="iqraa">
+                <i class="fas fa-star favorite-icon"></i>
+                <img src="https://i.imgur.com/HPVsIa4.png" class="channel-logo" alt="اقرا">
+                <div class="channel-name">اقرا</div>
+            </div>
+            <div class="channel-card" data-src="https://thaqafeyyah-ak.akamaized.net/out/v1/f6851f68ada94f82ae6b64a441eb5ab1/index.m3u8" data-id="thaqafeyyah">
+                <i class="fas fa-star favorite-icon"></i>
+                <img src="https://i.imgur.com/juM3k8B.jpg" class="channel-logo" alt="الثقافية">
+                <div class="channel-name">الثقافية</div>
+            </div>
+        </div>
+
+        <!-- قنوات الإمارات -->
+        <div class="section-title"> قنوات الإمارات</div>
+        <div class="channel-grid" id="uaeGrid">
+            <div class="channel-card" data-src="https://vo-live
