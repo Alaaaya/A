@@ -1,38 +1,68 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-    <meta charset="UTF-8">
-    <title>قنوات Alaa</title>
+  <meta charset="UTF-8">
+  <title>مشغل القنوات ديناميكي</title>
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
 <body>
-    <h2>قنوات Alaa من ملف M3U</h2>
-    <div id="channels"></div>
+  <h2>اختر قناة:</h2>
+  <select id="channelList"></select>
 
-    <script>
-        async function loadM3U() {
-            const url = 'https://gist.githubusercontent.com/Alaaaya/a29676eabff1cadb64105f770ccc9102/raw/d01c503f88ba7a0d48f82c1bac471bb198bf941e/gistfile1.txt';
-            const response = await fetch(url);
-            const text = await response.text();
+  <br><br>
+  <video id="video" width="640" height="360" controls autoplay></video>
 
-            const lines = text.split('\n');
-            const container = document.getElementById('channels');
+  <script>
+    const listUrl = "https://gist.githubusercontent.com/Alaaaya/a29676eabff1cadb64105f770ccc9102/raw/d01c503f88ba7a0d48f82c1bac471bb198bf941e/gistfile1.txt";
+    const select = document.getElementById('channelList');
+    const video = document.getElementById('video');
 
-            for (let i = 0; i < lines.length; i++) {
-                const line = lines[i].trim();
-                if (line && line.startsWith('http')) {
-                    const video = document.createElement('video');
-                    video.src = line;
-                    video.controls = true;
-                    video.width = 400;
-                    video.style.display = 'block';
-                    video.style.margin = '10px 0';
+    function playStream(url) {
+      if (Hls.isSupported()) {
+        const hls = new Hls();
+        hls.loadSource(url);
+        hls.attachMedia(video);
+      } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+        video.src = url;
+      } else {
+        alert("متصفحك لا يدعم تشغيل هذه القناة.");
+      }
+    }
 
-                    container.appendChild(video);
-                }
-            }
+    fetch(listUrl)
+      .then(res => res.text())
+      .then(text => {
+        const lines = text.split('\n');
+        const channels = [];
+
+        for (let i = 0; i < lines.length; i++) {
+          if (lines[i].startsWith('#EXTINF')) {
+            const name = lines[i].split(',')[1] || 'بدون اسم';
+            const url = lines[i + 1];
+            channels.push({ name, url });
+          }
         }
 
-        loadM3U();
-    </script>
+        // تعبئة القائمة
+        channels.forEach((ch, idx) => {
+          const option = document.createElement('option');
+          option.value = ch.url;
+          option.textContent = ch.name;
+          select.appendChild(option);
+        });
+
+        // تشغيل أول قناة افتراضياً
+        if (channels.length > 0) {
+          playStream(channels[0].url);
+        }
+
+        select.addEventListener('change', () => {
+          playStream(select.value);
+        });
+      })
+      .catch(err => {
+        console.error('خطأ في تحميل قائمة القنوات:', err);
+      });
+  </script>
 </body>
 </html>
