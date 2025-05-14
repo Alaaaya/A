@@ -3,6 +3,47 @@
 <head>
   <meta charset="UTF-8">
   <title>مشغل القنوات ديناميكي</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-color: #f0f0f0;
+    }
+
+    select {
+      font-size: 18px;
+      padding: 10px;
+      margin: 20px;
+    }
+
+    video {
+      max-width: 100%;
+      border: 2px solid #000;
+    }
+
+    .container {
+      margin-top: 20px;
+    }
+
+    .error-message {
+      color: red;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .reload-btn {
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      font-size: 16px;
+      border: none;
+      cursor: pointer;
+    }
+
+    .reload-btn:hover {
+      background-color: #45a049;
+    }
+  </style>
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
 <body>
@@ -12,10 +53,19 @@
   <br><br>
   <video id="video" width="640" height="360" controls autoplay></video>
 
+  <div class="container">
+    <button class="reload-btn" id="reloadBtn">إعادة تحميل القنوات</button>
+    <div class="error-message" id="error-message" style="display: none;">
+      <p>لا توجد قنوات حالياً أو فشل في تحميل القائمة.</p>
+    </div>
+  </div>
+
   <script>
     const listUrl = "https://gist.githubusercontent.com/Alaaaya/a29676eabff1cadb64105f770ccc9102/raw/d01c503f88ba7a0d48f82c1bac471bb198bf941e/gistfile1.txt";
     const select = document.getElementById('channelList');
     const video = document.getElementById('video');
+    const errorMessage = document.getElementById('error-message');
+    const reloadBtn = document.getElementById('reloadBtn');
 
     function playStream(url) {
       if (Hls.isSupported()) {
@@ -29,40 +79,57 @@
       }
     }
 
-    fetch(listUrl)
-      .then(res => res.text())
-      .then(text => {
-        const lines = text.split('\n');
-        const channels = [];
+    function loadChannels() {
+      fetch(listUrl)
+        .then(res => res.text())
+        .then(text => {
+          const lines = text.split('\n');
+          const channels = [];
 
-        for (let i = 0; i < lines.length; i++) {
-          if (lines[i].startsWith('#EXTINF')) {
-            const name = lines[i].split(',')[1] || 'بدون اسم';
-            const url = lines[i + 1];
-            channels.push({ name, url });
+          for (let i = 0; i < lines.length; i++) {
+            if (lines[i].startsWith('#EXTINF')) {
+              const name = lines[i].split(',')[1] || 'بدون اسم';
+              const url = lines[i + 1];
+              channels.push({ name, url });
+            }
           }
-        }
 
-        // تعبئة القائمة
-        channels.forEach((ch, idx) => {
-          const option = document.createElement('option');
-          option.value = ch.url;
-          option.textContent = ch.name;
-          select.appendChild(option);
-        });
+          if (channels.length === 0) {
+            errorMessage.style.display = 'block';
+            return;
+          }
 
-        // تشغيل أول قناة افتراضياً
-        if (channels.length > 0) {
+          // تعبئة القائمة
+          channels.forEach((ch, idx) => {
+            const option = document.createElement('option');
+            option.value = ch.url;
+            option.textContent = ch.name;
+            select.appendChild(option);
+          });
+
+          // تشغيل أول قناة افتراضياً
           playStream(channels[0].url);
-        }
 
-        select.addEventListener('change', () => {
-          playStream(select.value);
+          select.addEventListener('change', () => {
+            playStream(select.value);
+          });
+
+          errorMessage.style.display = 'none';
+        })
+        .catch(err => {
+          console.error('خطأ في تحميل قائمة القنوات:', err);
+          errorMessage.style.display = 'block';
         });
-      })
-      .catch(err => {
-        console.error('خطأ في تحميل قائمة القنوات:', err);
-      });
+    }
+
+    // تحميل القنوات عند فتح الصفحة
+    loadChannels();
+
+    // إعادة تحميل القنوات عند الضغط على الزر
+    reloadBtn.addEventListener('click', () => {
+      select.innerHTML = ''; // مسح القائمة القديمة
+      loadChannels();
+    });
   </script>
 </body>
 </html>
