@@ -1,165 +1,262 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <title>مشغل القنوات ديناميكي</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>مشغل القنوات الديناميكي</title>
   <style>
     body {
       font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+    
+    .header {
       text-align: center;
-      background-color: #f0f0f0;
+      margin-bottom: 20px;
     }
-
-    select {
-      font-size: 18px;
+    
+    .player-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    .channel-groups {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    
+    .group-btn {
+      padding: 8px 15px;
+      background: #e0e0e0;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.3s;
+    }
+    
+    .group-btn:hover, .group-btn.active {
+      background: #4CAF50;
+      color: white;
+    }
+    
+    .channel-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    
+    .channel-item {
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 8px;
       padding: 10px;
-      margin: 20px;
-      width: 80%;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
     }
-
-    video {
-      max-width: 100%;
-      border: 2px solid #000;
+    
+    .channel-item:hover {
+      background: #f0f0f0;
+      transform: translateY(-3px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     }
-
-    .container {
+    
+    .channel-item img {
+      width: 60px;
+      height: 60px;
+      object-fit: contain;
+      margin-bottom: 8px;
+      border-radius: 50%;
+    }
+    
+    .channel-item .name {
+      font-size: 14px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    .video-container {
+      width: 100%;
+      background: black;
+      border-radius: 8px;
+      overflow: hidden;
       margin-top: 20px;
     }
-
-    .error-message {
-      color: red;
-      font-size: 18px;
-      font-weight: bold;
+    
+    video {
+      width: 100%;
+      display: block;
     }
-
-    .reload-btn {
-      padding: 10px 20px;
-      background-color: #4CAF50;
-      color: white;
-      font-size: 16px;
-      border: none;
-      cursor: pointer;
+    
+    .loading {
+      text-align: center;
+      padding: 20px;
+      color: #666;
     }
-
-    .reload-btn:hover {
-      background-color: #45a049;
+    
+    @media (max-width: 768px) {
+      .channel-list {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      }
     }
-
-    /* تنسيق الصورة بجانب الاسم */
-    .channel-option {
-      display: flex;
-      align-items: center;
-    }
-
-    .channel-option img {
-      width: 30px;
-      height: 30px;
-      margin-right: 10px;
-    }
-
   </style>
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
 <body>
-  <h2>اختر قناة:</h2>
-  <select id="channelList"></select>
-
-  <br><br>
-  <video id="video" width="640" height="360" controls autoplay></video>
-
-  <div class="container">
-    <button class="reload-btn" id="reloadBtn">إعادة تحميل القنوات</button>
-    <div class="error-message" id="error-message" style="display: none;">
-      <p>لا توجد قنوات حالياً أو فشل في تحميل القائمة.</p>
+  <div class="player-container">
+    <div class="header">
+      <h1>مشغل القنوات الديناميكي</h1>
+    </div>
+    
+    <div class="channel-groups" id="channelGroups">
+      <!-- Groups will be added dynamically -->
+    </div>
+    
+    <div class="channel-list" id="channelList">
+      <div class="loading">جاري تحميل القنوات...</div>
+    </div>
+    
+    <div class="video-container">
+      <video id="video" controls autoplay></video>
     </div>
   </div>
 
   <script>
     const listUrl = "https://gist.githubusercontent.com/Alaaaya/a29676eabff1cadb64105f770ccc9102/raw/d01c503f88ba7a0d48f82c1bac471bb198bf941e/gistfile1.txt";
-    const select = document.getElementById('channelList');
     const video = document.getElementById('video');
-    const errorMessage = document.getElementById('error-message');
-    const reloadBtn = document.getElementById('reloadBtn');
-
+    const channelGroups = document.getElementById('channelGroups');
+    const channelList = document.getElementById('channelList');
+    
+    let allChannels = [];
+    let currentGroup = null;
+    
     function playStream(url) {
       if (Hls.isSupported()) {
         const hls = new Hls();
         hls.loadSource(url);
         hls.attachMedia(video);
+        hls.on(Hls.Events.MANIFEST_PARSED, function() {
+          video.play();
+        });
       } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
         video.src = url;
+        video.addEventListener('loadedmetadata', function() {
+          video.play();
+        });
       } else {
         alert("متصفحك لا يدعم تشغيل هذه القناة.");
       }
     }
-
+    
     function loadChannels() {
+      channelList.innerHTML = '<div class="loading">جاري تحميل القنوات...</div>';
+      
       fetch(listUrl)
         .then(res => res.text())
         .then(text => {
           const lines = text.split('\n');
-          const channels = [];
-
+          allChannels = [];
+          let currentChannel = null;
+          
           for (let i = 0; i < lines.length; i++) {
-            if (lines[i].startsWith('#EXTINF')) {
-              const name = lines[i].split(',')[1] || 'بدون اسم';
-              const url = lines[i + 1];
-              const imageUrl = lines[i + 2] || '';  // إضافة رابط الصورة (تأكد من أن الصورة موجودة في النص)
-              channels.push({ name, url, imageUrl });
+            const line = lines[i].trim();
+            
+            if (line.startsWith('#EXTINF')) {
+              const groupTitleMatch = line.match(/group-title="([^"]*)"/);
+              const groupTitle = groupTitleMatch ? groupTitleMatch[1] : 'أخرى';
+              const name = line.split(',')[1] || 'بدون اسم';
+              
+              currentChannel = {
+                name,
+                group: groupTitle,
+                url: '',
+                logo: 'https://via.placeholder.com/60?text=TV'
+              };
+            }
+            else if (currentChannel && line.startsWith('http')) {
+              currentChannel.url = line;
+              allChannels.push(currentChannel);
+              currentChannel = null;
+            }
+            else if (currentChannel && (line.endsWith('.png') || line.endsWith('.jpg'))) {
+              currentChannel.logo = line;
             }
           }
-
-          if (channels.length === 0) {
-            errorMessage.style.display = 'block';
+          
+          if (allChannels.length === 0) {
+            channelList.innerHTML = '<div class="error">لا توجد قنوات متاحة</div>';
             return;
           }
-
-          // تعبئة القائمة
-          channels.forEach((ch, idx) => {
-            const option = document.createElement('option');
-            const container = document.createElement('div');
-            container.classList.add('channel-option');
-
-            // إضافة الصورة للقناة
-            const image = document.createElement('img');
-            image.src = ch.imageUrl || 'default_image_url.jpg';  // استخدام صورة افتراضية إذا لم توجد صورة
-
-            // إضافة النص
-            const text = document.createElement('span');
-            text.textContent = ch.name;
-
-            // إضافة الصورة والنص إلى العنصر
-            container.appendChild(image);
-            container.appendChild(text);
-            option.appendChild(container);
-            
-            option.value = ch.url;
-            select.appendChild(option);
+          
+          // Create group buttons
+          const groups = [...new Set(allChannels.map(ch => ch.group))];
+          channelGroups.innerHTML = '';
+          
+          groups.forEach(group => {
+            const btn = document.createElement('button');
+            btn.className = 'group-btn';
+            btn.textContent = group;
+            btn.addEventListener('click', () => filterByGroup(group));
+            channelGroups.appendChild(btn);
           });
-
-          // تشغيل أول قناة افتراضياً
-          playStream(channels[0].url);
-
-          select.addEventListener('change', () => {
-            playStream(select.value);
-          });
-
-          errorMessage.style.display = 'none';
+          
+          // Show all channels by default
+          filterByGroup(groups[0]);
         })
         .catch(err => {
-          console.error('خطأ في تحميل قائمة القنوات:', err);
-          errorMessage.style.display = 'block';
+          console.error('Error loading channels:', err);
+          channelList.innerHTML = '<div class="error">فشل في تحميل القنوات</div>';
         });
     }
-
-    // تحميل القنوات عند فتح الصفحة
-    loadChannels();
-
-    // إعادة تحميل القنوات عند الضغط على الزر
-    reloadBtn.addEventListener('click', () => {
-      select.innerHTML = ''; // مسح القائمة القديمة
-      loadChannels();
-    });
+    
+    function filterByGroup(group) {
+      currentGroup = group;
+      const filteredChannels = allChannels.filter(ch => ch.group === group);
+      
+      // Update active group button
+      document.querySelectorAll('.group-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.textContent === group);
+      });
+      
+      // Render channels
+      channelList.innerHTML = '';
+      
+      if (filteredChannels.length === 0) {
+        channelList.innerHTML = '<div class="error">لا توجد قنوات في هذه المجموعة</div>';
+        return;
+      }
+      
+      filteredChannels.forEach(channel => {
+        const item = document.createElement('div');
+        item.className = 'channel-item';
+        item.innerHTML = `
+          <img src="${channel.logo}" alt="${channel.name}" onerror="this.src='https://via.placeholder.com/60?text=TV'">
+          <div class="name">${channel.name}</div>
+        `;
+        item.addEventListener('click', () => playStream(channel.url));
+        channelList.appendChild(item);
+      });
+      
+      // Play first channel in group
+      if (filteredChannels[0].url) {
+        playStream(filteredChannels[0].url);
+      }
+    }
+    
+    // Load channels when page loads
+    document.addEventListener('DOMContentLoaded', loadChannels);
   </script>
 </body>
 </html>
