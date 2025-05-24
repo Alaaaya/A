@@ -86,30 +86,6 @@
             border-radius: 15px;
         }
 
-        /* زر ملء الشاشة */
-        .fullscreen-btn {
-            position: absolute;
-            bottom: 25px;
-            left: 25px;
-            background: rgba(0, 0, 0, 0.5);
-            border: none;
-            color: white;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            z-index: 5;
-            transition: all 0.3s;
-        }
-
-        .fullscreen-btn:hover {
-            background: rgba(0, 0, 0, 0.8);
-            transform: scale(1.1);
-        }
-
         /* شريط البحث */
         .search-bar {
             display: flex;
@@ -320,9 +296,6 @@
         <!-- مشغل الفيديو -->
         <div class="player-section">
             <video id="videoPlayer" controls autoplay playsinline></video>
-            <button class="fullscreen-btn" id="fullscreenBtn" title="ملء الشاشة">
-                <i class="fas fa-expand"></i>
-            </button>
         </div>
 
         <!-- القنوات المفضلة -->
@@ -419,7 +392,6 @@
             // العناصر الرئيسية
             const videoPlayer = document.getElementById("videoPlayer");
             const channels = document.querySelectorAll(".channel-card");
-            const fullscreenBtn = document.getElementById("fullscreenBtn");
             const searchInput = document.getElementById("searchInput");
             const themeToggle = document.getElementById("themeToggle");
             const languageToggle = document.getElementById("languageToggle");
@@ -429,7 +401,7 @@
             // تهيئة المفضلة
             let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
             
-            // تشغيل القناة
+            // تشغيل القناة مع ملء الشاشة تلقائياً
             function setActiveChannel(channel) {
                 channels.forEach(c => c.classList.remove("active"));
                 channel.classList.add("active");
@@ -443,7 +415,16 @@
                 
                 videoPlayer.src = streamUrl;
                 videoPlayer.load();
-                videoPlayer.play().catch(e => console.log("التشغيل التلقائي غير مسموح"));
+                
+                videoPlayer.play()
+                    .then(() => {
+                        // تفعيل ملء الشاشة بعد بدء التشغيل
+                        if (videoPlayer.requestFullscreen) {
+                            videoPlayer.requestFullscreen()
+                                .catch(err => console.log("فشل ملء الشاشة:", err));
+                        }
+                    })
+                    .catch(e => console.log("التشغيل التلقائي غير مسموح"));
             }
             
             // إضافة إلى المفضلة
@@ -515,25 +496,6 @@
                     channel.style.display = name.includes(searchTerm) ? "block" : "none";
                 });
             });
-            
-            // دالة ملء الشاشة المحسنة
-            function toggleFullscreen() {
-                if (!document.fullscreenElement) {
-                    videoPlayer.requestFullscreen()
-                        .then(() => {
-                            fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i>';
-                        })
-                        .catch(err => {
-                            console.error("فشل ملء الشاشة:", err);
-                            alert("تعذر تفعيل ملء الشاشة. يرجى المحاولة مرة أخرى.");
-                        });
-                } else {
-                    document.exitFullscreen();
-                    fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i>';
-                }
-            }
-            
-            fullscreenBtn.addEventListener("click", toggleFullscreen);
             
             // تغيير الثيم
             themeToggle.addEventListener("click", () => {
