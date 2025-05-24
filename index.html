@@ -516,15 +516,24 @@
                 });
             });
             
-            fullscreenBtn.addEventListener("click", function() {
-                if (videoPlayer.requestFullscreen) {
-                    videoPlayer.requestFullscreen();
-                } else if (videoPlayer.webkitRequestFullscreen) {
-                    videoPlayer.webkitRequestFullscreen();
-                } else if (videoPlayer.msRequestFullscreen) {
-                    videoPlayer.msRequestFullscreen();
+            // دالة ملء الشاشة المحسنة
+            function toggleFullscreen() {
+                if (!document.fullscreenElement) {
+                    videoPlayer.requestFullscreen()
+                        .then(() => {
+                            fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i>';
+                        })
+                        .catch(err => {
+                            console.error("فشل ملء الشاشة:", err);
+                            alert("تعذر تفعيل ملء الشاشة. يرجى المحاولة مرة أخرى.");
+                        });
+                } else {
+                    document.exitFullscreen();
+                    fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i>';
                 }
-            });
+            }
+            
+            fullscreenBtn.addEventListener("click", toggleFullscreen);
             
             // تغيير الثيم
             themeToggle.addEventListener("click", () => {
