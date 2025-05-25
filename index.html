@@ -5,10 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>بث مباشر - قنوات إخبارية ومسلسلات</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- إضافة مكتبة Video.js -->
+    <!-- Video.js CSS -->
     <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet">
-    <meta name="description" content="موقع بث مباشر للقنوات الإخبارية والمسلسلات العربية">
-    <meta name="keywords" content="بث مباشر, قنوات عربية, الجزيرة, العربية, مسلسلات">
     <style>
         :root {
             --primary-color: rgba(33, 150, 243, 0.9);
@@ -79,7 +77,6 @@
             margin-bottom: 20px;
         }
 
-        /* تعديلات لمشغل Video.js */
         .video-js {
             width: 100%;
             height: 40vh;
@@ -233,6 +230,19 @@
             background: rgba(255, 255, 255, 0.2);
         }
 
+        /* شارة مباشر */
+        .live-badge {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: #f00;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+
         /* تصميم متجاوب للهواتف */
         @media (max-width: 768px) {
             .channel-grid {
@@ -275,19 +285,6 @@
         body.light-mode .search-bar input::placeholder {
             color: rgba(0, 0, 0, 0.5);
         }
-
-        /* إضافة شارة "مباشر" */
-        .live-badge {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            background: #f00;
-            color: white;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 0.7rem;
-            font-weight: bold;
-        }
     </style>
 </head>
 <body>
@@ -308,7 +305,7 @@
             <i class="fas fa-search"></i>
         </div>
 
-        <!-- مشغل الفيديو المطور -->
+        <!-- مشغل الفيديو -->
         <div class="player-section">
             <video id="myVideoPlayer" class="video-js vjs-default-skin" controls preload="auto">
                 <source src="" type="application/x-mpegURL">
@@ -354,6 +351,34 @@
                 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/Al_Hadath_TV_logo_2023.svg/1200px-Al_Hadath_TV_logo_2023.svg.png" class="channel-logo" alt="الحدث">
                 <div class="channel-name">الحدث</div>
             </div>
+
+            <div class="channel-card" data-src="https://ronahi-tv.akamaized.net/hls/ronahi-tv.m3u8" data-id="ronahi">
+                <i class="fas fa-star favorite-icon"></i>
+                <span class="live-badge">مباشر</span>
+                <img src="https://play-lh.googleusercontent.com/ebDDyV2oDJPtR0s6arYpUbpQVEEHf4gcFa3hwiNJlpa5ckHSbILMe5B42ovk8BwdB8oN=w240-h480-rw" class="channel-logo" alt="روناهي">
+                <div class="channel-name">روناهي</div>
+            </div>
+
+            <div class="channel-card" data-src="https://alarabyta.cdn.octivid.com/alaraby/smil:alaraby.stream.smil/chunklist.m3u8" data-id="alaraby">
+                <i class="fas fa-star favorite-icon"></i>
+                <span class="live-badge">مباشر</span>
+                <img src="https://www.alaraby.com/themes/custom/arabytv/logo-print.png" class="channel-logo" alt="تلفزيون العربي">
+                <div class="channel-name">تلفزيون العربي</div>
+            </div>
+
+            <div class="channel-card" data-src="https://stream.skynewsarabia.com/hls/sna.m3u8" data-id="skynews">
+                <i class="fas fa-star favorite-icon"></i>
+                <span class="live-badge">مباشر</span>
+                <img src="https://news.elsob7.com/wp-content/uploads/2024/05/%D9%82%D9%86%D8%A7%D8%A9-%D8%B3%D9%83%D8%A7%D9%8A-%D9%86%D9%8A%D9%88%D8%B2-%D8%B9%D8%B1%D8%A8%D9%8A%D8%A9.webp" class="channel-logo" alt="سكاي نيوز عربية">
+                <div class="channel-name">سكاي نيوز عربية</div>
+            </div>
+
+            <div class="channel-card" data-src="https://www.media.gov.kw/LiveTV.aspx?PanChannel=KTV1" data-id="ktv1">
+                <i class="fas fa-star favorite-icon"></i>
+                <span class="live-badge">مباشر</span>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/KTV_logo.svg/1200px-KTV_logo.svg.png" class="channel-logo" alt="تلفزيون الكويت">
+                <div class="channel-name">تلفزيون الكويت</div>
+            </div>
         </div>
 
         <!-- قنوات المسلسلات -->
@@ -365,16 +390,58 @@
                 <img src="https://upload.wikimedia.org/wikipedia/commons/8/81/Mbc1logo.png" class="channel-logo" alt="MBC 1">
                 <div class="channel-name">MBC 1</div>
             </div>
+            <div class="channel-card" data-src="https://shls-mbc2na-prod-dub.shahid.net/out/v1/2d5b8a8b6d1a4a8b8a8f8a8b8a8f8a8b/index.m3u8" data-id="mbc2">
+                <i class="fas fa-star favorite-icon"></i>
+                <span class="live-badge">مباشر</span>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/MBC2.svg/1200px-MBC2.svg.png" class="channel-logo" alt="MBC 2">
+                <div class="channel-name">MBC 2</div>
+            </div>
+            <div class="channel-card" data-src="https://shls-mbc3na-prod-dub.shahid.net/out/v1/3d5b8a8b6d1a4a8b8a8f8a8b8a8f8a8b/index.m3u8" data-id="mbc3">
+                <i class="fas fa-star favorite-icon"></i>
+                <span class="live-badge">مباشر</span>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/MBC3.svg/1200px-MBC3.svg.png" class="channel-logo" alt="MBC 3">
+                <div class="channel-name">MBC 3</div>
+            </div>
+            <div class="channel-card" data-src="https://shls-mbc4na-prod-dub.shahid.net/out/v1/4d5b8a8b6d1a4a8b8a8f8a8b8a8f8a8b/index.m3u8" data-id="mbc4">
+                <i class="fas fa-star favorite-icon"></i>
+                <span class="live-badge">مباشر</span>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/MBC4.svg/1200px-MBC4.svg.png" class="channel-logo" alt="MBC 4">
+                <div class="channel-name">MBC 4</div>
+            </div>
+            <div class="channel-card" data-src="https://shls-mbcactionna-prod-dub.shahid.net/out/v1/5d5b8a8b6d1a4a8b8a8f8a8b8a8f8a8b/index.m3u8" data-id="mbcaction">
+                <i class="fas fa-star favorite-icon"></i>
+                <span class="live-badge">مباشر</span>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/MBC_Action.svg/1200px-MBC_Action.svg.png" class="channel-logo" alt="MBC أكشن">
+                <div class="channel-name">MBC أكشن</div>
+            </div>
         </div>
         
         <!-- القنوات الرياضية -->
         <div class="section-title"> القنوات الرياضية</div>
         <div class="channel-grid" id="sportsGrid">
-            <div class="channel-card" data-src="http://het102a.4rouwanda-shop.store/live/918454578001/index.m3u8?" data-id="beinsports">
+            <div class="channel-card" data-src="http://het102a.4rouwanda-shop.store/live/918454578001/index.m3u8?" data-id="beinsports1">
                 <i class="fas fa-star favorite-icon"></i>
                 <span class="live-badge">مباشر</span>
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Bein_sport_logo.png/960px-Bein_sport_logo.png" class="channel-logo" alt="بي إن سبورت">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Bein_sport_logo.png/960px-Bein_sport_logo.png" class="channel-logo" alt="بي إن سبورت 1">
                 <div class="channel-name">بي إن سبورت 1</div>
+            </div>
+            <div class="channel-card" data-src="http://het102a.4rouwanda-shop.store/live/918454578002/index.m3u8?" data-id="beinsports2">
+                <i class="fas fa-star favorite-icon"></i>
+                <span class="live-badge">مباشر</span>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Bein_sport_logo.png/960px-Bein_sport_logo.png" class="channel-logo" alt="بي إن سبورت 2">
+                <div class="channel-name">بي إن سبورت 2</div>
+            </div>
+            <div class="channel-card" data-src="https://www.alkass.net/live" data-id="alkass">
+                <i class="fas fa-star favorite-icon"></i>
+                <span class="live-badge">مباشر</span>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Alkass_logo.png/800px-Alkass_logo.png" class="channel-logo" alt="الكأس">
+                <div class="channel-name">قناة الكأس</div>
+            </div>
+            <div class="channel-card" data-src="https://shls-ss1na-prod-dub.shahid.net/out/v1/6d5b8a8b6d1a4a8b8a8f8a8b8a8f8a8b/index.m3u8" data-id="shahidsports">
+                <i class="fas fa-star favorite-icon"></i>
+                <span class="live-badge">مباشر</span>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Shahid_logo.svg/1200px-Shahid_logo.svg.png" class="channel-logo" alt="شاهد سبورت">
+                <div class="channel-name">شاهد سبورت</div>
             </div>
         </div>
     </div>
