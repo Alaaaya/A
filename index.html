@@ -38,12 +38,6 @@
             align-items: center;
             transition: all 0.3s ease;
         }
-        body.light-mode {
-            --glass-bg: rgba(255, 255, 255, 0.8);
-            --glass-border: rgba(0, 0, 0, 0.1);
-            color: #333;
-            background: #f5f5f5;
-        }
         .container {
             max-width: 1200px;
             width: 100%;
@@ -51,7 +45,6 @@
             flex: 1;
             overflow-y: auto;
         }
-        /* تصميم Glassmorphism */
         .player-section,
         .channel-card,
         .section-title,
@@ -122,14 +115,6 @@
             transform: translateY(-5px) scale(1.05);
             box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
         }
-        .channel-card.active {
-            background: rgba(33, 150, 243, 0.15);
-            border: 1px solid rgba(33, 150, 243, 0.3);
-        }
-        .channel-card.favorite .favorite-icon {
-            color: var(--favorite-color);
-            text-shadow: 0 0 8px var(--favorite-color);
-        }
         .channel-logo,
         .movie-thumbnail {
             width: 80px;
@@ -139,40 +124,8 @@
             filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
             transition: transform 0.3s ease;
         }
-        .channel-card:hover .channel-logo,
-        .movie-card:hover .movie-thumbnail {
-            transform: scale(1.1);
-        }
         .channel-name,
         .movie-title {
-            font-weight: 700;
-            color: rgba(255, 255, 255, 0.95);
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-            letter-spacing: -0.5px;
-            margin-bottom: 5px;
-        }
-        .favorite-icon {
-            position: absolute;
-            top: 5px;
-            left: 5px;
-            color: rgba(255, 255, 255, 0.3);
-            cursor: pointer;
-            transition: all 0.3s;
-            z-index: 2;
-            font-size: 1.2rem;
-        }
-        .favorite-icon:hover {
-            transform: scale(1.2);
-        }
-        .live-badge {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            background: #f00;
-            color: white;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 0.7rem;
             font-weight: bold;
         }
         .section-title {
@@ -184,189 +137,68 @@
             margin-bottom: 20px;
             position: relative;
         }
-        .section-title::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            right: 50%;
-            transform: translateX(50%);
-            width: 80px;
-            height: 3px;
-            background: var(--primary-color);
-            border-radius: 3px;
-        }
-        .control-buttons {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-        }
-        .theme-toggle, .language-toggle {
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            color: inherit;
-            padding: 8px 15px;
-            border-radius: 20px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.3s;
-        }
-        .theme-toggle:hover, .language-toggle:hover {
-            background: rgba(255, 255, 255, 0.2);
-        }
-        @media (max-width: 768px) {
-            .channel-grid,
-            .movies-grid {
-                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            }
-            .channel-logo,
-            .movie-thumbnail {
-                width: 60px;
-                height: 60px;
-            }
-            .video-js {
-                height: 30vh;
-                min-height: 200px;
-            }
-            .section-title {
-                font-size: 1.2rem;
-            }
-            .search-bar input {
-                font-size: 14px;
-                padding: 8px;
-            }
-        }
-        body.light-mode .channel-name {
-            color: #333;
-        }
-        body.light-mode .favorite-icon {
-            color: rgba(0, 0, 0, 0.3);
-        }
-        body.light-mode .channel-card:hover {
-            background: rgba(0, 0, 0, 0.05);
-        }
-        body.light-mode .search-bar input::placeholder {
-            color: rgba(0, 0, 0, 0.5);
-        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- أزرار التحكم -->
-        <div class="control-buttons">
-            <button class="theme-toggle" id="themeToggle">
-                <i class="fas fa-moon"></i> <span>الوضع الليلي</span>
-            </button>
-            <button class="language-toggle" id="languageToggle">
-                <i class="fas fa-language"></i> <span>English</span>
-            </button>
-        </div>
-        <!-- شريط البحث -->
-        <div class="search-bar">
-            <input type="text" id="searchInput" placeholder="ابحث عن قناة...">
-            <i class="fas fa-search"></i>
-        </div>
-        <!-- مشغل الفيديو -->
-        <div class="player-section">
-            <video id="myVideoPlayer" class="video-js vjs-default-skin" controls preload="auto">
-                <source src="" type="application/x-mpegURL">
-                <p class="vjs-no-js">
-                    لرؤية البث المباشر، يرجى تمكين JavaScript أو استخدام متصفح يدعم HTML5 video
-                </p>
-            </video>
-        </div>
-        <!-- القنوات المفضلة -->
-        <div class="section-title" id="favoritesTitle"> القنوات المفضلة</div>
-        <div class="channel-grid" id="favoritesGrid"></div>
 
-        <!-- قنوات الأخبار -->
-        <div class="section-title"> قنوات الأخبار</div>
-        <div class="channel-grid" id="newsGrid">
-            <!-- سيتم ملؤها ديناميكيًا -->
-        </div>
+<div class="container">
 
-        <!-- قنوات المسلسلات -->
-        <div class="section-title"> قنوات المسلسلات</div>
-        <div class="channel-grid" id="seriesGrid">
-            <!-- سيتم ملؤها ديناميكيًا -->
-        </div>
-
-        <!-- القنوات الرياضية -->
-        <div class="section-title"> القنوات الرياضية</div>
-        <div class="channel-grid" id="sportsGrid">
-            <!-- سيتم ملؤها ديناميكيًا -->
-        </div>
-
-        <!-- قسم الأفلام -->
-        <div class="section-title">أفلام</div>
-        <div class="movies-grid" id="moviesGrid">
-            <!-- سيتم تحميل الأفلام هنا ديناميكيًا -->
-        </div>
+    <!-- مشغل الفيديو -->
+    <div class="player-section">
+        <video id="myVideoPlayer" class="video-js vjs-default-skin" controls preload="auto">
+            <source src="" type="application/x-mpegURL">
+            <p class="vjs-no-js">لرؤية البث المباشر، يرجى تمكين JavaScript أو استخدام متصفح يدعم HTML5 video</p>
+        </video>
     </div>
 
-    <!-- مكتبة Video.js -->
-    <script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script> 
-    <!-- دعم HLS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/videojs-contrib-hls/5.15.0/videojs-contrib-hls.min.js"></script> 
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const player = videojs('myVideoPlayer', {
-                autoplay: true,
-                fluid: true,
-                liveui: true,
-                playbackRates: [0.5, 1, 1.5, 2],
-                controlBar: {
-                    children: [
-                        'playToggle',
-                        'progressControl',
-                        'volumePanel',
-                        'currentTimeDisplay',
-                        'timeDivider',
-                        'durationDisplay',
-                        'liveDisplay',
-                        'remainingTimeDisplay',
-                        'customControlSpacer',
-                        'playbackRateMenuButton',
-                        'fullscreenToggle'
-                    ]
-                }
-            });
+    <!-- قسم الأفلام -->
+    <div class="section-title">أفلام</div>
+    <div class="movies-grid" id="moviesGrid"></div>
 
-            // بيانات الأفلام (مثال ثابت - يمكن جلبها من API لاحقًا)
-            const movies = [
-                {
-                    title: "فيلم بين سايفز",
-                    thumbnail: "https://via.placeholder.com/300x450?text=Between+Sieves",
-                    url: "https://todays-video.online/ios/splash?key=e25874f2d86e061e06a571f8ef006e0b&v=betweens2"
-                },
-                {
-                    title: "فيلم Clash",
-                    thumbnail: "https://via.placeholder.com/300x450?text=Clash",
-                    url: "https://clash.rosetvvta-one.online/videos/"
-                },
-                {
-                    title: "مسلسل العربي",
-                    thumbnail: "https://via.placeholder.com/300x450?text=Alaraby",
-                    url: "https://alarabytv.net/watch"
-                }
-            ];
+</div>
 
-            const moviesGrid = document.getElementById("moviesGrid");
+<!-- Video.js -->
+<script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script> 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/videojs-contrib-hls/5.15.0/videojs-contrib-hls.min.js"></script> 
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const player = videojs('myVideoPlayer');
+        const moviesGrid = document.getElementById("moviesGrid");
 
-            movies.forEach(movie => {
-                const card = document.createElement("div");
-                card.className = "movie-card";
-                card.innerHTML = `
-                    <img src="${movie.thumbnail}" alt="${movie.title}" class="movie-thumbnail">
-                    <div class="movie-title">${movie.title}</div>
-                `;
-                card.addEventListener("click", () => {
-                    window.open(movie.url, "_blank");
+        // قائمة بأفلام يمكن تشغيلها مباشرة
+        const movies = [
+            {
+                title: "فيلم عالمي",
+                thumbnail: "https://via.placeholder.com/300x450?text=Movie+Sample",
+                url: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+                type: "application/x-mpegURL"
+            },
+            {
+                title: "مثال MP4",
+                thumbnail: "https://via.placeholder.com/300x450?text=MP4+Movie",
+                url: "https://www.w3schools.com/html/mov_bbb.mp4",
+                type: "video/mp4"
+            }
+        ];
+
+        movies.forEach(movie => {
+            const card = document.createElement("div");
+            card.className = "movie-card";
+            card.innerHTML = `
+                <img src="${movie.thumbnail}" alt="${movie.title}" class="movie-thumbnail">
+                <div class="movie-title">${movie.title}</div>
+            `;
+            card.addEventListener("click", () => {
+                player.src({
+                    src: movie.url,
+                    type: movie.type
                 });
-                moviesGrid.appendChild(card);
+                player.play();
             });
+            moviesGrid.appendChild(card);
         });
-    </script>
+    });
+</script>
+
 </body>
 </html>
