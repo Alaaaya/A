@@ -1,9 +1,43 @@
-/* ضبط صورة الخلفية */
-body {
-    background: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhaiXiH-HFNqJjXLNvrv66K2r7NdgPxdohR9ZQzpwaU39plGPgRMHoCX8nn3Fxn9vkmPVnKY84l6jekCL18qgiNfzzmbRA4NkhGsN04vo2dAT3r-p8cahb1ExDXbgSraGTD_gaJmZ7enq0/s1600/23.jpg') 
-                no-repeat center center fixed;
-    background-size: cover;
-    color: white;
-    font-family: 'Segoe UI', 'Tahoma', sans-serif;
-    min-height: 100vh;
+/* ضبط صورة الخلفية */:root {
+    --primary-color: rgba(0, 113, 227, 0.9); /* Apple Blue */
+    --glass-bg: rgba(255, 255, 255, 0.15);
+    --glass-border: rgba(255, 255, 255, 0.3);
+    --glass-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    --favorite-color: #ffd700;
+    --transition-speed: 0.25s;
+    --corner-radius: 20px;
+    --blur-amount: 30px;
 }
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: white;
+    min-height: 100vh;
+    background: url('https://www.apple.com/v/home/bl/images/heroes/iphone-15-pro/hero_iphone15pro__eqwrvy72748y_large.jpg') no-repeat center center fixed;
+    background-size: cover;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: all var(--transition-speed) ease;
+}
+
+body.light-mode {
+    --glass-bg: rgba(255, 255, 255, 0.7);
+    --glass-border: rgba(200, 200, 200, 0.3);
+    color: #222;
+    background: #f2f2f7;
+}
+
+/* الحاوية الرئيسية
