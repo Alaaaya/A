@@ -9,12 +9,15 @@
     <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet">
     <style>
         :root {
-            --primary-color: rgba(33, 150, 243, 0.9);
-            --bg-gradient: linear-gradient(45deg, #0f172a, #1e293b);
-            --glass-bg: rgba(255, 255, 255, 0.1);
-            --glass-border: rgba(255, 255, 255, 0.25);
-            --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            --primary-color: rgba(0, 122, 255, 0.9);
+            --bg-gradient: linear-gradient(135deg, #0f172a, #1e293b);
+            --glass-bg: rgba(255, 255, 255, 0.15);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            --glass-highlight: rgba(255, 255, 255, 0.05);
+            --glass-blur: 20px;
             --favorite-color: #ffd700;
+            --live-color: #ff453a;
         }
 
         * {
@@ -27,26 +30,29 @@
             height: 100%;
             margin: 0;
             padding: 0;
+            font-synthesis: none;
+            text-rendering: optimizeLegibility;
         }
 
         body {
-            font-family: 'Segoe UI', 'Tahoma', sans-serif;
-            color: white;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            color: rgba(255, 255, 255, 0.92);
             min-height: 100vh;
-            background: url('https://i.pinimg.com/736x/a0/ad/75/a0ad758c1fe0cb8350624eecb77c27ca.jpg') 
-                        no-repeat center center fixed;
-            background-size: cover;
+            background: var(--bg-gradient) fixed;
             display: flex;
             flex-direction: column;
             align-items: center;
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            overflow-x: hidden;
         }
 
         body.light-mode {
-            --glass-bg: rgba(255, 255, 255, 0.8);
-            --glass-border: rgba(0, 0, 0, 0.1);
-            color: #333;
-            background: #f5f5f5;
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(0, 0, 0, 0.08);
+            --glass-highlight: rgba(255, 255, 255, 0.3);
+            --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            color: rgba(0, 0, 0, 0.85);
+            background: #f5f5f7 fixed;
         }
 
         .container {
@@ -57,102 +63,141 @@
             overflow-y: auto;
         }
 
-        /* تصميم Glassmorphism */
-        .player-section,
-        .channel-card,
-        .section-title,
-        .search-bar {
+        /* تأثير الزجاج السائل */
+        .glass-effect {
             background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--glass-border);
-            box-shadow: var(--glass-shadow);
-            border-radius: 15px;
-            padding: 15px;
-            transition: all 0.3s ease-in-out;
+            box-shadow: var(--glass-shadow),
+                        inset 0 0 15px var(--glass-highlight);
+            backdrop-filter: blur(var(--glass-blur));
+            -webkit-backdrop-filter: blur(var(--glass-blur));
+            border-radius: 14px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.2, 0.8, 0.4, 1);
         }
 
+        .glass-effect::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 0.1) 50%,
+                rgba(255, 255, 255, 0) 100%
+            );
+            transform: rotate(30deg);
+            pointer-events: none;
+            animation: glassShine 8s infinite;
+            opacity: 0.6;
+        }
+
+        @keyframes glassShine {
+            0% { transform: translateX(-100%) rotate(30deg); }
+            100% { transform: translateX(100%) rotate(30deg); }
+        }
+
+        /* مشغل الفيديو */
         .player-section {
-            position: relative;
-            margin-bottom: 20px;
+            composes: glass-effect;
+            border-radius: 18px;
+            padding: 0;
+            margin-bottom: 24px;
+            overflow: hidden;
         }
 
         .video-js {
             width: 100%;
             height: 40vh;
             min-height: 300px;
-            background: #000;
-            border-radius: 15px;
+            border-radius: 18px;
+            overflow: hidden;
+            background: transparent;
         }
 
         /* شريط البحث */
         .search-bar {
+            composes: glass-effect;
             display: flex;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
+            padding: 12px 16px;
         }
 
         .search-bar input {
             flex: 1;
-            padding: 10px;
+            padding: 10px 12px;
             border: none;
             background: transparent;
             color: inherit;
             font-size: 16px;
             border-radius: 8px;
+            font-weight: 500;
         }
 
         .search-bar input:focus {
             outline: 2px solid var(--primary-color);
+            outline-offset: 2px;
         }
 
         .search-bar input::placeholder {
             color: rgba(255, 255, 255, 0.7);
+            font-weight: 400;
         }
 
         .search-bar i {
-            margin-left: 10px;
+            margin-left: 12px;
+            opacity: 0.8;
+        }
+
+        body.light-mode .search-bar input::placeholder {
+            color: rgba(0, 0, 0, 0.5);
         }
 
         /* شبكة القنوات */
         .channel-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            gap: 15px;
+            gap: 16px;
             margin-bottom: 40px;
         }
 
         .channel-card {
+            composes: glass-effect;
             text-align: center;
             cursor: pointer;
-            position: relative;
-            overflow: hidden;
-            padding: 15px;
-            transition: all 0.3s ease;
+            padding: 20px 15px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.4s cubic-bezier(0.2, 0.8, 0.4, 1);
         }
 
         .channel-card:hover {
-            background: rgba(255, 255, 255, 0.15);
-            transform: translateY(-5px) scale(1.05);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+            transform: translateY(-8px) scale(1.03);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3),
+                        inset 0 0 20px var(--glass-highlight);
         }
 
         .channel-card.active {
-            background: rgba(33, 150, 243, 0.15);
-            border: 1px solid rgba(33, 150, 243, 0.3);
+            background: rgba(0, 122, 255, 0.15);
+            border: 1px solid rgba(0, 122, 255, 0.3);
         }
 
         .channel-card.favorite .favorite-icon {
             color: var(--favorite-color);
-            text-shadow: 0 0 8px var(--favorite-color);
+            text-shadow: 0 0 12px var(--favorite-color);
         }
 
         .channel-logo {
             width: 80px;
             height: 80px;
             object-fit: contain;
-            margin-bottom: 10px;
-            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+            margin-bottom: 12px;
+            filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3));
             transition: transform 0.3s ease;
         }
 
@@ -161,17 +206,22 @@
         }
 
         .channel-name {
-            font-weight: 700;
+            font-weight: 600;
             color: rgba(255, 255, 255, 0.95);
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-            letter-spacing: -0.5px;
-            margin-bottom: 5px;
+            margin-bottom: 6px;
+            font-size: 15px;
+        }
+
+        body.light-mode .channel-name {
+            color: rgba(0, 0, 0, 0.9);
+            text-shadow: none;
         }
 
         .favorite-icon {
             position: absolute;
-            top: 5px;
-            left: 5px;
+            top: 8px;
+            left: 8px;
             color: rgba(255, 255, 255, 0.3);
             cursor: pointer;
             transition: all 0.3s;
@@ -181,30 +231,38 @@
 
         .favorite-icon:hover {
             transform: scale(1.2);
+            opacity: 1;
+        }
+
+        body.light-mode .favorite-icon {
+            color: rgba(0, 0, 0, 0.3);
         }
 
         /* شارة مباشر */
         .live-badge {
             position: absolute;
-            top: 5px;
-            right: 5px;
-            background: #f00;
+            top: 8px;
+            right: 8px;
+            background: var(--live-color);
             color: white;
-            padding: 2px 6px;
+            padding: 3px 8px;
             border-radius: 4px;
             font-size: 0.7rem;
             font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
 
         /* عناوين الأقسام */
         .section-title {
-            font-size: 1.5rem;
-            font-weight: bold;
+            composes: glass-effect;
+            display: inline-block;
+            font-size: 1.4rem;
+            font-weight: 600;
             text-align: center;
-            padding: 10px;
-            margin-top: 5px;
-            margin-bottom: 20px;
+            padding: 12px 24px;
+            margin: 24px auto;
             position: relative;
+            letter-spacing: -0.5px;
         }
 
         .section-title::after {
@@ -213,7 +271,7 @@
             bottom: 0;
             right: 50%;
             transform: translateX(50%);
-            width: 80px;
+            width: 60px;
             height: 3px;
             background: var(--primary-color);
             border-radius: 3px;
@@ -227,15 +285,17 @@
         }
 
         .theme-toggle, .language-toggle {
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
+            composes: glass-effect;
+            border: none;
             color: inherit;
-            padding: 8px 15px;
-            border-radius: 20px;
+            padding: 10px 16px;
+            border-radius: 12px;
             cursor: pointer;
             display: flex;
             align-items: center;
             gap: 8px;
+            font-weight: 500;
+            font-size: 14px;
             transition: all 0.3s;
         }
 
@@ -243,10 +303,16 @@
             background: rgba(255, 255, 255, 0.2);
         }
 
-        /* تصميم متجاوب للهواتف */
+        body.light-mode .theme-toggle:hover,
+        body.light-mode .language-toggle:hover {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        /* تحسينات للهواتف */
         @media (max-width: 768px) {
             .channel-grid {
-                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+                gap: 12px;
             }
             
             .channel-logo {
@@ -261,29 +327,35 @@
             
             .section-title {
                 font-size: 1.2rem;
+                padding: 10px 20px;
+                margin: 16px auto;
             }
-
+            
             .search-bar input {
                 font-size: 14px;
                 padding: 8px;
             }
+
+            .glass-effect {
+                border-radius: 12px;
+            }
         }
 
         /* تحسينات للوضع النهاري */
-        body.light-mode .channel-name {
-            color: #333;
-        }
-
-        body.light-mode .favorite-icon {
-            color: rgba(0, 0, 0, 0.3);
-        }
-
         body.light-mode .channel-card:hover {
-            background: rgba(0, 0, 0, 0.05);
+            background: rgba(255, 255, 255, 0.8);
         }
 
-        body.light-mode .search-bar input::placeholder {
-            color: rgba(0, 0, 0, 0.5);
+        /* تأثيرات الظهور */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
     </style>
 </head>
@@ -316,13 +388,13 @@
         </div>
 
         <!-- القنوات المفضلة -->
-        <div class="section-title" id="favoritesTitle"> القنوات المفضلة</div>
+        <div class="section-title" id="favoritesTitle">القنوات المفضلة</div>
         <div class="channel-grid" id="favoritesGrid">
             <!-- سيتم ملؤها ديناميكيًا -->
         </div>
 
         <!-- قنوات الأخبار -->
-        <div class="section-title"> قنوات الأخبار</div>
+        <div class="section-title">قنوات الأخبار</div>
         <div class="channel-grid" id="newsGrid">
             <div class="channel-card" data-src="https://live-hls-web-aja.getaj.net/AJA/index.m3u8" data-id="aljazeera">
                 <i class="fas fa-star favorite-icon"></i>
@@ -382,7 +454,7 @@
         </div>
 
         <!-- قنوات المسلسلات -->
-        <div class="section-title"> قنوات المسلسلات</div>
+        <div class="section-title">قنوات المسلسلات</div>
         <div class="channel-grid" id="seriesGrid">
             <div class="channel-card" data-src="https://shls-mbc1na-prod-dub.shahid.net/out/v1/84ab37e99d6e4b16b33c6600f94f6ccb/index_7.m3u8" data-id="mbc1">
                 <i class="fas fa-star favorite-icon"></i>
@@ -393,7 +465,7 @@
         </div>
         
         <!-- القنوات الرياضية -->
-        <div class="section-title"> القنوات الرياضية</div>
+        <div class="section-title">القنوات الرياضية</div>
         <div class="channel-grid" id="sportsGrid">
             <div class="channel-card" data-src="http://het102a.4rouwanda-shop.store/live/918454578001/index.m3u8?" data-id="beinsports">
                 <i class="fas fa-star favorite-icon"></i>
@@ -467,12 +539,6 @@
                 player.play()
                     .then(() => {
                         console.log("بدأ التشغيل بنجاح");
-                        // ملء الشاشة تلقائياً بعد التشغيل
-                        if (player.requestFullscreen) {
-                            player.requestFullscreen().catch(err => {
-                                console.log("لم يتمكن من ملء الشاشة تلقائياً:", err);
-                            });
-                        }
                     })
                     .catch(e => {
                         console.error("خطأ في التشغيل:", e);
@@ -580,7 +646,7 @@
             });
             
             // تفعيل النقر على القنوات
-            channels.forEach(channel => {
+            channels.forEach((channel, index) => {
                 channel.addEventListener("click", function() {
                     setActiveChannel(channel);
                 });
@@ -597,6 +663,12 @@
                 if (favorites.includes(channelId)) {
                     channel.classList.add("favorite");
                 }
+                
+                // تأثير الظهور التدريجي
+                setTimeout(() => {
+                    channel.style.opacity = '1';
+                    channel.style.transform = 'translateY(0)';
+                }, index * 50);
             });
             
             // تحديث عناصر التحكم الأولية
