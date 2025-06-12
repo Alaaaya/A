@@ -114,11 +114,15 @@
     <script>
         const GITHUB_JSON_URL = 'https://gist.githubusercontent.com/Alaaaya/fa9335279127305f05e0fd730153e0a0/raw/bb01a03cd1a739adb3d45d0dcaf02e8fb8668652/Aflamraw';
 
-        // لم نعد بحاجة إلى PROXY_BASE_URL أو ORIGINAL_GET_LINK_BASE_URL أو ORIGINAL_EPISODES_BASE_URL
-        // لأننا سنستخرج رابط الفيديو مباشرة من بيانات الـ Gist.
+        const PROXY_BASE_URL = 'https://plain-snowflake-64f5.rasmtk300.workers.dev/?url=';
 
-        // متغير لتخزين بيانات الأفلام بعد جلبها من Gist
-        let allMoviesData = {}; 
+        const API_KEY = 'e25874f2d86e061e06a571f8ef006e0b';
+        const V_PARAM = 'betweens2'; 
+
+        const ORIGINAL_GET_LINK_BASE_URL = `https://todays-video.online/ios/getLink?key=${API_KEY}&v=${V_PARAM}&id=`;
+        const ORIGINAL_EPISODES_BASE_URL = `https://todays-video.online/ios/episodes?key=${API_KEY}&v=${V_PARAM}&id=`;
+        
+        let allMoviesData = {}; // Global variable to store fetched movie data
 
         const moviesContainer = document.getElementById('moviesContainer');
         const loadingElement = document.getElementById('loading');
@@ -136,13 +140,21 @@
                 const response = await fetch(url);
                 if (!response.ok) {
                     console.error(`Fetch failed for URL: ${url}. Status: ${response.status} ${response.statusText}`);
-                    throw new Error(`خطأ في الشبكة أو الخادم: ${response.statusText} (${response.status})`);
+                    // حاول قراءة الاستجابة كنص JSON حتى لو كانت HTTP Not OK
+                    const errorText = await response.text();
+                    try {
+                        const errorJson = JSON.parse(errorText);
+                        throw new Error(`خطأ من الخادم: ${JSON.stringify(errorJson)}`);
+                    } catch (e) {
+                        // إذا لم تكن JSON، اعرض النص الخام
+                        throw new Error(`خطأ في الشبكة أو الخادم: ${response.statusText} (${response.status}). الاستجابة: ${errorText}`);
+                    }
                 }
                 const data = await response.json();
                 return data;
             } catch (error) {
                 console.error('فشل جلب البيانات من:', url, error);
-                showErrorMessage(`فشل في جلب البيانات من ${url.split('?')[0]}. يرجى المحاولة لاحقًا.`);
+                showErrorMessage(`فشل في جلب البيانات من ${url.split('?')[0]}. التفاصيل: ${error.message}`);
                 return null;
             }
         }
@@ -168,31 +180,23 @@
         async function playMovie(movieId) {
             alert(`جاري محاولة تشغيل الفيلم بالـ ID: ${movieId}...`);
             
-            // البحث عن الفيلم بواسطة الـ ID في البيانات التي تم جلبها من Gist
-            const movieToPlay = allMoviesData[movieId];
+            let videoLinkData = null;
 
-            let videoLink = null;
+            // استخدام الـ Proxy لجلب رابط الفيديو من ORIGINAL_GET_LINK_BASE_URL مع المفاتيح
+            const proxiedGetLinkUrl = PROXY_BASE_URL + encodeURIComponent(`${ORIGINAL_GET_LINK_BASE_URL}${movieId}`);
+            videoLinkData = await fetchData(proxiedGetLinkUrl);
 
-            if (movieToPlay) {
-                // إذا كان الفيلم يحتوي على حلقات (epiks)
-                if (movieToPlay.epiks && Array.isArray(movieToPlay.epiks) && movieToPlay.epiks.length > 0) {
-                    // تشغيل الحلقة الأولى افتراضياً
-                    videoLink = movieToPlay.epiks[0].file;
-                } 
-                // إذا كان الفيلم نفسه يحتوي على رابط file مباشر
-                else if (movieToPlay.file) {
-                    videoLink = movieToPlay.file;
-                }
-                // قد تكون هناك حالات أخرى حيث يكون رابط الفيديو في مكان مختلف
-                // مثلاً: movieToPlay.video.file إذا كانت البنية هكذا
-                // أو إذا كانت هناك علاقة بين الـ ID والمفتاح الطويل الذي رأيته في Gist
-                // حالياً، سنركز على "epiks[0].file" أو "file" مباشرة
+            // إذا لم يتم العثور على رابط، جرب ORIGINAL_EPISODES_BASE_URL عبر الـ Proxy
+            if (!videoLinkData || !videoLinkData.link) {
+                console.warn(`لم يتم العثور على رابط من GET_LINK_API لـ ID: ${movieId}. محاولة EPISODES_API عبر الـ Proxy.`);
+                const proxiedEpisodesUrl = PROXY_BASE_URL + encodeURIComponent(`${ORIGINAL_EPISODES_BASE_URL}${movieId}`);
+                videoLinkData = await fetchData(proxiedEpisodesUrl);
             }
+            
+            if (videoLinkData && videoLinkData.link) {
+                const videoLink = videoLinkData.link;
 
-            if (videoLink) {
-                // التأكد من أن رابط الفيديو يبدأ بـ "https://" ليكون صالحًا للتشغيل
                 if (!videoLink.startsWith('http://') && !videoLink.startsWith('https://')) {
-                    // هذا قد يعني أن الرابط غير مكتمل أو غير صالح
                     console.error('رابط الفيديو غير صالح:', videoLink);
                     alert('عذرًا، رابط الفيديو الذي تم العثور عليه غير صالح.');
                     videoPlayer.style.display = 'none';
@@ -209,7 +213,7 @@
                     });
                 videoPlayer.scrollIntoView({ behavior: 'smooth', block: 'center' });
             } else {
-                alert('عذرًا، لم نتمكن من العثور على رابط فيديو لهذا الفيلم. يرجى التحقق من بنية البيانات في الـ Gist.');
+                alert('عذرًا، لم نتمكن من العثور على رابط فيديو لهذا الفيلم. قد يكون الـ ID غير صحيح أو المشكلة في الـ Proxy أو مصدر الفيديو (Unauthorized).');
                 videoPlayer.style.display = 'none';
             }
         }
@@ -224,14 +228,33 @@
 
             if (rawAflamData) {
                 let aflamList = [];
-                // Reset allMoviesData for new load
-                allMoviesData = {};
+                allMoviesData = {}; // Reset for new load
 
-                // سنقوم بتخزين الأفلام في allMoviesData باستخدام الـ ID كمفتاح لسهولة الوصول لاحقاً
-                // هذا الجزء هو نفسه الذي يجمع الأفلام من Gist
-                // ومن الصورة، يبدو أن الكائن الرئيسي نفسه (ID: 5448) يحتوي على "epiks"
+                if (rawAflamData.id && (rawAflamData.title || rawAflamData.description) && (rawAflamData.poster_url || rawAflamData.portrait)) {
+                    aflamList.push(rawAflamData);
+                    allMoviesData[rawAflamData.id] = rawAflamData;
+                }
 
-                // محاولة استخراج من "cat_all" إذا كان موجوداً ويحتوي على قوائم فرعية
+                for (const key in rawAflamData) {
+                    if (rawAflamData.hasOwnProperty(key)) {
+                        const value = rawAflamData[key];
+                        if (Array.isArray(value)) {
+                            if (value.length > 0 && value[0].id && (value[0].title || value[0].description || value[0].category)) {
+                                value.forEach(movie => {
+                                    if (movie.id) {
+                                        aflamList.push(movie);
+                                        allMoviesData[movie.id] = movie;
+                                    }
+                                });
+                            }
+                        } 
+                        else if (typeof value === 'object' && value !== null && value.id && (value.title || value.title_ar)) {
+                            aflamList.push(value);
+                            allMoviesData[value.id] = value;
+                        }
+                    }
+                }
+
                 if (rawAflamData.cat_all && typeof rawAflamData.cat_all === 'object') {
                     for (const catKey in rawAflamData.cat_all) {
                         if (rawAflamData.cat_all.hasOwnProperty(catKey) && Array.isArray(rawAflamData.cat_all[catKey])) {
@@ -239,15 +262,13 @@
                             potentialMovies.forEach(movie => {
                                 if (movie.id && (movie.title || movie.description || movie.category || movie.title_ar) && (movie.poster_url || movie.portrait)) {
                                     aflamList.push(movie);
-                                    allMoviesData[movie.id] = movie; // تخزين الفيلم بواسطة الـ ID
+                                    allMoviesData[movie.id] = movie;
                                 }
                             });
                         }
                     }
                 }
                 
-                // إضافة معالجة للمفاتيح الطويلة التي تحتوي على كائنات أفلام فردية
-                // هذه المفاتيح في Gist تبدو ككائنات فردية وليست مصفوفات
                 const directMovieKeys = [
                     "media0078.elcinema.com/uploads/",
                     "video.almanhavvly.net/videos/",
@@ -256,22 +277,17 @@
                 directMovieKeys.forEach(key => {
                     if (rawAflamData[key] && typeof rawAflamData[key] === 'object' && rawAflamData[key].id && (rawAflamData[key].title || rawAflamData[key].description)) {
                         aflamList.push(rawAflamData[key]);
-                        allMoviesData[rawAflamData[key].id] = rawAflamData[key]; // تخزين الفيلم بواسطة الـ ID
+                        allMoviesData[rawAflamData[key].id] = rawAflamData[key];
                     }
                 });
 
-                // إذا كان الكائن الرئيسي (rawAflamData) نفسه هو الفيلم المراد عرضه (مثل 5448)
-                if (rawAflamData.id && (rawAflamData.title || rawAflamData.description) && (rawAflamData.poster_url || rawAflamData.portrait || rawAflamData.epiks)) {
-                    aflamList.push(rawAflamData);
-                    allMoviesData[rawAflamData.id] = rawAflamData; // تخزين الفيلم الرئيسي بواسطة الـ ID
-                }
 
                 if (aflamList.length > 0) {
                     loadingElement.style.display = 'none';
                     const uniqueMovies = Array.from(new Map(aflamList.map(movie => [movie.id, movie])).values());
                     
                     const validAflam = uniqueMovies.filter(movie => 
-                        movie.id && (movie.title || movie.description || movie.category || movie.title_ar) && (movie.poster_url || movie.portrait || (movie.epiks && movie.epiks.length > 0)) // التحقق من وجود رابط فيديو أو حلقات
+                        movie.id && (movie.title || movie.description || movie.category || movie.title_ar) && (movie.poster_url || movie.portrait)
                     );
 
                     if (validAflam.length > 0) {
@@ -279,7 +295,7 @@
                             createMovieCard(movie);
                         });
                     } else {
-                        showErrorMessage('تم تحميل ملف JSON بنجاح، لكن لم يتم العثور على أي أفلام صالحة (مع ID وعنوان/وصف وصورة/فيديو) داخل الأقسام المتوقعة.');
+                        showErrorMessage('تم تحميل ملف JSON بنجاح، لكن لم يتم العثور على أي أفلام صالحة (مع ID وعنوان/وصف وصورة) داخل الأقسام المتوقعة.');
                         console.error('No valid movie objects found in the expected JSON paths with required fields.');
                     }
 
