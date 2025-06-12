@@ -111,14 +111,11 @@
         </div>
 
     <script>
-        // *** هذا هو المصدر الرئيسي لقائمة الأفلام (ID، العنوان، الصورة، الوصف) ***
         const GITHUB_JSON_URL = 'https://gist.githubusercontent.com/Alaaaya/fa9335279127305f05e0fd730153e0a0/raw/bb01a03cd1a739adb3d45d0dcaf02e8fb8668652/Aflamraw';
 
-        // هذه الروابط تستخدم لجلب رابط الفيديو الفعلي عند النقر على الفيلم
         const GET_LINK_API = 'https://todays-video.online/ios/getLink?id=';
         const EPISODES_API = 'https://todays-video.online/ios/episodes?id=';
-        
-        // الروابط الأخرى التي قد تحتاجها لجلب الفيديو بالـ ID، إذا لم تكن الروابط أعلاه كافية
+        // الروابط الأخرى التي قد تحتاجها لاحقًا:
         // const ELRVVMDNZ_VIDEOS = 'https://elrvvmdnz.com/videos/';
         // const ALMANHAVVLY_VIDEOS = 'https://video.almanhavvly.net/videos/';
         // const ROSETVVTA_VIDEOS = 'https://clash.rosetvvta-one.online/videos/';
@@ -146,7 +143,7 @@
                 return data;
             } catch (error) {
                 console.error('فشل جلب البيانات من:', url, error);
-                showErrorMessage(`فشل في جلب البيانات من ${url.split('?')[0]}. قد تكون مشكلة في الاتصال أو قيود الخادم (CORS).`);
+                showErrorMessage(`فشل في جلب البيانات من ${url.split('?')[0]}. يرجى المحاولة لاحقًا.`);
                 return null;
             }
         }
@@ -157,9 +154,7 @@
 
             const movieId = movie.id || 'N/A';
             const movieTitle = movie.title || `فيلم ID: ${movieId}`;
-            // استخدام 'description' أو 'long_description' أو 'category' للوصف
             const movieDescription = movie.description || movie.long_description || movie.category || 'لا يوجد وصف متاح.';
-            // استخدام 'poster_url' أو 'portrait' للصورة
             const moviePoster = movie.poster_url || movie.portrait || 'https://via.placeholder.com/250x350?text=لا+صورة';
 
             movieCard.innerHTML = `
@@ -176,28 +171,15 @@
             
             let videoLinkData = null;
 
-            // محاولة جلب رابط الفيديو من GET_LINK_API أولاً
             if (GET_LINK_API.endsWith('=')) {
                 videoLinkData = await fetchData(`${GET_LINK_API}${movieId}`);
             }
 
-            // إذا لم يتم العثور على رابط، جرب EPISODES_API إذا كانت ذات صلة
             if ((!videoLinkData || !videoLinkData.link) && EPISODES_API.endsWith('=')) {
                 console.warn(`لم يتم العثور على رابط من GET_LINK_API لـ ID: ${movieId}. محاولة EPISODES_API.`);
                 videoLinkData = await fetchData(`${EPISODES_API}${movieId}`);
             }
             
-            // ** هنا يمكنك إضافة محاولات للروابط الأخرى مثل elrvvmdnz.com/videos/
-            // إذا كانت تعيد روابط مباشرة للفيديو عند إعطائها ID،
-            // لكن تذكر مشاكل CORS!
-            // مثال (تخيل أن هذا الرابط يعيد رابط فيديو مباشر لـ ID):
-            // if ((!videoLinkData || !videoLinkData.link) && ELRVVMDNZ_VIDEOS.endsWith('/')) {
-            //      console.warn(`لم يتم العثور على رابط، محاولة ELRVVMDNZ_VIDEOS.`);
-            //      // قد تحتاج لتنسيق مختلف للرابط هنا:
-            //      videoLinkData = await fetchData(`${ELRVVMDNZ_VIDEOS}${movieId}.mp4`); 
-            // }
-
-
             if (videoLinkData && videoLinkData.link) {
                 videoPlayer.src = videoLinkData.link;
                 videoPlayer.style.display = 'block';
@@ -225,21 +207,38 @@
             if (rawAflamData) {
                 let aflamList = [];
 
-                // بناءً على فحصي السابق لملفك، الأفلام كانت داخل مفاتيح معينة
-                // على سبيل المثال: "media0078.elcinema.com/uploads/"
-                // سنقوم بجمع كل المصفوفات التي تبدو وكأنها قوائم أفلام
+                // ** هذا هو الجزء الذي يحتاج إلى التركيز والتعديل بناءً على بنية ملف Gist **
+                // من فحصي للملف:
+                // يبدو أن المفاتيح مثل "media0078.elcinema.com/uploads/" و "video.almanhavvly.net/videos/"
+                // هي نفسها كائنات (Objects) تحتوي على خصائص الفيلم (id, title, poster_url)
+                // وليست مصفوفات (Arrays) مباشرة.
+                // القوائم الفعلية من الأفلام قد تكون داخل المفتاح "cat_all" أو قد لا تكون موجودة كقائمة موحدة.
 
+                // سنحاول جمع كل الكائنات التي تبدو كفيلم مباشرة
+                // إذا كان الكائن الرئيسي (rawAflamData) نفسه يحتوي على id, title, poster_url (وهو غير مرجح كقائمة)
+                if (rawAflamData.id && (rawAflamData.title || rawAflamData.description) && (rawAflamData.poster_url || rawAflamData.portrait)) {
+                    aflamList.push(rawAflamData);
+                }
+
+                // البحث داخل المفاتيح الرئيسية التي قد تحتوي على كائنات أفلام فردية
+                // أو مصفوفات من الأفلام (إذا تغيرت البنية مستقبلاً)
                 for (const key in rawAflamData) {
-                    if (rawAflamData.hasOwnProperty(key) && Array.isArray(rawAflamData[key])) {
-                        const potentialMovies = rawAflamData[key];
-                        // التحقق من أن أول عنصر في المصفوفة يبدو كفيلم (يحتوي على ID وعنوان/وصف)
-                        if (potentialMovies.length > 0 && potentialMovies[0].id && (potentialMovies[0].title || potentialMovies[0].description || potentialMovies[0].category)) {
-                            aflamList = aflamList.concat(potentialMovies);
+                    if (rawAflamData.hasOwnProperty(key)) {
+                        const value = rawAflamData[key];
+                        // إذا كانت القيمة مصفوفة، نتحقق مما إذا كانت تحتوي على أفلام
+                        if (Array.isArray(value)) {
+                            if (value.length > 0 && value[0].id && (value[0].title || value[0].description || value[0].category)) {
+                                aflamList = aflamList.concat(value);
+                            }
+                        } 
+                        // إذا كانت القيمة كائن وتظهر كفيلم فردي (مثلاً المفتاح هو ID الفيلم أو اسم الفيلم)
+                        else if (typeof value === 'object' && value !== null && value.id && (value.title || value.title_ar)) {
+                            aflamList.push(value);
                         }
                     }
                 }
-                
-                // إضافة معالجة للمفتاح "cat_all" الذي رأيته في ملفك (قد يحتوي على قوائم أفلام)
+
+                // محاولة استخراج من "cat_all" إذا كان موجوداً ويحتوي على قوائم فرعية
                 if (rawAflamData.cat_all && typeof rawAflamData.cat_all === 'object') {
                     for (const catKey in rawAflamData.cat_all) {
                         if (rawAflamData.cat_all.hasOwnProperty(catKey) && Array.isArray(rawAflamData.cat_all[catKey])) {
@@ -250,16 +249,27 @@
                         }
                     }
                 }
+                
+                // إضافة معالجة للمفاتيح الطويلة التي رأيتها والتي تحتوي على كائنات أفلام فردية
+                // هذه المفاتيح في Gist تبدو ككائنات فردية وليست مصفوفات
+                const directMovieKeys = [
+                    "media0078.elcinema.com/uploads/",
+                    "video.almanhavvly.net/videos/",
+                    "clash.rosetvvta-one.online/videos/"
+                ];
+                directMovieKeys.forEach(key => {
+                    if (rawAflamData[key] && typeof rawAflamData[key] === 'object' && rawAflamData[key].id && (rawAflamData[key].title || rawAflamData[key].description)) {
+                        aflamList.push(rawAflamData[key]);
+                    }
+                });
 
 
                 if (aflamList.length > 0) {
                     loadingElement.style.display = 'none';
-                    // إزالة التكرارات بناءً على الـ ID
                     const uniqueMovies = Array.from(new Map(aflamList.map(movie => [movie.id, movie])).values());
                     
-                    // تصفية إضافية لضمان وجود البيانات الأساسية المطلوبة للعرض
                     const validAflam = uniqueMovies.filter(movie => 
-                        movie.id && (movie.title || movie.description || movie.category) && (movie.poster_url || movie.portrait)
+                        movie.id && (movie.title || movie.description || movie.category || movie.title_ar) && (movie.poster_url || movie.portrait)
                     );
 
                     if (validAflam.length > 0) {
@@ -272,7 +282,7 @@
                     }
 
                 } else {
-                    showErrorMessage('لم يتم العثور على أي أفلام صالحة في ملف GitHub JSON. يرجى التحقق من بنية الملف وتحديد مسار الأفلام الصحيح في الكود.');
+                    showErrorMessage('لم يتم العثور على أي أفلام صالحة في ملف GitHub JSON. يرجى التحقق من بنية الملف أو تحديث الكود لاستخلاص الأفلام.');
                     console.error('Aflam list is empty after attempting to parse JSON from Gist.');
                 }
 
