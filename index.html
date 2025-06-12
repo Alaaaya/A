@@ -35,7 +35,7 @@
             border-radius: 8px;
             padding: 15px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-            text-align: right; /* محاذاة النص لليمين للعربية */
+            text-align: right;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -112,17 +112,12 @@
         </div>
 
     <script>
+        // رابط الـ Gist الذي يحتوي على بيانات الأفلام وروابط الفيديو المباشرة
         const GITHUB_JSON_URL = 'https://gist.githubusercontent.com/Alaaaya/fa9335279127305f05e0fd730153e0a0/raw/bb01a03cd1a739adb3d45d0dcaf02e8fb8668652/Aflamraw';
 
-        const PROXY_BASE_URL = 'https://plain-snowflake-64f5.rasmtk300.workers.dev/?url=';
+        // لا حاجة لمتغيرات Proxy أو API Keys بعد الآن
 
-        const API_KEY = 'e25874f2d86e061e06a571f8ef006e0b';
-        const V_PARAM = 'betweens2'; 
-
-        const ORIGINAL_GET_LINK_BASE_URL = `https://todays-video.online/ios/getLink?key=${API_KEY}&v=${V_PARAM}&id=`;
-        const ORIGINAL_EPISODES_BASE_URL = `https://todays-video.online/ios/episodes?key=${API_KEY}&v=${V_PARAM}&id=`;
-        
-        let allMoviesData = {}; // Global variable to store fetched movie data
+        let allMoviesData = {}; // متغير لتخزين بيانات الأفلام بعد جلبها من Gist
 
         const moviesContainer = document.getElementById('moviesContainer');
         const loadingElement = document.getElementById('loading');
@@ -140,21 +135,13 @@
                 const response = await fetch(url);
                 if (!response.ok) {
                     console.error(`Fetch failed for URL: ${url}. Status: ${response.status} ${response.statusText}`);
-                    // حاول قراءة الاستجابة كنص JSON حتى لو كانت HTTP Not OK
-                    const errorText = await response.text();
-                    try {
-                        const errorJson = JSON.parse(errorText);
-                        throw new Error(`خطأ من الخادم: ${JSON.stringify(errorJson)}`);
-                    } catch (e) {
-                        // إذا لم تكن JSON، اعرض النص الخام
-                        throw new Error(`خطأ في الشبكة أو الخادم: ${response.statusText} (${response.status}). الاستجابة: ${errorText}`);
-                    }
+                    throw new Error(`خطأ في الشبكة أو الخادم: ${response.statusText} (${response.status})`);
                 }
                 const data = await response.json();
                 return data;
             } catch (error) {
                 console.error('فشل جلب البيانات من:', url, error);
-                showErrorMessage(`فشل في جلب البيانات من ${url.split('?')[0]}. التفاصيل: ${error.message}`);
+                showErrorMessage(`فشل في جلب البيانات من ${url.split('?')[0]}. يرجى المحاولة لاحقًا.`);
                 return null;
             }
         }
@@ -179,23 +166,25 @@
 
         async function playMovie(movieId) {
             alert(`جاري محاولة تشغيل الفيلم بالـ ID: ${movieId}...`);
-            
-            let videoLinkData = null;
 
-            // استخدام الـ Proxy لجلب رابط الفيديو من ORIGINAL_GET_LINK_BASE_URL مع المفاتيح
-            const proxiedGetLinkUrl = PROXY_BASE_URL + encodeURIComponent(`${ORIGINAL_GET_LINK_BASE_URL}${movieId}`);
-            videoLinkData = await fetchData(proxiedGetLinkUrl);
+            const movieToPlay = allMoviesData[movieId];
 
-            // إذا لم يتم العثور على رابط، جرب ORIGINAL_EPISODES_BASE_URL عبر الـ Proxy
-            if (!videoLinkData || !videoLinkData.link) {
-                console.warn(`لم يتم العثور على رابط من GET_LINK_API لـ ID: ${movieId}. محاولة EPISODES_API عبر الـ Proxy.`);
-                const proxiedEpisodesUrl = PROXY_BASE_URL + encodeURIComponent(`${ORIGINAL_EPISODES_BASE_URL}${movieId}`);
-                videoLinkData = await fetchData(proxiedEpisodesUrl);
+            let videoLink = null;
+
+            if (movieToPlay) {
+                // ابحث عن رابط الفيديو أولاً في 'video_link' (للفيلم الواحد)
+                if (movieToPlay.video_link) {
+                    videoLink = movieToPlay.video_link;
+                } 
+                // إذا لم يوجد، ابحث في 'epiks[0].file' (للمسلسلات والحلقات)
+                else if (movieToPlay.epiks && Array.isArray(movieToPlay.epiks) && movieToPlay.epiks.length > 0) {
+                    videoLink = movieToPlay.epiks[0].file; // تشغيل الحلقة الأولى افتراضياً
+                } 
+                // يمكنك إضافة المزيد من المنطق هنا إذا كانت روابط الفيديو في أماكن أخرى في Gist
             }
-            
-            if (videoLinkData && videoLinkData.link) {
-                const videoLink = videoLinkData.link;
 
+            if (videoLink) {
+                // تحقق من أن الرابط يبدأ بـ 'http://' أو 'https://'
                 if (!videoLink.startsWith('http://') && !videoLink.startsWith('https://')) {
                     console.error('رابط الفيديو غير صالح:', videoLink);
                     alert('عذرًا، رابط الفيديو الذي تم العثور عليه غير صالح.');
@@ -213,7 +202,7 @@
                     });
                 videoPlayer.scrollIntoView({ behavior: 'smooth', block: 'center' });
             } else {
-                alert('عذرًا، لم نتمكن من العثور على رابط فيديو لهذا الفيلم. قد يكون الـ ID غير صحيح أو المشكلة في الـ Proxy أو مصدر الفيديو (Unauthorized).');
+                alert('عذرًا، لم نتمكن من العثور على رابط فيديو لهذا الفيلم في بيانات الـ Gist. يرجى التحقق من ملف الـ Gist أو ID الفيلم.');
                 videoPlayer.style.display = 'none';
             }
         }
@@ -228,8 +217,10 @@
 
             if (rawAflamData) {
                 let aflamList = [];
-                allMoviesData = {}; // Reset for new load
+                allMoviesData = {}; // إعادة تعيين البيانات عند كل تحميل
 
+                // منطق تحليل بيانات الأفلام من Gist (مأخوذ من النسخ السابقة التي عملت)
+                // هذا الجزء يقوم بجمع جميع كائنات الأفلام الصالحة من بنية الـ Gist المعقدة
                 if (rawAflamData.id && (rawAflamData.title || rawAflamData.description) && (rawAflamData.poster_url || rawAflamData.portrait)) {
                     aflamList.push(rawAflamData);
                     allMoviesData[rawAflamData.id] = rawAflamData;
@@ -268,7 +259,7 @@
                         }
                     }
                 }
-                
+
                 const directMovieKeys = [
                     "media0078.elcinema.com/uploads/",
                     "video.almanhavvly.net/videos/",
@@ -281,13 +272,17 @@
                     }
                 });
 
-
                 if (aflamList.length > 0) {
                     loadingElement.style.display = 'none';
+                    // إزالة الأفلام المكررة
                     const uniqueMovies = Array.from(new Map(aflamList.map(movie => [movie.id, movie])).values());
-                    
+
+                    // تصفية الأفلام الصالحة (يجب أن يكون لها ID وعنوان/وصف وصورة/أو رابط فيديو)
                     const validAflam = uniqueMovies.filter(movie => 
-                        movie.id && (movie.title || movie.description || movie.category || movie.title_ar) && (movie.poster_url || movie.portrait)
+                        movie.id && 
+                        (movie.title || movie.description || movie.category || movie.title_ar) && 
+                        (movie.poster_url || movie.portrait) &&
+                        (movie.video_link || (movie.epiks && movie.epiks.length > 0 && movie.epiks[0].file)) // يجب أن يكون هناك رابط فيديو أو حلقات
                     );
 
                     if (validAflam.length > 0) {
@@ -295,12 +290,12 @@
                             createMovieCard(movie);
                         });
                     } else {
-                        showErrorMessage('تم تحميل ملف JSON بنجاح، لكن لم يتم العثور على أي أفلام صالحة (مع ID وعنوان/وصف وصورة) داخل الأقسام المتوقعة.');
+                        showErrorMessage('تم تحميل ملف JSON بنجاح، لكن لم يتم العثور على أي أفلام صالحة (مع ID وعنوان/وصف وصورة وروابط فيديو) داخل الأقسام المتوقعة.');
                         console.error('No valid movie objects found in the expected JSON paths with required fields.');
                     }
 
                 } else {
-                    showErrorMessage('لم يتم العثور على أي أفلام صالحة في ملف GitHub JSON. يرجى التحقق من بنية الملف أو تحديث الكود لاستخلاص الأفلام.');
+                    showErrorMessage('لم يتم العثور على أي أفلام في ملف GitHub JSON. يرجى التحقق من بنية الملف.');
                     console.error('Aflam list is empty after attempting to parse JSON from Gist.');
                 }
 
