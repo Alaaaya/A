@@ -8,11 +8,11 @@
     <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet">
     <style>
         :root {
-            --primary-color: rgba(46, 204, 113, 0.9); /* A vibrant green */
+            --primary-color: rgba(64, 224, 208, 0.9); /* Vibrant Turquoise */
             --bg-gradient: linear-gradient(135deg, #1a2a3a, #2a3a4a); /* Darker blue-grey gradient */
             --glass-bg: rgba(255, 255, 255, 0.1);
             --glass-border: rgba(255, 255, 255, 0.15);
-            --glass-shadow: 0 8px 32px rgba(46, 204, 113, 0.2); /* Green shadow */
+            --glass-shadow: 0 8px 32px rgba(64, 224, 208, 0.2); /* Turquoise shadow */
             --glass-highlight: rgba(255, 255, 255, 0.05);
             --glass-blur: 20px;
             --favorite-color: #ffd700; /* Gold */
@@ -204,8 +204,8 @@
         }
 
         .channel-card.active {
-            background: rgba(46, 204, 113, 0.15); /* Primary color with transparency */
-            border: 1px solid rgba(46, 204, 113, 0.3); /* Primary color with transparency */
+            background: rgba(64, 224, 208, 0.15); /* Primary color with transparency (Turquoise) */
+            border: 1px solid rgba(64, 224, 208, 0.3); /* Primary color with transparency (Turquoise) */
         }
 
         .channel-card.favorite .favorite-icon {
@@ -534,7 +534,7 @@
             });
 
             // العناصر الرئيسية
-            const channels = document.querySelectorAll(".channel-card");
+            const allChannelCards = document.querySelectorAll(".channel-card"); // Select all channel cards initially
             const searchInput = document.getElementById("searchInput");
             const themeToggle = document.getElementById("themeToggle");
             const languageToggle = document.getElementById("languageToggle");
@@ -546,7 +546,7 @@
             
             // تشغيل القناة
             function setActiveChannel(channel) {
-                channels.forEach(c => c.classList.remove("active"));
+                allChannelCards.forEach(c => c.classList.remove("active"));
                 channel.classList.add("active");
                 
                 const streamUrl = channel.getAttribute("data-src");
@@ -583,10 +583,16 @@
                 
                 if (isFavorite) {
                     favorites = favorites.filter(id => id !== channelId);
-                    channel.classList.remove("favorite");
+                    // Remove 'favorite' class from ALL instances of this channel (original and cloned)
+                    document.querySelectorAll(`.channel-card[data-id="${channelId}"]`).forEach(c => {
+                        c.classList.remove("favorite");
+                    });
                 } else {
                     favorites.push(channelId);
-                    channel.classList.add("favorite");
+                    // Add 'favorite' class to ALL instances of this channel (original and cloned)
+                    document.querySelectorAll(`.channel-card[data-id="${channelId}"]`).forEach(c => {
+                        c.classList.add("favorite");
+                    });
                 }
                 
                 localStorage.setItem("favorites", JSON.stringify(favorites));
@@ -605,22 +611,27 @@
                 favoritesTitle.style.display = 'block';
                 
                 favorites.forEach(favId => {
-                    const channel = document.querySelector(`.channel-card[data-id="${favId}"]`);
-                    if (channel) {
-                        const clone = channel.cloneNode(true);
+                    // Find the original channel card to clone its content
+                    const originalChannel = document.querySelector(`.channel-card[data-id="${favId}"]`);
+                    if (originalChannel) {
+                        const clone = originalChannel.cloneNode(true);
                         clone.classList.remove("active");
+                        // Ensure the cloned card also has the 'favorite' class if it's in favorites
+                        if (favorites.includes(favId)) {
+                             clone.classList.add("favorite");
+                        }
                         favoritesGrid.appendChild(clone);
                         
-                        // إضافة حدث النقر للقنوات المنسوخة
+                        // إضافة حدث النقر للقنوات المنسوخة (لتشغيل الفيديو)
                         clone.addEventListener("click", function() {
-                            setActiveChannel(channel);
+                            setActiveChannel(originalChannel); // Use the original channel to set active
                         });
                         
-                        // إضافة حدث النقر للنجمة
+                        // إضافة حدث النقر للنجمة (لتغيير حالة المفضلة)
                         const starIcon = clone.querySelector(".favorite-icon");
                         starIcon.addEventListener("click", (e) => {
                             e.stopPropagation();
-                            toggleFavorite(channel);
+                            toggleFavorite(originalChannel); // Use the original channel for toggling favorite
                         });
                     }
                 });
@@ -640,9 +651,18 @@
             // البحث عن القنوات
             searchInput.addEventListener("input", () => {
                 const searchTerm = searchInput.value.toLowerCase();
-                channels.forEach(channel => {
+                allChannelCards.forEach(channel => {
                     const name = channel.querySelector(".channel-name").textContent.toLowerCase();
-                    channel.style.display = name.includes(searchTerm) ? "block" : "none";
+                    // If the channel is in the favorites grid, it should always be visible (or handled by the favorites grid itself)
+                    // This logic primarily applies to the main news/series/sports grids
+                    if (channel.closest('#favoritesGrid')) {
+                        // For favorite cards, they should be filtered by the search if needed,
+                        // but generally, favorites are a distinct section.
+                        // For now, let's keep them visible if the search matches their name.
+                        channel.style.display = name.includes(searchTerm) ? "block" : "none";
+                    } else {
+                        channel.style.display = name.includes(searchTerm) ? "block" : "none";
+                    }
                 });
             });
             
@@ -672,8 +692,8 @@
                 }
             });
             
-            // تفعيل النقر على القنوات
-            channels.forEach((channel, index) => {
+            // تفعيل النقر على القنوات وتحديث حالة المفضلة عند التحميل
+            allChannelCards.forEach((channel, index) => {
                 channel.addEventListener("click", function() {
                     setActiveChannel(channel);
                 });
@@ -681,11 +701,11 @@
                 // أحداث النجمة
                 const starIcon = channel.querySelector(".favorite-icon");
                 starIcon.addEventListener("click", (e) => {
-                    e.stopPropagation();
+                    e.stopPropagation(); // منع تشغيل القناة عند النقر على النجمة
                     toggleFavorite(channel);
                 });
                 
-                // تظليل القنوات المفضلة
+                // تظليل القنوات المفضلة عند تحميل الصفحة
                 const channelId = channel.getAttribute("data-id");
                 if (favorites.includes(channelId)) {
                     channel.classList.add("favorite");
