@@ -111,13 +111,11 @@
         </div>
 
     <script>
-        // *** تم تحديث هذا الرابط ليستخدم رابط Gist الخاص بك ***
         const GITHUB_JSON_URL = 'https://gist.githubusercontent.com/Alaaaya/fa9335279127305f05e0fd730153e0a0/raw/bb01a03cd1a739adb3d45d0dcaf02e8fb8668652/Aflamraw';
 
-        // روابط الـ API التي قدمتها
         const GET_LINK_API = 'https://todays-video.online/ios/getLink?id=';
         const EPISODES_API = 'https://todays-video.online/ios/episodes?id=';
-        // الروابط الأخرى:
+        // الروابط الأخرى التي قد تحتاجها لاحقًا:
         // const ELRVVMDNZ_VIDEOS = 'https://elrvvmdnz.com/videos/';
         // const ALMANHAVVLY_VIDEOS = 'https://video.almanhavvly.net/videos/';
         // const ROSETVVTA_VIDEOS = 'https://clash.rosetvvta-one.online/videos/';
@@ -128,14 +126,12 @@
         const errorElement = document.getElementById('error');
         const videoPlayer = document.getElementById('currentVideoPlayer');
 
-        // دالة لإظهار رسالة خطأ
         function showErrorMessage(message) {
             errorElement.textContent = message;
             errorElement.style.display = 'block';
-            loadingElement.style.display = 'none'; // إخفاء رسالة التحميل
+            loadingElement.style.display = 'none';
         }
 
-        // دالة لجلب البيانات من أي رابط API
         async function fetchData(url) {
             try {
                 const response = await fetch(url);
@@ -146,20 +142,24 @@
                 return data;
             } catch (error) {
                 console.error('فشل جلب البيانات من:', url, error);
+                // عرض رسالة خطأ للمستخدم إذا لم يكن هناك خطأ خاص بالبنية
+                if (!url.includes(GITHUB_JSON_URL)) { // لا تعرض خطأ مرئيًا لـ GITHUB_JSON_URL هنا
+                    showErrorMessage(`فشل في جلب البيانات من ${url.split('?')[0]}. يرجى المحاولة لاحقًا.`);
+                }
                 return null;
             }
         }
 
-        // دالة لإنشاء وعرض بطاقة الفيلم
         function createMovieCard(movie) {
             const movieCard = document.createElement('div');
             movieCard.classList.add('movie-card');
 
-            // الخصائص المتوقعة من ملف JSON الخاص بك
             const movieId = movie.id || 'N/A';
             const movieTitle = movie.title || `فيلم ID: ${movieId}`;
-            const movieDescription = movie.description || 'لا يوجد وصف متاح.';
-            const moviePoster = movie.poster_url || 'https://via.placeholder.com/250x350?text=لا+صورة'; // صورة افتراضية
+            // يبدو أن الوصف في ملفك قد يكون في حقل 'description' أو 'long_description'
+            // أو قد لا يكون موجودًا دائمًا.
+            const movieDescription = movie.description || movie.long_description || 'لا يوجد وصف متاح.';
+            const moviePoster = movie.poster_url || movie.portrait || 'https://via.placeholder.com/250x350?text=لا+صورة';
 
             movieCard.innerHTML = `
                 <img src="${moviePoster}" alt="${movieTitle}">
@@ -170,57 +170,88 @@
             moviesContainer.appendChild(movieCard);
         }
 
-        // دالة لتشغيل الفيلم
         async function playMovie(movieId) {
-            // إظهار رسالة تحميل صغيرة أو مؤشر
             alert(`جاري محاولة تشغيل الفيلم بالـ ID: ${movieId}...`);
-
-            const videoLinkData = await fetchData(`${GET_LINK_API}${movieId}`);
             
+            // محاولة جلب رابط الفيديو من GET_LINK_API أولاً
+            let videoLinkData = await fetchData(`${GET_LINK_API}${movieId}`);
+            
+            // إذا لم يتم العثور على رابط، جرب EPISODES_API إذا كانت ذات صلة
+            if (!videoLinkData || !videoLinkData.link) {
+                console.warn(`لم يتم العثور على رابط من GET_LINK_API لـ ID: ${movieId}. محاولة EPISODES_API.`);
+                videoLinkData = await fetchData(`${EPISODES_API}${movieId}`);
+            }
+
             if (videoLinkData && videoLinkData.link) {
                 videoPlayer.src = videoLinkData.link;
-                videoPlayer.style.display = 'block'; // إظهار مشغل الفيديو
-                videoPlayer.load(); // تحميل الفيديو
+                videoPlayer.style.display = 'block';
+                videoPlayer.load();
                 videoPlayer.play()
                     .catch(e => {
                         console.error('فشل تشغيل الفيديو تلقائيًا:', e);
                         alert('للتشغيل، يرجى النقر على زر التشغيل في المشغل.');
                     });
-                // يمكنك التمرير إلى مشغل الفيديو أو التركيز عليه
                 videoPlayer.scrollIntoView({ behavior: 'smooth', block: 'center' });
             } else {
-                alert('عذرًا، لم نتمكن من العثور على رابط فيديو لهذا الفيلم. قد يكون ID غير صحيح أو المشكلة في مصدر الفيديو.');
-                videoPlayer.style.display = 'none'; // إخفاء المشغل إذا لم يكن هناك رابط
+                alert('عذرًا، لم نتمكن من العثور على رابط فيديو لهذا الفيلم. قد يكون الـ ID غير صحيح أو المشكلة في مصدر الفيديو (CORS).');
+                videoPlayer.style.display = 'none';
             }
         }
 
-        // الوظيفة الرئيسية لبدء تحميل الأفلام
         async function loadMovies() {
-            loadingElement.style.display = 'block'; // إظهار رسالة التحميل
-            moviesContainer.innerHTML = ''; // مسح أي محتوى سابق
-            errorElement.style.display = 'none'; // إخفاء أي رسائل خطأ سابقة
-            videoPlayer.style.display = 'none'; // إخفاء المشغل عند التحميل الجديد
+            loadingElement.style.display = 'block';
+            moviesContainer.innerHTML = '';
+            errorElement.style.display = 'none';
+            videoPlayer.style.display = 'none';
 
-            const aflamList = await fetchData(GITHUB_JSON_URL);
+            const rawAflamData = await fetchData(GITHUB_JSON_URL);
 
-            if (aflamList && Array.isArray(aflamList)) {
-                loadingElement.style.display = 'none'; // إخفاء رسالة التحميل
-                if (aflamList.length === 0) {
-                    showErrorMessage('لا توجد أفلام لعرضها في ملف JSON.');
-                    return;
+            if (rawAflamData) {
+                let aflamList = [];
+
+                // بناءً على الصورة، يبدو أن قائمة الأفلام الحقيقية موجودة في مفاتيح معينة
+                // مثل "media0078.elcinema.com/uploads/"
+                // أو "video.almanhavvly.net/videos/"
+                // يجب عليك تحديد المفتاح (أو المفاتيح) التي تحتوي على الأفلام الفعلية.
+
+                // مثال: إذا كانت الأفلام موجودة تحت مفتاح "media0078.elcinema.com/uploads/"
+                // أو أي مفتاح آخر يبدو كمصدر فيديو:
+                for (const key in rawAflamData) {
+                    if (rawAflamData.hasOwnProperty(key) && Array.isArray(rawAflamData[key])) {
+                        // هنا نفحص إذا كان المفتاح هو رابط URL لمصدر فيديو ويحتوي على مصفوفة
+                        // من كائنات الأفلام (مثل ما رأيناه في الصورة).
+                        // يمكن أن نضيف شروطًا هنا لاختيار المفتاح الصحيح.
+                        // على سبيل المثال، إذا كان يحتوي على "elcinema" أو "videos" في اسمه
+                        if (key.includes("elcinema.com") || key.includes("videos/")) {
+                            aflamList = aflamList.concat(rawAflamData[key]);
+                        }
+                    }
+                }
+                
+                // إذا لم يتم العثور على أفلام بعد البحث عن مفاتيح محددة،
+                // قد يكون هناك بنية أخرى، أو أن الأفلام ليست في مصفوفة مباشرة
+                // داخل المفاتيح الرئيسية. في هذه الحالة، ستحتاج إلى تحديد المسار الصحيح.
+
+                if (aflamList.length > 0) {
+                    loadingElement.style.display = 'none';
+                    aflamList.forEach(movie => {
+                        // تحقق من أن الكائن يحتوي على خصائص الفيلم المطلوبة
+                        if (movie.id && (movie.title || movie.description)) {
+                            createMovieCard(movie);
+                        } else {
+                            console.warn("تم تخطي كائن لا يحتوي على بيانات فيلم كافية:", movie);
+                        }
+                    });
+                } else {
+                    showErrorMessage('لم يتم العثور على أفلام صالحة في ملف GitHub JSON. يرجى التحقق من بنية الملف وتحديد مسار الأفلام.');
+                    console.error('Aflam list is empty or incorrect format after parsing:', rawAflamData);
                 }
 
-                aflamList.forEach(movie => {
-                    createMovieCard(movie);
-                });
-
             } else {
-                showErrorMessage('فشل في تحميل قائمة الأفلام من GitHub. يرجى التحقق من الرابط أو تنسيق الملف.');
-                console.error('Aflam list not found or not an array:', aflamList);
+                showErrorMessage('فشل في تحميل أو تحليل ملف الأفلام من GitHub Gist. يرجى التحقق من الرابط أو تنسيق JSON.');
             }
         }
 
-        // تشغيل الوظيفة الرئيسية عند تحميل الصفحة
         document.addEventListener('DOMContentLoaded', loadMovies);
     </script>
 </body>
