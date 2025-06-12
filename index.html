@@ -5,19 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>بث مباشر - قنوات إخبارية ومسلسلات</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Video.js CSS -->
     <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet">
     <style>
         :root {
-            --primary-color: rgba(0, 122, 255, 0.9);
-            --bg-gradient: linear-gradient(135deg, #0f172a, #1e293b);
-            --glass-bg: rgba(255, 255, 255, 0.15);
-            --glass-border: rgba(255, 255, 255, 0.2);
-            --glass-shadow: 0 8px 32px rgba(0, 255, 0, 0.2);
+            --primary-color: rgba(46, 204, 113, 0.9); /* A vibrant green */
+            --bg-gradient: linear-gradient(135deg, #1a2a3a, #2a3a4a); /* Darker blue-grey gradient */
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --glass-shadow: 0 8px 32px rgba(46, 204, 113, 0.2); /* Green shadow */
             --glass-highlight: rgba(255, 255, 255, 0.05);
             --glass-blur: 20px;
-            --favorite-color: #ffd700;
-            --live-color: #ff453a;
+            --favorite-color: #ffd700; /* Gold */
+            --live-color: #ff453a; /* Red */
         }
 
         * {
@@ -103,7 +102,13 @@
 
         /* مشغل الفيديو */
         .player-section {
-            composes: glass-effect;
+            /* composes: glass-effect; */ /* This isn't standard CSS, commenting out */
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow),
+                        inset 0 0 15px var(--glass-highlight);
+            backdrop-filter: blur(var(--glass-blur));
+            -webkit-backdrop-filter: blur(var(--glass-blur));
             border-radius: 18px;
             padding: 0;
             margin-bottom: 24px;
@@ -121,7 +126,15 @@
 
         /* شريط البحث */
         .search-bar {
-            composes: glass-effect;
+            /* composes: glass-effect; */ /* This isn't standard CSS, commenting out */
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow),
+                        inset 0 0 15px var(--glass-highlight);
+            backdrop-filter: blur(var(--glass-blur));
+            -webkit-backdrop-filter: blur(var(--glass-blur));
+            border-radius: 14px; /* Re-added to match .glass-effect */
+
             display: flex;
             align-items: center;
             margin-bottom: 24px;
@@ -167,7 +180,15 @@
         }
 
         .channel-card {
-            composes: glass-effect;
+            /* composes: glass-effect; */ /* This isn't standard CSS, commenting out */
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow),
+                        inset 0 0 15px var(--glass-highlight);
+            backdrop-filter: blur(var(--glass-blur));
+            -webkit-backdrop-filter: blur(var(--glass-blur));
+            border-radius: 14px; /* Re-added to match .glass-effect */
+
             text-align: center;
             cursor: pointer;
             padding: 20px 15px;
@@ -183,8 +204,8 @@
         }
 
         .channel-card.active {
-            background: rgba(0, 122, 255, 0.15);
-            border: 1px solid rgba(0, 122, 255, 0.3);
+            background: rgba(46, 204, 113, 0.15); /* Primary color with transparency */
+            border: 1px solid rgba(46, 204, 113, 0.3); /* Primary color with transparency */
         }
 
         .channel-card.favorite .favorite-icon {
@@ -254,7 +275,15 @@
 
         /* عناوين الأقسام */
         .section-title {
-            composes: glass-effect;
+            /* composes: glass-effect; */ /* This isn't standard CSS, commenting out */
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow),
+                        inset 0 0 15px var(--glass-highlight);
+            backdrop-filter: blur(var(--glass-blur));
+            -webkit-backdrop-filter: blur(var(--glass-blur));
+            border-radius: 14px; /* Re-added to match .glass-effect */
+
             display: inline-block;
             font-size: 1.4rem;
             font-weight: 600;
@@ -285,7 +314,15 @@
         }
 
         .theme-toggle, .language-toggle {
-            composes: glass-effect;
+            /* composes: glass-effect; */ /* This isn't standard CSS, commenting out */
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow),
+                        inset 0 0 15px var(--glass-highlight);
+            backdrop-filter: blur(var(--glass-blur));
+            -webkit-backdrop-filter: blur(var(--glass-blur));
+            border-radius: 14px; /* Re-added to match .glass-effect */
+
             border: none;
             color: inherit;
             padding: 10px 16px;
@@ -361,7 +398,6 @@
 </head>
 <body>
     <div class="container">
-        <!-- أزرار التحكم -->
         <div class="control-buttons">
             <button class="theme-toggle" id="themeToggle">
                 <i class="fas fa-moon"></i> <span>الوضع الليلي</span>
@@ -371,13 +407,11 @@
             </button>
         </div>
 
-        <!-- شريط البحث -->
         <div class="search-bar">
             <input type="text" id="searchInput" placeholder="ابحث عن قناة...">
             <i class="fas fa-search"></i>
         </div>
 
-        <!-- مشغل الفيديو -->
         <div class="player-section">
             <video id="myVideoPlayer" class="video-js vjs-default-skin" controls preload="auto">
                 <source src="" type="application/x-mpegURL">
@@ -387,13 +421,10 @@
             </video>
         </div>
 
-        <!-- القنوات المفضلة -->
         <div class="section-title" id="favoritesTitle">القنوات المفضلة</div>
         <div class="channel-grid" id="favoritesGrid">
-            <!-- سيتم ملؤها ديناميكيًا -->
-        </div>
+            </div>
 
-        <!-- قنوات الأخبار -->
         <div class="section-title">قنوات الأخبار</div>
         <div class="channel-grid" id="newsGrid">
             <div class="channel-card" data-src="https://live-hls-web-aja.getaj.net/AJA/index.m3u8" data-id="aljazeera">
@@ -453,7 +484,6 @@
             </div>
         </div>
 
-        <!-- قنوات المسلسلات -->
         <div class="section-title">قنوات المسلسلات</div>
         <div class="channel-grid" id="seriesGrid">
             <div class="channel-card" data-src="https://shls-mbc1na-prod-dub.shahid.net/out/v1/84ab37e99d6e4b16b33c6600f94f6ccb/index_7.m3u8" data-id="mbc1">
@@ -464,7 +494,6 @@
             </div>
         </div>
         
-        <!-- القنوات الرياضية -->
         <div class="section-title">القنوات الرياضية</div>
         <div class="channel-grid" id="sportsGrid">
             <div class="channel-card" data-src="http://het102a.4rouwanda-shop.store/live/918454578001/index.m3u8?" data-id="beinsports">
@@ -476,9 +505,7 @@
         </div>
     </div>
 
-    <!-- مكتبة Video.js -->
     <script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
-    <!-- دعم HLS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/videojs-contrib-hls/5.15.0/videojs-contrib-hls.min.js"></script>
     
     <script>
