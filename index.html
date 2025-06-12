@@ -550,13 +550,13 @@
             // روابط السيرفرات لإنشاء رابط التشغيل الفعلي
             const streamServers = [
                 "https://todays-video.online/ios/getLink?id=", // هذا هو الرابط الأرجح لجلب الفيديو
-                "https://elrvvmdnz.com/videos/",
+                "https://elrvvmdnz.com/videos/", // قد لا تحتاج لهذه إذا كان getLink يعمل
                 "https://video.almanhavvly.net/videos/",
                 "https://clash.rosetvvta-one.online/videos/"
             ];
 
-            // رابط الـ JSON لجلب الأفلام (افترضت هذا بناءً على روابطك)
-            const moviesJsonUrl = "https://todays-video.online/ios/episodes?id=1"; // افترضت 'id=1' كمثال لجلب قائمة
+            // رابط الـ JSON لجلب الأفلام (الرابط الجديد الذي قدمته)
+            const moviesJsonUrl = "https://todays-video.online/ios/splash?key=e25874f2d86e061e06a571f8ef006e0b&v=betweens2";
 
             // وظيفة لجلب الأفلام وبنائها ديناميكيًا
             async function fetchAndRenderMovies() {
@@ -567,60 +567,44 @@
                     if (!response.ok) {
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }
-                    const moviesData = await response.json();
+                    const moviesData = await response.json(); // هذا سيكون الكائن الذي يحتوي على القنوات بداخل مفاتيح رقمية
                     
                     moviesGrid.innerHTML = ''; // إزالة رسالة التحميل
                     
-                    // تحقق من هيكل البيانات المستلمة
-                    // افترض أن moviesData هو مصفوفة من الكائنات، وكل كائن له 'id', 'title', 'poster'
-                    if (Array.isArray(moviesData)) {
-                        moviesData.forEach((movie, index) => {
-                            const movieCard = document.createElement('div');
-                            movieCard.classList.add('channel-card');
-                            movieCard.setAttribute('data-id', `movie-${movie.id}`); // إضافة بادئة لتمييزها
-                            movieCard.setAttribute('data-movie-id', movie.id); // لحفظ الـ ID الأصلي
+                    let index = 0; // لترتيب ظهور البطاقات
+                    for (const key in moviesData) {
+                        if (moviesData.hasOwnProperty(key)) {
+                            const movie = moviesData[key]; // كل 'movie' هنا هو كائن القناة/الفيلم
                             
-                            // افترض أن `movie.poster` يحتوي على رابط الصورة
-                            // وأن `movie.title` يحتوي على عنوان الفيلم
-                            movieCard.innerHTML = `
-                                <i class="fas fa-star favorite-icon"></i>
-                                <span class="live-badge" style="display:none;">مباشر</span> <img src="${movie.poster || 'https://via.placeholder.com/80?text=Movie'}" class="channel-logo" alt="${movie.title}">
-                                <div class="channel-name">${movie.title}</div>
-                            `;
-                            
-                            moviesGrid.appendChild(movieCard);
-                            
-                            // إضافة تأثير الظهور التدريجي
-                            setTimeout(() => {
-                                movieCard.style.opacity = '1';
-                                movieCard.style.transform = 'translateY(0)';
-                            }, index * 50);
-                        });
-                    } else if (moviesData && moviesData.episodes && Array.isArray(moviesData.episodes)) {
-                        // إذا كان الـ JSON يعيد هيكلاً مثل { "episodes": [...] }
-                        moviesData.episodes.forEach((movie, index) => {
-                            const movieCard = document.createElement('div');
-                            movieCard.classList.add('channel-card');
-                            movieCard.setAttribute('data-id', `movie-${movie.id}`); // إضافة بادئة لتمييزها
-                            movieCard.setAttribute('data-movie-id', movie.id); // لحفظ الـ ID الأصلي
-                            
-                            movieCard.innerHTML = `
-                                <i class="fas fa-star favorite-icon"></i>
-                                <span class="live-badge" style="display:none;">مباشر</span>
-                                <img src="${movie.poster || 'https://via.placeholder.com/80?text=Movie'}" class="channel-logo" alt="${movie.title}">
-                                <div class="channel-name">${movie.title}</div>
-                            `;
-                            
-                            moviesGrid.appendChild(movieCard);
-                            
-                            setTimeout(() => {
-                                movieCard.style.opacity = '1';
-                                movieCard.style.transform = 'translateY(0)';
-                            }, index * 50);
-                        });
+                            // تأكد أن الكائن يحتوي على الخصائص المطلوبة
+                            // الصورة التي قدمتها تظهر 'title', 'portrait', 'id'
+                            if (movie && movie.id && movie.title && movie.portrait) {
+                                const movieCard = document.createElement('div');
+                                movieCard.classList.add('channel-card');
+                                // إضافة بادئة لتمييز الأفلام الديناميكية وضمان عدم تعارض الـ IDs
+                                movieCard.setAttribute('data-id', `dynamic-${movie.id}`); 
+                                movieCard.setAttribute('data-movie-id', movie.id); // لحفظ الـ ID الأصلي المستخدم لجلب رابط البث
+                                
+                                movieCard.innerHTML = `
+                                    <i class="fas fa-star favorite-icon"></i>
+                                    <span class="live-badge" style="display:none;">مباشر</span> <img src="${movie.portrait}" class="channel-logo" alt="${movie.title}">
+                                    <div class="channel-name">${movie.title}</div>
+                                `;
+                                
+                                moviesGrid.appendChild(movieCard);
+                                
+                                // إضافة تأثير الظهور التدريجي
+                                setTimeout(() => {
+                                    movieCard.style.opacity = '1';
+                                    movieCard.style.transform = 'translateY(0)';
+                                }, index * 50);
+                                index++;
+                            }
+                        }
                     }
-                     else {
-                        moviesGrid.innerHTML = '<p style="text-align: center; color: rgba(255, 255, 255, 0.7);">لا توجد أفلام لعرضها حاليًا.</p>';
+
+                    if (index === 0) {
+                        moviesGrid.innerHTML = '<p style="text-align: center; color: rgba(255, 255, 255, 0.7);">لا توجد أفلام/قنوات لعرضها حاليًا.</p>';
                     }
 
                     // بعد تحميل الأفلام، قم بتحديث قائمة allChannelCards
@@ -636,10 +620,8 @@
 
             // وظيفة لجلب رابط التشغيل الفعلي لفيلم بناءً على الـ ID
             async function getMovieStreamUrl(movieId) {
-                // يمكنك اختيار أي من الروابط التي قدمتها هنا
-                // بناءً على معرفة بكيفية عمل الواجهة الخلفية (Backend)
-                // الأرجح أنك تستخدم `getLink`
-                const fetchUrl = `${streamServers[0]}${movieId}`; // استخدام السيرفر الأول (getLink)
+                // استخدام الرابط الذي قدمته لجلب رابط التشغيل بناءً على الـ ID
+                const fetchUrl = `${streamServers[0]}${movieId}`; // هذا هو "https://todays-video.online/ios/getLink?id="
                 
                 try {
                     const response = await fetch(fetchUrl);
@@ -647,9 +629,15 @@
                         throw new Error(`Failed to fetch movie stream link for ID: ${movieId}, status: ${response.status}`);
                     }
                     const data = await response.json();
-                    // افترض أن الـ JSON يعيد كائنًا يحتوي على مفتاح مثل 'link' أو 'url'
-                    // تحتاج إلى التحقق من هيكل استجابة getLink?id=
-                    return data.link || data.url || data.stream_url; // تعديل هذا بناءً على الاستجابة الفعلية
+                    
+                    // بناءً على الـ JSON الذي عرضته من رابط 'splash'، فإنه يعيد link داخل كائن
+                    // تأكد أن 'link' هو المفتاح الصحيح لرابط البث الفعلي (m3u8 أو mp4)
+                    if (data && data.link) {
+                        return data.link; 
+                    } else {
+                        console.warn(`'link' property not found in response for movie ID: ${movieId}`, data);
+                        return null;
+                    }
                 } catch (error) {
                     console.error("Error fetching movie stream URL:", error);
                     return null;
@@ -665,12 +653,12 @@
                 const channelLogo = channel.querySelector(".channel-logo").src;
                 
                 let streamUrl = channel.getAttribute("data-src"); // للقنوات الثابتة
-                const movieId = channel.getAttribute("data-movie-id"); // للأفلام الديناميكية
+                const movieId = channel.getAttribute("data-movie-id"); // للأفلام الديناميكية (من `splash` endpoint)
                 
                 if (movieId) {
                     // إذا كانت بطاقة فيلم ديناميكية، احصل على رابط التشغيل الفعلي
                     player.error(null); // مسح أي رسائل خطأ سابقة
-                    player.poster('https://via.placeholder.com/640x360?text=Loading+Movie...'); // عرض صورة تحميل
+                    player.poster(channelLogo); // عرض صورة الفيلم كبوستر تحميل
                     player.pause(); // إيقاف أي تشغيل سابق
                     player.src(''); // مسح المصدر الحالي
                     document.querySelector('.vjs-loading-spinner').style.display = 'block'; // إظهار عجلة التحميل
@@ -692,7 +680,7 @@
                 // تغيير مصدر الفيديو
                 player.src({
                     src: streamUrl,
-                    type: streamUrl.includes(".m3u8") ? 'application/x-mpegURL' : 'video/mp4'
+                    type: streamUrl.includes(".m3u8") ? 'application/x-mpegURL' : 'video/mp4' // افتراض m3u8 أو mp4
                 });
                 
                 // تشغيل الفيديو
@@ -756,10 +744,12 @@
                         });
                         
                         const starIcon = clone.querySelector(".favorite-icon");
-                        starIcon.addEventListener("click", (e) => {
-                            e.stopPropagation();
-                            toggleFavorite(originalChannel);
-                        });
+                        if (starIcon) { // تأكد من وجود النجمة
+                            starIcon.addEventListener("click", (e) => {
+                                e.stopPropagation();
+                                toggleFavorite(originalChannel);
+                            });
+                        }
                     }
                 });
             }
@@ -779,8 +769,11 @@
             searchInput.addEventListener("input", () => {
                 const searchTerm = searchInput.value.toLowerCase();
                 allChannelCards.forEach(channel => {
-                    const name = channel.querySelector(".channel-name").textContent.toLowerCase();
-                    channel.style.display = name.includes(searchTerm) ? "block" : "none";
+                    const nameElement = channel.querySelector(".channel-name");
+                    if (nameElement) {
+                        const name = nameElement.textContent.toLowerCase();
+                        channel.style.display = name.includes(searchTerm) ? "block" : "none";
+                    }
                 });
             });
             
@@ -806,19 +799,22 @@
                     document.title = "Live Streaming - News, Series & Movies";
                     searchInput.placeholder = "Search for a channel or movie...";
                     document.querySelector("#favoritesTitle").textContent = "Favorite Channels";
-                    document.querySelectorAll(".section-title")[1].textContent = "News Channels";
-                    document.querySelectorAll(".section-title")[2].textContent = "Series Channels";
-                    document.querySelectorAll(".section-title")[3].textContent = "Sports Channels";
-                    document.querySelectorAll(".section-title")[4].textContent = "Movie Channels";
+                    // تأكد من وجود هذه العناصر قبل محاولة تغيير نصها
+                    const sectionTitles = document.querySelectorAll(".section-title");
+                    if (sectionTitles[1]) sectionTitles[1].textContent = "News Channels";
+                    if (sectionTitles[2]) sectionTitles[2].textContent = "Series Channels";
+                    if (sectionTitles[3]) sectionTitles[3].textContent = "Sports Channels";
+                    if (sectionTitles[4]) sectionTitles[4].textContent = "Movie Channels";
                 } else {
                     languageToggle.innerHTML = '<i class="fas fa-language"></i> <span>English</span>';
                     document.title = "بث مباشر - قنوات إخبارية ومسلسلات وأفلام";
                     searchInput.placeholder = "ابحث عن قناة أو فيلم...";
                     document.querySelector("#favoritesTitle").textContent = "القنوات المفضلة";
-                    document.querySelectorAll(".section-title")[1].textContent = "قنوات الأخبار";
-                    document.querySelectorAll(".section-title")[2].textContent = "قنوات المسلسلات";
-                    document.querySelectorAll(".section-title")[3].textContent = "القنوات الرياضية";
-                    document.querySelectorAll(".section-title")[4].textContent = "قنوات الأفلام";
+                    const sectionTitles = document.querySelectorAll(".section-title");
+                    if (sectionTitles[1]) sectionTitles[1].textContent = "قنوات الأخبار";
+                    if (sectionTitles[2]) sectionTitles[2].textContent = "قنوات المسلسلات";
+                    if (sectionTitles[3]) sectionTitles[3].textContent = "القنوات الرياضية";
+                    if (sectionTitles[4]) sectionTitles[4].textContent = "قنوات الأفلام";
                 }
             });
 
@@ -826,11 +822,15 @@
             function initializeChannelListeners() {
                 allChannelCards = document.querySelectorAll(".channel-card"); // إعادة تحديد جميع البطاقات
                 allChannelCards.forEach((channel) => {
-                    channel.removeEventListener("click", channelClickHandler); // إزالة المستمعين القدامى لتجنب التكرار
-                    channel.removeEventListener("click", favoriteClickHandler); // إزالة المستمعين القدامى للنجمة
-
-                    channel.addEventListener("click", channelClickHandler);
+                    // إزالة المستمعين القدامى لتجنب التكرار
+                    channel.removeEventListener("click", channelClickHandler); 
                     const starIcon = channel.querySelector(".favorite-icon");
+                    if (starIcon) {
+                        starIcon.removeEventListener("click", favoriteClickHandler);
+                    }
+
+                    // إضافة المستمعين الجدد
+                    channel.addEventListener("click", channelClickHandler);
                     if (starIcon) {
                         starIcon.addEventListener("click", favoriteClickHandler);
                     }
