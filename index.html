@@ -113,13 +113,18 @@
     <script>
         const GITHUB_JSON_URL = 'https://gist.githubusercontent.com/Alaaaya/fa9335279127305f05e0fd730153e0a0/raw/bb01a03cd1a739adb3d45d0dcaf02e8fb8668652/Aflamraw';
 
-        const GET_LINK_API = 'https://todays-video.online/ios/getLink?id=';
-        const EPISODES_API = 'https://todays-video.online/ios/episodes?id=';
-        // الروابط الأخرى التي قد تحتاجها لاحقًا:
-        // const ELRVVMDNZ_VIDEOS = 'https://elrvvmdnz.com/videos/';
-        // const ALMANHAVVLY_VIDEOS = 'https://video.almanhavvly.net/videos/';
-        // const ROSETVVTA_VIDEOS = 'https://clash.rosetvvta-one.online/videos/';
+        // ** هذا هو الـ Proxy الخاص بك الذي سيوجه الطلبات إلى todays-video.online **
+        const PROXY_BASE_URL = 'https://plain-snowflake-64f5.rasmtk300.workers.dev/?url=';
 
+        // الروابط الأصلية لـ API الخاص بروابط الفيديو
+        const ORIGINAL_GET_LINK_API = 'https://todays-video.online/ios/getLink?id=';
+        const ORIGINAL_EPISODES_API = 'https://todays-video.online/ios/episodes?id=';
+        
+        // الآن، سنستخدم الـ Proxy لجلب الروابط
+        // يجب أن نُشفر الـ URL الأصلي قبل تمريره إلى الـ Proxy
+        function getProxiedUrl(originalUrl) {
+            return PROXY_BASE_URL + encodeURIComponent(originalUrl);
+        }
 
         const moviesContainer = document.getElementById('moviesContainer');
         const loadingElement = document.getElementById('loading');
@@ -143,7 +148,8 @@
                 return data;
             } catch (error) {
                 console.error('فشل جلب البيانات من:', url, error);
-                showErrorMessage(`فشل في جلب البيانات من ${url.split('?')[0]}. يرجى المحاولة لاحقًا.`);
+                // رسالة الخطأ الآن ستكون أكثر عمومية لأن الـ Proxy هو من يفشل (إذا فشل)
+                showErrorMessage(`فشل في جلب البيانات من ${url}. قد تكون مشكلة في الاتصال أو الخادم الوسيط.`);
                 return null;
             }
         }
@@ -171,13 +177,15 @@
             
             let videoLinkData = null;
 
-            if (GET_LINK_API.endsWith('=')) {
-                videoLinkData = await fetchData(`${GET_LINK_API}${movieId}`);
-            }
+            // استخدام الـ Proxy لجلب رابط الفيديو من ORIGINAL_GET_LINK_API
+            const proxiedGetLinkUrl = getProxiedUrl(`${ORIGINAL_GET_LINK_API}${movieId}`);
+            videoLinkData = await fetchData(proxiedGetLinkUrl);
 
-            if ((!videoLinkData || !videoLinkData.link) && EPISODES_API.endsWith('=')) {
-                console.warn(`لم يتم العثور على رابط من GET_LINK_API لـ ID: ${movieId}. محاولة EPISODES_API.`);
-                videoLinkData = await fetchData(`${EPISODES_API}${movieId}`);
+            // إذا لم يتم العثور على رابط، جرب EPISODES_API عبر الـ Proxy
+            if ((!videoLinkData || !videoLinkData.link)) {
+                console.warn(`لم يتم العثور على رابط من GET_LINK_API لـ ID: ${movieId}. محاولة EPISODES_API عبر الـ Proxy.`);
+                const proxiedEpisodesUrl = getProxiedUrl(`${ORIGINAL_EPISODES_API}${movieId}`);
+                videoLinkData = await fetchData(proxiedEpisodesUrl);
             }
             
             if (videoLinkData && videoLinkData.link) {
@@ -191,7 +199,7 @@
                     });
                 videoPlayer.scrollIntoView({ behavior: 'smooth', block: 'center' });
             } else {
-                alert('عذرًا، لم نتمكن من العثور على رابط فيديو لهذا الفيلم. قد يكون الـ ID غير صحيح أو المشكلة في مصدر الفيديو (CORS).');
+                alert('عذرًا، لم نتمكن من العثور على رابط فيديو لهذا الفيلم. قد يكون الـ ID غير صحيح أو المشكلة في الـ Proxy أو مصدر الفيديو.');
                 videoPlayer.style.display = 'none';
             }
         }
@@ -207,38 +215,24 @@
             if (rawAflamData) {
                 let aflamList = [];
 
-                // ** هذا هو الجزء الذي يحتاج إلى التركيز والتعديل بناءً على بنية ملف Gist **
-                // من فحصي للملف:
-                // يبدو أن المفاتيح مثل "media0078.elcinema.com/uploads/" و "video.almanhavvly.net/videos/"
-                // هي نفسها كائنات (Objects) تحتوي على خصائص الفيلم (id, title, poster_url)
-                // وليست مصفوفات (Arrays) مباشرة.
-                // القوائم الفعلية من الأفلام قد تكون داخل المفتاح "cat_all" أو قد لا تكون موجودة كقائمة موحدة.
-
-                // سنحاول جمع كل الكائنات التي تبدو كفيلم مباشرة
-                // إذا كان الكائن الرئيسي (rawAflamData) نفسه يحتوي على id, title, poster_url (وهو غير مرجح كقائمة)
                 if (rawAflamData.id && (rawAflamData.title || rawAflamData.description) && (rawAflamData.poster_url || rawAflamData.portrait)) {
                     aflamList.push(rawAflamData);
                 }
 
-                // البحث داخل المفاتيح الرئيسية التي قد تحتوي على كائنات أفلام فردية
-                // أو مصفوفات من الأفلام (إذا تغيرت البنية مستقبلاً)
                 for (const key in rawAflamData) {
                     if (rawAflamData.hasOwnProperty(key)) {
                         const value = rawAflamData[key];
-                        // إذا كانت القيمة مصفوفة، نتحقق مما إذا كانت تحتوي على أفلام
                         if (Array.isArray(value)) {
                             if (value.length > 0 && value[0].id && (value[0].title || value[0].description || value[0].category)) {
                                 aflamList = aflamList.concat(value);
                             }
                         } 
-                        // إذا كانت القيمة كائن وتظهر كفيلم فردي (مثلاً المفتاح هو ID الفيلم أو اسم الفيلم)
                         else if (typeof value === 'object' && value !== null && value.id && (value.title || value.title_ar)) {
                             aflamList.push(value);
                         }
                     }
                 }
 
-                // محاولة استخراج من "cat_all" إذا كان موجوداً ويحتوي على قوائم فرعية
                 if (rawAflamData.cat_all && typeof rawAflamData.cat_all === 'object') {
                     for (const catKey in rawAflamData.cat_all) {
                         if (rawAflamData.cat_all.hasOwnProperty(catKey) && Array.isArray(rawAflamData.cat_all[catKey])) {
@@ -250,8 +244,6 @@
                     }
                 }
                 
-                // إضافة معالجة للمفاتيح الطويلة التي رأيتها والتي تحتوي على كائنات أفلام فردية
-                // هذه المفاتيح في Gist تبدو ككائنات فردية وليست مصفوفات
                 const directMovieKeys = [
                     "media0078.elcinema.com/uploads/",
                     "video.almanhavvly.net/videos/",
