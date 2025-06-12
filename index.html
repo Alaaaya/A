@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بث مباشر - قنوات إخبارية ومسلسلات</title>
+    <title>بث مباشر - قنوات إخبارية ومسلسلات وأفلام</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet">
     <style>
@@ -102,7 +102,6 @@
 
         /* مشغل الفيديو */
         .player-section {
-            /* composes: glass-effect; */ /* This isn't standard CSS, commenting out */
             background: var(--glass-bg);
             border: 1px solid var(--glass-border);
             box-shadow: var(--glass-shadow),
@@ -126,14 +125,13 @@
 
         /* شريط البحث */
         .search-bar {
-            /* composes: glass-effect; */ /* This isn't standard CSS, commenting out */
             background: var(--glass-bg);
             border: 1px solid var(--glass-border);
             box-shadow: var(--glass-shadow),
                         inset 0 0 15px var(--glass-highlight);
             backdrop-filter: blur(var(--glass-blur));
             -webkit-backdrop-filter: blur(var(--glass-blur));
-            border-radius: 14px; /* Re-added to match .glass-effect */
+            border-radius: 14px;
 
             display: flex;
             align-items: center;
@@ -180,14 +178,13 @@
         }
 
         .channel-card {
-            /* composes: glass-effect; */ /* This isn't standard CSS, commenting out */
             background: var(--glass-bg);
             border: 1px solid var(--glass-border);
             box-shadow: var(--glass-shadow),
                         inset 0 0 15px var(--glass-highlight);
             backdrop-filter: blur(var(--glass-blur));
             -webkit-backdrop-filter: blur(var(--glass-blur));
-            border-radius: 14px; /* Re-added to match .glass-effect */
+            border-radius: 14px;
 
             text-align: center;
             cursor: pointer;
@@ -275,14 +272,13 @@
 
         /* عناوين الأقسام */
         .section-title {
-            /* composes: glass-effect; */ /* This isn't standard CSS, commenting out */
             background: var(--glass-bg);
             border: 1px solid var(--glass-border);
             box-shadow: var(--glass-shadow),
                         inset 0 0 15px var(--glass-highlight);
             backdrop-filter: blur(var(--glass-blur));
             -webkit-backdrop-filter: blur(var(--glass-blur));
-            border-radius: 14px; /* Re-added to match .glass-effect */
+            border-radius: 14px;
 
             display: inline-block;
             font-size: 1.4rem;
@@ -314,14 +310,13 @@
         }
 
         .theme-toggle, .language-toggle {
-            /* composes: glass-effect; */ /* This isn't standard CSS, commenting out */
             background: var(--glass-bg);
             border: 1px solid var(--glass-border);
             box-shadow: var(--glass-shadow),
                         inset 0 0 15px var(--glass-highlight);
             backdrop-filter: blur(var(--glass-blur));
             -webkit-backdrop-filter: blur(var(--glass-blur));
-            border-radius: 14px; /* Re-added to match .glass-effect */
+            border-radius: 14px;
 
             border: none;
             color: inherit;
@@ -503,6 +498,22 @@
                 <div class="channel-name">بي إن سبورت 1</div>
             </div>
         </div>
+
+        <div class="section-title">قنوات الأفلام</div>
+        <div class="channel-grid" id="moviesGrid">
+            <div class="channel-card" data-src="https://mnmedias.api.telequebec.tv/m3u8/29082.m3u8" data-id="moviechannel1">
+                <i class="fas fa-star favorite-icon"></i>
+                <span class="live-badge">مباشر</span>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Film_icon.svg/1024px-Film_icon.svg.png" class="channel-logo" alt="قناة أفلام">
+                <div class="channel-name">قناة الأفلام 1</div>
+            </div>
+             <div class="channel-card" data-src="https://streameast.xyz/playlist/tv/fsc_hd.m3u8" data-id="moviechannel2">
+                <i class="fas fa-star favorite-icon"></i>
+                <span class="live-badge">مباشر</span>
+                <img src="https://cdn-icons-png.flaticon.com/512/2926/2926526.png" class="channel-logo" alt="سينما بلس">
+                <div class="channel-name">سينما بلس</div>
+            </div>
+        </div>
     </div>
 
     <script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
@@ -630,7 +641,7 @@
                         // إضافة حدث النقر للنجمة (لتغيير حالة المفضلة)
                         const starIcon = clone.querySelector(".favorite-icon");
                         starIcon.addEventListener("click", (e) => {
-                            e.stopPropagation();
+                            e.stopPropagation(); // منع تشغيل القناة عند النقر على النجمة
                             toggleFavorite(originalChannel); // Use the original channel for toggling favorite
                         });
                     }
@@ -685,10 +696,10 @@
                 
                 if (isArabic) {
                     languageToggle.innerHTML = '<i class="fas fa-language"></i> <span>العربية</span>';
-                    document.title = "Live Streaming - News & Series";
+                    document.title = "Live Streaming - News & Series & Movies";
                 } else {
                     languageToggle.innerHTML = '<i class="fas fa-language"></i> <span>English</span>';
-                    document.title = "بث مباشر - قنوات إخبارية ومسلسلات";
+                    document.title = "بث مباشر - قنوات إخبارية ومسلسلات وأفلام";
                 }
             });
             
