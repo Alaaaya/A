@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>موقع الأفلام الخاص بي</title>
     <style>
+        /* ... (CSS Styles remain the same as previous version) ... */
         body {
             font-family: 'Arial', sans-serif;
             background-color: #f4f4f4;
@@ -113,15 +114,17 @@
     <script>
         const GITHUB_JSON_URL = 'https://gist.githubusercontent.com/Alaaaya/fa9335279127305f05e0fd730153e0a0/raw/bb01a03cd1a739adb3d45d0dcaf02e8fb8668652/Aflamraw';
 
-        // ** هذا هو الـ Proxy الخاص بك الذي سيوجه الطلبات إلى todays-video.online **
         const PROXY_BASE_URL = 'https://plain-snowflake-64f5.rasmtk300.workers.dev/?url=';
 
+        // ** المفاتيح التي يبدو أن API Todays-Video يطلبها **
+        const API_KEY = 'e25874f2d86e061e06a571f8ef006e0b';
+        const V_PARAM = 'betweens2'; // هذا قد يكون ثابت أو متغير حسب الفيلم/الطلب
+
         // الروابط الأصلية لـ API الخاص بروابط الفيديو
-        const ORIGINAL_GET_LINK_API = 'https://todays-video.online/ios/getLink?id=';
-        const ORIGINAL_EPISODES_API = 'https://todays-video.online/ios/episodes?id=';
+        // سنضيف إليها المفتاح والمعلمة V
+        const ORIGINAL_GET_LINK_BASE_URL = `https://todays-video.online/ios/getLink?key=${API_KEY}&v=${V_PARAM}&id=`;
+        const ORIGINAL_EPISODES_BASE_URL = `https://todays-video.online/ios/episodes?key=${API_KEY}&v=${V_PARAM}&id=`;
         
-        // الآن، سنستخدم الـ Proxy لجلب الروابط
-        // يجب أن نُشفر الـ URL الأصلي قبل تمريره إلى الـ Proxy
         function getProxiedUrl(originalUrl) {
             return PROXY_BASE_URL + encodeURIComponent(originalUrl);
         }
@@ -142,14 +145,17 @@
                 const response = await fetch(url);
                 if (!response.ok) {
                     console.error(`Fetch failed for URL: ${url}. Status: ${response.status} ${response.statusText}`);
+                    // إذا كان الخطأ 401 Unauthorized، نعرض رسالة محددة
+                    if (response.status === 401) {
+                        throw new Error('خطأ: الوصول إلى API الفيديو غير مصرح به. تحقق من المفتاح (key) أو المعلمات.');
+                    }
                     throw new Error(`خطأ في الشبكة أو الخادم: ${response.statusText} (${response.status})`);
                 }
                 const data = await response.json();
                 return data;
             } catch (error) {
                 console.error('فشل جلب البيانات من:', url, error);
-                // رسالة الخطأ الآن ستكون أكثر عمومية لأن الـ Proxy هو من يفشل (إذا فشل)
-                showErrorMessage(`فشل في جلب البيانات من ${url}. قد تكون مشكلة في الاتصال أو الخادم الوسيط.`);
+                showErrorMessage(`فشل في جلب البيانات من ${url.split('?')[0]}. قد تكون مشكلة في الاتصال أو الخادم الوسيط أو المفتاح.`);
                 return null;
             }
         }
@@ -177,14 +183,14 @@
             
             let videoLinkData = null;
 
-            // استخدام الـ Proxy لجلب رابط الفيديو من ORIGINAL_GET_LINK_API
-            const proxiedGetLinkUrl = getProxiedUrl(`${ORIGINAL_GET_LINK_API}${movieId}`);
+            // استخدام الـ Proxy لجلب رابط الفيديو من ORIGINAL_GET_LINK_BASE_URL مع المفاتيح
+            const proxiedGetLinkUrl = getProxiedUrl(`${ORIGINAL_GET_LINK_BASE_URL}${movieId}`);
             videoLinkData = await fetchData(proxiedGetLinkUrl);
 
-            // إذا لم يتم العثور على رابط، جرب EPISODES_API عبر الـ Proxy
-            if ((!videoLinkData || !videoLinkData.link)) {
+            // إذا لم يتم العثور على رابط، جرب ORIGINAL_EPISODES_BASE_URL عبر الـ Proxy
+            if (!videoLinkData || !videoLinkData.link) {
                 console.warn(`لم يتم العثور على رابط من GET_LINK_API لـ ID: ${movieId}. محاولة EPISODES_API عبر الـ Proxy.`);
-                const proxiedEpisodesUrl = getProxiedUrl(`${ORIGINAL_EPISODES_API}${movieId}`);
+                const proxiedEpisodesUrl = getProxiedUrl(`${ORIGINAL_EPISODES_BASE_URL}${movieId}`);
                 videoLinkData = await fetchData(proxiedEpisodesUrl);
             }
             
@@ -199,7 +205,7 @@
                     });
                 videoPlayer.scrollIntoView({ behavior: 'smooth', block: 'center' });
             } else {
-                alert('عذرًا، لم نتمكن من العثور على رابط فيديو لهذا الفيلم. قد يكون الـ ID غير صحيح أو المشكلة في الـ Proxy أو مصدر الفيديو.');
+                alert('عذرًا، لم نتمكن من العثور على رابط فيديو لهذا الفيلم. قد يكون الـ ID غير صحيح أو المشكلة في الـ Proxy أو مصدر الفيديو (Unauthorized).');
                 videoPlayer.style.display = 'none';
             }
         }
