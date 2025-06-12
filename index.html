@@ -37,13 +37,13 @@
             text-align: right; /* محاذاة النص لليمين للعربية */
             display: flex;
             flex-direction: column;
-            justify-content: space-between; /* يدفع الزر للأسفل */
+            justify-content: space-between;
         }
         .movie-card img {
             max-width: 100%;
             height: auto;
-            aspect-ratio: 2/3; /* للحفاظ على نسبة العرض إلى الارتفاع للبوستر */
-            object-fit: cover; /* لضمان تغطية الصورة للمساحة */
+            aspect-ratio: 2/3;
+            object-fit: cover;
             border-radius: 4px;
             margin-bottom: 10px;
         }
@@ -57,11 +57,11 @@
             font-size: 0.9em;
             color: #666;
             line-height: 1.5;
-            flex-grow: 1; /* للسماح للوصف بأخذ المساحة المتاحة */
-            overflow: hidden; /* لإخفاء الوصف الزائد */
-            text-overflow: ellipsis; /* لإضافة نقاط ... للوصف الطويل */
+            flex-grow: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
             display: -webkit-box;
-            -webkit-line-clamp: 3; /* عرض 3 أسطر فقط */
+            -webkit-line-clamp: 3;
             -webkit-box-orient: vertical;
         }
         .movie-card button {
@@ -71,9 +71,9 @@
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            margin-top: 15px; /* زيادة الهامش العلوي للزر */
+            margin-top: 15px;
             font-size: 0.9em;
-            width: 100%; /* جعل الزر يملأ العرض */
+            width: 100%;
         }
         .movie-card button:hover {
             background-color: #218838;
@@ -91,9 +91,9 @@
         #currentVideoPlayer {
             width: 100%;
             max-width: 800px;
-            margin: 20px auto; /* توسيط المشغل */
+            margin: 20px auto;
             display: block;
-            background-color: black; /* خلفية سوداء للمشغل */
+            background-color: black;
             border-radius: 8px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         }
@@ -111,14 +111,19 @@
         </div>
 
     <script>
-        const GITHUB_JSON_URL = 'https://gist.githubusercontent.com/Alaaaya/fa9335279127305f05e0fd730153e0a0/raw/bb01a03cd1a739adb3d45d0dcaf02e8fb8668652/Aflamraw';
-
+        // روابط الـ API التي قد ترجع روابط للفيديو أو تفاصيل الفيلم
         const GET_LINK_API = 'https://todays-video.online/ios/getLink?id=';
         const EPISODES_API = 'https://todays-video.online/ios/episodes?id=';
-        // الروابط الأخرى التي قد تحتاجها لاحقًا:
-        // const ELRVVMDNZ_VIDEOS = 'https://elrvvmdnz.com/videos/';
-        // const ALMANHAVVLY_VIDEOS = 'https://video.almanhavvly.net/videos/';
-        // const ROSETVVTA_VIDEOS = 'https://clash.rosetvvta-one.online/videos/';
+        
+        // ** المصادر التي قد ترجع قوائم الأفلام **
+        const VIDEO_LIST_SOURCES = [
+            'https://elrvvmdnz.com/videos/',
+            'https://video.almanhavvly.net/videos/',
+            'https://clash.rosetvvta-one.online/videos/'
+        ];
+
+        // هذا الرابط لم يعد يستخدم لجلب قائمة الأفلام الرئيسية
+        // const GITHUB_JSON_URL = 'https://gist.githubusercontent.com/Alaaaya/fa9335279127305f05e0fd730153e0a0/raw/bb01a03cd1a739adb3d45d0dcaf02e8fb8668652/Aflamraw';
 
 
         const moviesContainer = document.getElementById('moviesContainer');
@@ -136,16 +141,17 @@
             try {
                 const response = await fetch(url);
                 if (!response.ok) {
+                    // إذا كان الخطأ CORS، فلن نصل إلى response.statusText
+                    // ولكن يمكننا تسجيل الخطأ في الكونسول
+                    console.error(`Fetch failed for URL: ${url}. Status: ${response.status} ${response.statusText}`);
                     throw new Error(`خطأ في الشبكة أو الخادم: ${response.statusText} (${response.status})`);
                 }
                 const data = await response.json();
                 return data;
             } catch (error) {
                 console.error('فشل جلب البيانات من:', url, error);
-                // عرض رسالة خطأ للمستخدم إذا لم يكن هناك خطأ خاص بالبنية
-                if (!url.includes(GITHUB_JSON_URL)) { // لا تعرض خطأ مرئيًا لـ GITHUB_JSON_URL هنا
-                    showErrorMessage(`فشل في جلب البيانات من ${url.split('?')[0]}. يرجى المحاولة لاحقًا.`);
-                }
+                // رسالة خطأ عامة للمستخدم، مع تفاصيل في الكونسول
+                showErrorMessage(`فشل في جلب البيانات من ${url}. قد تكون مشكلة في الاتصال أو قيود الخادم (CORS).`);
                 return null;
             }
         }
@@ -156,9 +162,7 @@
 
             const movieId = movie.id || 'N/A';
             const movieTitle = movie.title || `فيلم ID: ${movieId}`;
-            // يبدو أن الوصف في ملفك قد يكون في حقل 'description' أو 'long_description'
-            // أو قد لا يكون موجودًا دائمًا.
-            const movieDescription = movie.description || movie.long_description || 'لا يوجد وصف متاح.';
+            const movieDescription = movie.description || movie.long_description || movie.category || 'لا يوجد وصف متاح.';
             const moviePoster = movie.poster_url || movie.portrait || 'https://via.placeholder.com/250x350?text=لا+صورة';
 
             movieCard.innerHTML = `
@@ -173,14 +177,20 @@
         async function playMovie(movieId) {
             alert(`جاري محاولة تشغيل الفيلم بالـ ID: ${movieId}...`);
             
+            let videoLinkData = null;
+
             // محاولة جلب رابط الفيديو من GET_LINK_API أولاً
-            let videoLinkData = await fetchData(`${GET_LINK_API}${movieId}`);
-            
+            if (GET_LINK_API.endsWith('=')) {
+                videoLinkData = await fetchData(`${GET_LINK_API}${movieId}`);
+            }
+
             // إذا لم يتم العثور على رابط، جرب EPISODES_API إذا كانت ذات صلة
-            if (!videoLinkData || !videoLinkData.link) {
+            if ((!videoLinkData || !videoLinkData.link) && EPISODES_API.endsWith('=')) {
                 console.warn(`لم يتم العثور على رابط من GET_LINK_API لـ ID: ${movieId}. محاولة EPISODES_API.`);
                 videoLinkData = await fetchData(`${EPISODES_API}${movieId}`);
             }
+            
+            // يمكنك إضافة محاولات للروابط الأخرى هنا إذا كانت تعطي روابط مباشرة للفيديو
 
             if (videoLinkData && videoLinkData.link) {
                 videoPlayer.src = videoLinkData.link;
@@ -204,51 +214,59 @@
             errorElement.style.display = 'none';
             videoPlayer.style.display = 'none';
 
-            const rawAflamData = await fetchData(GITHUB_JSON_URL);
+            let allMovies = [];
+            let loadedSuccessfully = false;
 
-            if (rawAflamData) {
-                let aflamList = [];
+            for (const sourceUrl of VIDEO_LIST_SOURCES) {
+                console.log(`محاولة جلب الأفلام من: ${sourceUrl}`);
+                const data = await fetchData(sourceUrl); // جلب البيانات من كل مصدر
 
-                // بناءً على الصورة، يبدو أن قائمة الأفلام الحقيقية موجودة في مفاتيح معينة
-                // مثل "media0078.elcinema.com/uploads/"
-                // أو "video.almanhavvly.net/videos/"
-                // يجب عليك تحديد المفتاح (أو المفاتيح) التي تحتوي على الأفلام الفعلية.
-
-                // مثال: إذا كانت الأفلام موجودة تحت مفتاح "media0078.elcinema.com/uploads/"
-                // أو أي مفتاح آخر يبدو كمصدر فيديو:
-                for (const key in rawAflamData) {
-                    if (rawAflamData.hasOwnProperty(key) && Array.isArray(rawAflamData[key])) {
-                        // هنا نفحص إذا كان المفتاح هو رابط URL لمصدر فيديو ويحتوي على مصفوفة
-                        // من كائنات الأفلام (مثل ما رأيناه في الصورة).
-                        // يمكن أن نضيف شروطًا هنا لاختيار المفتاح الصحيح.
-                        // على سبيل المثال، إذا كان يحتوي على "elcinema" أو "videos" في اسمه
-                        if (key.includes("elcinema.com") || key.includes("videos/")) {
-                            aflamList = aflamList.concat(rawAflamData[key]);
+                if (data) {
+                    loadedSuccessfully = true; // على الأقل مصدر واحد يعمل
+                    // بناءً على معرفتي بالـ APIs، بعضها قد يُرجع كائناً يحتوي على قائمة، وبعضها مصفوفة مباشرة
+                    let moviesFromSource = [];
+                    if (Array.isArray(data)) {
+                        moviesFromSource = data;
+                    } else if (data.videos && Array.isArray(data.videos)) { // افتراض بنية محتملة
+                        moviesFromSource = data.videos;
+                    } else {
+                        // إذا كانت البيانات ليست مصفوفة مباشرة أو في مفتاح 'videos'،
+                        // سنحاول البحث عن المصفوفات داخل الكائن، كما فعلنا مع Gist.
+                        for (const key in data) {
+                            if (data.hasOwnProperty(key) && Array.isArray(data[key])) {
+                                const potentialMovies = data[key];
+                                // تحقق من أن أول عنصر في المصفوفة يبدو كفيلم
+                                if (potentialMovies.length > 0 && potentialMovies[0].id && (potentialMovies[0].title || potentialMovies[0].description || potentialMovies[0].category)) {
+                                    moviesFromSource = moviesFromSource.concat(potentialMovies);
+                                }
+                            }
                         }
                     }
-                }
-                
-                // إذا لم يتم العثور على أفلام بعد البحث عن مفاتيح محددة،
-                // قد يكون هناك بنية أخرى، أو أن الأفلام ليست في مصفوفة مباشرة
-                // داخل المفاتيح الرئيسية. في هذه الحالة، ستحتاج إلى تحديد المسار الصحيح.
 
-                if (aflamList.length > 0) {
-                    loadingElement.style.display = 'none';
-                    aflamList.forEach(movie => {
-                        // تحقق من أن الكائن يحتوي على خصائص الفيلم المطلوبة
-                        if (movie.id && (movie.title || movie.description)) {
-                            createMovieCard(movie);
-                        } else {
-                            console.warn("تم تخطي كائن لا يحتوي على بيانات فيلم كافية:", movie);
-                        }
-                    });
-                } else {
-                    showErrorMessage('لم يتم العثور على أفلام صالحة في ملف GitHub JSON. يرجى التحقق من بنية الملف وتحديد مسار الأفلام.');
-                    console.error('Aflam list is empty or incorrect format after parsing:', rawAflamData);
+                    const validMovies = moviesFromSource.filter(movie => 
+                        movie.id && (movie.title || movie.description || movie.category)
+                    );
+                    allMovies = allMovies.concat(validMovies);
                 }
+            }
 
+            loadingElement.style.display = 'none';
+
+            if (allMovies.length > 0) {
+                // إزالة التكرارات بناءً على الـ ID إذا كانت نفس الأفلام تظهر من مصادر مختلفة
+                const uniqueMovies = Array.from(new Map(allMovies.map(movie => [movie.id, movie])).values());
+                uniqueMovies.forEach(movie => {
+                    createMovieCard(movie);
+                });
             } else {
-                showErrorMessage('فشل في تحميل أو تحليل ملف الأفلام من GitHub Gist. يرجى التحقق من الرابط أو تنسيق JSON.');
+                let errorMessage = 'لم يتم العثور على أي أفلام صالحة من أي من المصادر. ';
+                if (!loadedSuccessfully) {
+                    errorMessage += 'هذا قد يكون بسبب مشاكل CORS أو عدم توفر المصادر.';
+                } else {
+                    errorMessage += 'يرجى التحقق من بنية البيانات التي تُرجعها هذه المصادر.';
+                }
+                showErrorMessage(errorMessage);
+                console.error('No valid movies found from any source or all sources failed to load.');
             }
         }
 
