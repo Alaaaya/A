@@ -565,8 +565,8 @@
                 'en': {
                     darkMode: 'Dark Mode',
                     lightMode: 'Light Mode',
-                    english: 'العربية', // هذا يجب أن يكون "Arabic" إذا كنت تريد عرض اسم اللغة التي سيتم التبديل إليها
-                    arabic: 'English', // هذا يجب أن يكون "English"
+                    english: 'العربية', 
+                    arabic: 'English', 
                     searchPlaceholder: 'Search for a channel...',
                     favoriteChannels: 'Favorite Channels',
                     newsChannels: 'News Channels',
@@ -597,7 +597,6 @@
                     themeToggle.innerHTML = `<i class="fas fa-moon"></i> <span>${translations[lang].darkMode}</span>`;
                 }
                 
-                // هنا نعدل نص زر اللغة ليعرض اللغة التي سيتم التبديل إليها
                 languageToggle.innerHTML = `<i class="fas fa-language"></i> <span>${lang === 'ar' ? translations['en'].english : translations['ar'].arabic}</span>`;
                 document.title = lang === 'ar' ? "بث مباشر - قنوات إخبارية ومسلسلات" : "Live Streaming - News & Series";
             }
@@ -620,10 +619,10 @@
                 
                 player.play()
                     .then(() => {
-                        console.log("بدأ التشغيل بنجاح");
+                        // Playback started successfully
                     })
                     .catch(e => {
-                        console.error("خطأ في التشغيل:", e);
+                        console.error("Playback error for channel:", channelName, e);
                         player.error({
                             code: 2,
                             message: translations[document.documentElement.lang].playerError1
@@ -676,6 +675,8 @@
                             e.stopPropagation();
                             toggleFavorite(originalChannel);
                         });
+                    } else {
+                        // Favorite channel not found in allChannels
                     }
                 });
             }
@@ -717,12 +718,22 @@
             
             // دالة لبناء القنوات من بيانات JSON
             function renderJosonChannels(channelsData) {
+                if (!channelsData || channelsData.length === 0) {
+                    return;
+                }
+
                 josonGrid.innerHTML = ''; 
                 channelsData.forEach((channel, index) => {
+                    // Ensure 'id' exists, fallback to 'name' for data-id
+                    const channelId = channel.id || channel.name; 
+                    if (!channelId) {
+                        return; // Skip channels without a valid ID/name
+                    }
+                    
                     const channelCard = document.createElement('div');
                     channelCard.classList.add('channel-card');
-                    channelCard.setAttribute('data-src', channel.url); // *** تم التعديل: استخدام 'channel.url' ***
-                    channelCard.setAttribute('data-id', channel.id || channel.name); // استخدم الاسم كـ ID إذا لم يكن هناك ID
+                    channelCard.setAttribute('data-src', channel.url); 
+                    channelCard.setAttribute('data-id', channelId);
                     
                     const channelLogoSrc = channel.logo || "https://via.placeholder.com/80?text=Logo"; 
                     
@@ -734,7 +745,7 @@
                     `;
 
                     josonGrid.appendChild(channelCard);
-                    allChannels.push(channelCard); // إضافة القناة المجلوبة إلى قائمة allChannels
+                    allChannels.push(channelCard);
 
                     channelCard.addEventListener("click", function() {
                         setActiveChannel(channelCard);
@@ -746,7 +757,7 @@
                         toggleFavorite(channelCard);
                     });
                     
-                    if (favorites.includes(channel.id || channel.name)) { // استخدم نفس المنطق للـ ID هنا
+                    if (favorites.includes(channelId)) {
                         channelCard.classList.add("favorite");
                     }
                     
@@ -757,7 +768,6 @@
                 });
             }
 
-            // جلب قنوات جوسون من ملف JSON
             fetch('https://raw.githubusercontent.com/jzu4/jzu4.github.io/main/files/json/rives.json')
                 .then(response => {
                     if (!response.ok) {
@@ -766,24 +776,21 @@
                     return response.json();
                 })
                 .then(data => {
-                    // *** تم التعديل: الوصول إلى مصفوفة القنوات داخل مفتاح "channels" ***
                     if (data && data.channels && Array.isArray(data.channels)) {
                         renderJosonChannels(data.channels);
-                        // بعد تحميل قنوات جوسون، نتحقق من تشغيل القناة الأولى
-                        // إذا لم تكن هناك قناة نشطة بالفعل
-                        if (!document.querySelector(".channel-card.active")) {
+                        
+                        if (!document.querySelector(".channel-card.active") && allChannels.length > 0) {
                             const firstChannel = allChannels[0];
-                            if (firstChannel) {
-                                setActiveChannel(firstChannel);
-                            }
-                        }
-                        updateFavoritesDisplay(); // تحديث المفضلة بعد تحميل كل القنوات
+                            setActiveChannel(firstChannel);
+                        } 
+
+                        updateFavoritesDisplay();
                     } else {
-                        console.error('JSON structure is not as expected: "channels" array not found.', data);
+                        console.error('JSON structure is not as expected: "channels" array not found or not an array.', data);
                     }
                 })
                 .catch(error => {
-                    console.error('There has been a problem with fetching Joson channels:', error);
+                    console.error('There has been a problem with fetching or processing Joson channels:', error);
                 });
 
             // جمع القنوات المكتوبة يدويا عند التحميل الأولي وإضافة المستمعين
@@ -810,21 +817,16 @@
                     channel.style.transform = 'translateY(0)';
                 }, index * 50);
             });
-            
-            // تحديث عناصر التحكم الأولية (اللغة والثيم)
+
+            // Initial setup for language and theme
             let currentLang = document.documentElement.lang;
             updateTexts(currentLang);
             updateFavoritesDisplay();
 
-            // تشغيل القناة الأولى تلقائياً عند تحميل الصفحة إذا لم تكن أي قناة نشطة بعد تحميل الأقسام الثابتة
-            // (هذا الجزء قد يحتاج لإعادة تقييم إذا كنت تريد قناة جوسون هي الافتراضية)
-            // إذا كان لديك تفضيل لأي قناة كافتراضية، يفضل تعيينها بعد اكتمال تحميل كل القنوات (الثابتة وديناميكية)
-            // لقد نقلت منطق تشغيل القناة الأولى إلى دالة `fetch.then()`
-            
-            // معالجة أخطاء المشغل
+            // Error handling for video player
             player.on('error', function() {
                 const error = player.error();
-                console.error('حدث خطأ في المشغل:', error);
+                console.error('Video player error:', error);
                 
                 if (error.code === 2) {
                     player.error({
