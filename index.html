@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet">
     <style>
+        /* كود CSS الخاص بك هنا */
         :root {
             --primary-color: rgba(46, 204, 113, 0.9); /* A vibrant green */
             --bg-gradient: linear-gradient(135deg, #1a2a3a, #2a3a4a); /* Darker blue-grey gradient */
@@ -102,7 +103,6 @@
 
         /* مشغل الفيديو */
         .player-section {
-            /* composes: glass-effect; */ /* This isn't standard CSS, commenting out */
             background: var(--glass-bg);
             border: 1px solid var(--glass-border);
             box-shadow: var(--glass-shadow),
@@ -126,7 +126,6 @@
 
         /* شريط البحث */
         .search-bar {
-            /* composes: glass-effect; */ /* This isn't standard CSS, commenting out */
             background: var(--glass-bg);
             border: 1px solid var(--glass-border);
             box-shadow: var(--glass-shadow),
@@ -180,7 +179,6 @@
         }
 
         .channel-card {
-            /* composes: glass-effect; */ /* This isn't standard CSS, commenting out */
             background: var(--glass-bg);
             border: 1px solid var(--glass-border);
             box-shadow: var(--glass-shadow),
@@ -275,7 +273,6 @@
 
         /* عناوين الأقسام */
         .section-title {
-            /* composes: glass-effect; */ /* This isn't standard CSS, commenting out */
             background: var(--glass-bg);
             border: 1px solid var(--glass-border);
             box-shadow: var(--glass-shadow),
@@ -314,7 +311,6 @@
         }
 
         .theme-toggle, .language-toggle {
-            /* composes: glass-effect; */ /* This isn't standard CSS, commenting out */
             background: var(--glass-bg);
             border: 1px solid var(--glass-border);
             box-shadow: var(--glass-shadow),
@@ -421,11 +417,11 @@
             </video>
         </div>
 
-        <div class="section-title" id="favoritesTitle">القنوات المفضلة</div>
+        <div class="section-title" id="favoritesTitle" data-key="favoriteChannels">القنوات المفضلة</div>
         <div class="channel-grid" id="favoritesGrid">
-            </div>
+        </div>
 
-        <div class="section-title">قنوات الأخبار</div>
+        <div class="section-title" data-key="newsChannels">قنوات الأخبار</div>
         <div class="channel-grid" id="newsGrid">
             <div class="channel-card" data-src="https://live-hls-web-aja.getaj.net/AJA/index.m3u8" data-id="aljazeera">
                 <i class="fas fa-star favorite-icon"></i>
@@ -484,7 +480,7 @@
             </div>
         </div>
 
-        <div class="section-title">قنوات المسلسلات</div>
+        <div class="section-title" data-key="seriesChannels">قنوات المسلسلات</div>
         <div class="channel-grid" id="seriesGrid">
             <div class="channel-card" data-src="https://shls-mbc1na-prod-dub.shahid.net/out/v1/84ab37e99d6e4b16b33c6600f94f6ccb/index_7.m3u8" data-id="mbc1">
                 <i class="fas fa-star favorite-icon"></i>
@@ -494,7 +490,7 @@
             </div>
         </div>
         
-        <div class="section-title">القنوات الرياضية</div>
+        <div class="section-title" data-key="sportsChannels">القنوات الرياضية</div>
         <div class="channel-grid" id="sportsGrid">
             <div class="channel-card" data-src="http://het102a.4rouwanda-shop.store/live/918454578001/index.m3u8?" data-id="beinsports">
                 <i class="fas fa-star favorite-icon"></i>
@@ -503,6 +499,10 @@
                 <div class="channel-name">بي إن سبورت 1</div>
             </div>
         </div>
+
+        <div class="section-title" data-key="josonChannels">قنوات جوسون</div>
+        <div class="channel-grid" id="josonGrid">
+            </div>
     </div>
 
     <script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
@@ -534,19 +534,78 @@
             });
 
             // العناصر الرئيسية
-            const channels = document.querySelectorAll(".channel-card");
+            let allChannels = []; // ستشمل كل القنوات (المكتوبة يدويا والمجلوبة من JSON)
             const searchInput = document.getElementById("searchInput");
             const themeToggle = document.getElementById("themeToggle");
             const languageToggle = document.getElementById("languageToggle");
             const favoritesGrid = document.getElementById("favoritesGrid");
             const favoritesTitle = document.getElementById("favoritesTitle");
+            const josonGrid = document.getElementById("josonGrid"); // الشبكة الجديدة لجوسون
             
             // تهيئة المفضلة
             let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+
+            // كائنات الترجمة
+            const translations = {
+                'ar': {
+                    darkMode: 'الوضع الليلي',
+                    lightMode: 'الوضع النهاري',
+                    english: 'English',
+                    arabic: 'العربية',
+                    searchPlaceholder: 'ابحث عن قناة...',
+                    favoriteChannels: 'القنوات المفضلة',
+                    newsChannels: 'قنوات الأخبار',
+                    seriesChannels: 'قنوات المسلسلات',
+                    sportsChannels: 'القنوات الرياضية',
+                    josonChannels: 'قنوات جوسون', // إضافة ترجمة للقسم الجديد
+                    playerError1: 'تعذر تشغيل القناة، يرجى المحاولة لاحقاً',
+                    playerError2: 'تعذر الاتصال بالقناة، يرجى التحقق من اتصال الإنترنت',
+                    playerError3: 'هذه القناة غير متاحة حاليًا',
+                    noJsMessage: 'لرؤية البث المباشر، يرجى تمكين JavaScript أو استخدام متصفح يدعم HTML5 video'
+                },
+                'en': {
+                    darkMode: 'Dark Mode',
+                    lightMode: 'Light Mode',
+                    english: 'English',
+                    arabic: 'العربية',
+                    searchPlaceholder: 'Search for a channel...',
+                    favoriteChannels: 'Favorite Channels',
+                    newsChannels: 'News Channels',
+                    seriesChannels: 'Series Channels',
+                    sportsChannels: 'Sports Channels',
+                    josonChannels: 'Joson Channels', // إضافة ترجمة للقسم الجديد
+                    playerError1: 'Could not play channel, please try again later',
+                    playerError2: 'Could not connect to channel, please check internet connection',
+                    playerError3: 'This channel is currently unavailable',
+                    noJsMessage: 'To view live stream, please enable JavaScript or use a browser that supports HTML5 video'
+                }
+            };
+
+            // دالة لتحديث النصوص حسب اللغة
+            function updateTexts(lang) {
+                document.querySelectorAll('[data-key]').forEach(element => {
+                    const key = element.getAttribute('data-key');
+                    if (translations[lang] && translations[lang][key]) {
+                        element.textContent = translations[lang][key];
+                    }
+                });
+                document.getElementById("searchInput").placeholder = translations[lang].searchPlaceholder;
+                document.querySelector('.vjs-no-js').textContent = translations[lang].noJsMessage;
+                
+                if (document.body.classList.contains("light-mode")) {
+                    themeToggle.innerHTML = `<i class="fas fa-sun"></i> <span>${translations[lang].lightMode}</span>`;
+                } else {
+                    themeToggle.innerHTML = `<i class="fas fa-moon"></i> <span>${translations[lang].darkMode}</span>`;
+                }
+                
+                languageToggle.innerHTML = `<i class="fas fa-language"></i> <span>${translations[lang][lang === 'ar' ? 'english' : 'arabic']}</span>`;
+                document.title = lang === 'ar' ? "بث مباشر - قنوات إخبارية ومسلسلات" : "Live Streaming - News & Series";
+            }
             
             // تشغيل القناة
             function setActiveChannel(channel) {
-                channels.forEach(c => c.classList.remove("active"));
+                // نستخدم allChannels للعثور على جميع القنوات وتحديث الفئة active
+                allChannels.forEach(c => c.classList.remove("active"));
                 channel.classList.add("active");
                 
                 const streamUrl = channel.getAttribute("data-src");
@@ -571,22 +630,22 @@
                         console.error("خطأ في التشغيل:", e);
                         player.error({
                             code: 2,
-                            message: "تعذر تشغيل القناة، يرجى المحاولة لاحقاً"
+                            message: translations[document.documentElement.lang].playerError1
                         });
                     });
             }
             
             // إضافة إلى المفضلة
-            function toggleFavorite(channel) {
-                const channelId = channel.getAttribute("data-id");
+            function toggleFavorite(channelElement) { // تغيير الاسم لتجنب تضارب
+                const channelId = channelElement.getAttribute("data-id");
                 const isFavorite = favorites.includes(channelId);
                 
                 if (isFavorite) {
                     favorites = favorites.filter(id => id !== channelId);
-                    channel.classList.remove("favorite");
+                    channelElement.classList.remove("favorite");
                 } else {
                     favorites.push(channelId);
-                    channel.classList.add("favorite");
+                    channelElement.classList.add("favorite");
                 }
                 
                 localStorage.setItem("favorites", JSON.stringify(favorites));
@@ -605,22 +664,24 @@
                 favoritesTitle.style.display = 'block';
                 
                 favorites.forEach(favId => {
-                    const channel = document.querySelector(`.channel-card[data-id="${favId}"]`);
-                    if (channel) {
-                        const clone = channel.cloneNode(true);
+                    // البحث عن القناة الأصلية من بين allChannels
+                    const originalChannel = allChannels.find(c => c.getAttribute("data-id") === favId);
+                    
+                    if (originalChannel) {
+                        const clone = originalChannel.cloneNode(true);
                         clone.classList.remove("active");
                         favoritesGrid.appendChild(clone);
                         
                         // إضافة حدث النقر للقنوات المنسوخة
                         clone.addEventListener("click", function() {
-                            setActiveChannel(channel);
+                            setActiveChannel(originalChannel); // يجب أن يشغل الأصلية
                         });
                         
-                        // إضافة حدث النقر للنجمة
+                        // إضافة حدث النقر للنجمة على النسخة
                         const starIcon = clone.querySelector(".favorite-icon");
                         starIcon.addEventListener("click", (e) => {
                             e.stopPropagation();
-                            toggleFavorite(channel);
+                            toggleFavorite(originalChannel); // يجب أن يؤثر على الأصلية
                         });
                     }
                 });
@@ -640,7 +701,7 @@
             // البحث عن القنوات
             searchInput.addEventListener("input", () => {
                 const searchTerm = searchInput.value.toLowerCase();
-                channels.forEach(channel => {
+                allChannels.forEach(channel => { // استخدام allChannels للبحث الشامل
                     const name = channel.querySelector(".channel-name").textContent.toLowerCase();
                     channel.style.display = name.includes(searchTerm) ? "block" : "none";
                 });
@@ -649,31 +710,95 @@
             // تغيير الثيم
             themeToggle.addEventListener("click", () => {
                 document.body.classList.toggle("light-mode");
-                
-                if (document.body.classList.contains("light-mode")) {
-                    themeToggle.innerHTML = '<i class="fas fa-sun"></i> <span>الوضع النهاري</span>';
-                } else {
-                    themeToggle.innerHTML = '<i class="fas fa-moon"></i> <span>الوضع الليلي</span>';
-                }
+                updateTexts(document.documentElement.lang); // تحديث نص الزر
             });
             
             // تغيير اللغة
             languageToggle.addEventListener("click", () => {
                 const isArabic = document.documentElement.lang === "ar";
-                document.documentElement.lang = isArabic ? "en" : "ar";
+                let newLang = isArabic ? "en" : "ar";
+                document.documentElement.lang = newLang;
                 document.documentElement.dir = isArabic ? "ltr" : "rtl";
-                
-                if (isArabic) {
-                    languageToggle.innerHTML = '<i class="fas fa-language"></i> <span>العربية</span>';
-                    document.title = "Live Streaming - News & Series";
-                } else {
-                    languageToggle.innerHTML = '<i class="fas fa-language"></i> <span>English</span>';
-                    document.title = "بث مباشر - قنوات إخبارية ومسلسلات";
-                }
+                updateTexts(newLang); // تحديث جميع النصوص
             });
             
-            // تفعيل النقر على القنوات
-            channels.forEach((channel, index) => {
+            // دالة لبناء القنوات من بيانات JSON
+            function renderJosonChannels(channelsData) {
+                josonGrid.innerHTML = ''; // مسح أي محتوى سابق
+                channelsData.forEach((channel, index) => {
+                    const channelCard = document.createElement('div');
+                    channelCard.classList.add('channel-card');
+                    channelCard.setAttribute('data-src', channel.url_channel); // استخدام url_channel من JSON
+                    channelCard.setAttribute('data-id', channel.id);
+                    
+                    // استخدام شعار افتراضي إذا لم يكن موجودًا في JSON
+                    const channelLogoSrc = channel.logo || "https://via.placeholder.com/80?text=Logo"; 
+                    
+                    channelCard.innerHTML = `
+                        <i class="fas fa-star favorite-icon"></i>
+                        <span class="live-badge">مباشر</span>
+                        <img src="${channelLogoSrc}" class="channel-logo" alt="${channel.name}">
+                        <div class="channel-name">${channel.name}</div>
+                    `;
+
+                    josonGrid.appendChild(channelCard);
+                    allChannels.push(channelCard); // إضافة القناة المجلوبة إلى قائمة allChannels
+
+                    // تفعيل النقر على القنوات
+                    channelCard.addEventListener("click", function() {
+                        setActiveChannel(channelCard);
+                    });
+                    
+                    // أحداث النجمة
+                    const starIcon = channelCard.querySelector(".favorite-icon");
+                    starIcon.addEventListener("click", (e) => {
+                        e.stopPropagation();
+                        toggleFavorite(channelCard);
+                    });
+                    
+                    // تظليل القنوات المفضلة
+                    if (favorites.includes(channel.id)) {
+                        channelCard.classList.add("favorite");
+                    }
+                    
+                    // تأثير الظهور التدريجي
+                    setTimeout(() => {
+                        channelCard.style.opacity = '1';
+                        channelCard.style.transform = 'translateY(0)';
+                    }, index * 50);
+                });
+
+                // بعد إضافة القنوات من JSON، ندمجها مع القنوات الموجودة مسبقًا
+                // ونقوم بتشغيل القناة الأولى إذا لم تكن هناك قناة نشطة
+                if (!document.querySelector(".channel-card.active")) {
+                    const firstChannel = allChannels[0];
+                    if (firstChannel) {
+                        setActiveChannel(firstChannel);
+                    }
+                }
+            }
+
+            // جلب قنوات جوسون من ملف JSON
+            fetch('https://raw.githubusercontent.com/jzu4/jzu4.github.io/main/files/json/rives.json')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok ' + response.statusText);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    renderJosonChannels(data);
+                    updateFavoritesDisplay(); // تحديث المفضلة بعد تحميل كل القنوات
+                })
+                .catch(error => {
+                    console.error('There has been a problem with fetching Joson channels:', error);
+                    // يمكنك عرض رسالة خطأ للمستخدم هنا إذا فشل التحميل
+                });
+
+            // جمع القنوات المكتوبة يدويا عند التحميل الأولي
+            document.querySelectorAll("#newsGrid .channel-card, #seriesGrid .channel-card, #sportsGrid .channel-card").forEach((channel, index) => {
+                allChannels.push(channel);
+                // تفعيل النقر على القنوات المكتوبة يدويا
                 channel.addEventListener("click", function() {
                     setActiveChannel(channel);
                 });
@@ -698,14 +823,10 @@
                 }, index * 50);
             });
             
-            // تحديث عناصر التحكم الأولية
-            updateFavoritesDisplay();
-            
-            // تشغيل القناة الأولى تلقائياً عند تحميل الصفحة
-            const defaultChannel = document.querySelector(".channel-card");
-            if (defaultChannel) {
-                setActiveChannel(defaultChannel);
-            }
+            // تحديث عناصر التحكم الأولية (اللغة والثيم)
+            let currentLang = document.documentElement.lang;
+            updateTexts(currentLang);
+            updateFavoritesDisplay(); // تحديث عرض المفضلة للقنوات المحملة يدوياً أيضاً
 
             // معالجة أخطاء المشغل
             player.on('error', function() {
@@ -713,16 +834,14 @@
                 console.error('حدث خطأ في المشغل:', error);
                 
                 if (error.code === 2) {
-                    // خطأ في الشبكة
                     player.error({
                         code: 2,
-                        message: 'تعذر الاتصال بالقناة، يرجى التحقق من اتصال الإنترنت'
+                        message: translations[document.documentElement.lang].playerError2
                     });
                 } else if (error.code === 4) {
-                    // ترميز غير مدعوم
                     player.error({
                         code: 4,
-                        message: 'هذه القناة غير متاحة حاليًا'
+                        message: translations[document.documentElement.lang].playerError3
                     });
                 }
             });
