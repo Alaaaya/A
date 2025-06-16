@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet">
     <style>
-        /* كود CSS الخاص بك هنا */
         :root {
             --primary-color: rgba(46, 204, 113, 0.9); /* A vibrant green */
             --bg-gradient: linear-gradient(135deg, #1a2a3a, #2a3a4a); /* Darker blue-grey gradient */
@@ -132,7 +131,7 @@
                         inset 0 0 15px var(--glass-highlight);
             backdrop-filter: blur(var(--glass-blur));
             -webkit-backdrop-filter: blur(var(--glass-blur));
-            border-radius: 14px; /* Re-added to match .glass-effect */
+            border-radius: 14px;
 
             display: flex;
             align-items: center;
@@ -185,7 +184,7 @@
                         inset 0 0 15px var(--glass-highlight);
             backdrop-filter: blur(var(--glass-blur));
             -webkit-backdrop-filter: blur(var(--glass-blur));
-            border-radius: 14px; /* Re-added to match .glass-effect */
+            border-radius: 14px;
 
             text-align: center;
             cursor: pointer;
@@ -279,7 +278,7 @@
                         inset 0 0 15px var(--glass-highlight);
             backdrop-filter: blur(var(--glass-blur));
             -webkit-backdrop-filter: blur(var(--glass-blur));
-            border-radius: 14px; /* Re-added to match .glass-effect */
+            border-radius: 14px;
 
             display: inline-block;
             font-size: 1.4rem;
@@ -317,7 +316,7 @@
                         inset 0 0 15px var(--glass-highlight);
             backdrop-filter: blur(var(--glass-blur));
             -webkit-backdrop-filter: blur(var(--glass-blur));
-            border-radius: 14px; /* Re-added to match .glass-effect */
+            border-radius: 14px;
 
             border: none;
             color: inherit;
@@ -396,10 +395,10 @@
     <div class="container">
         <div class="control-buttons">
             <button class="theme-toggle" id="themeToggle">
-                <i class="fas fa-moon"></i> <span>الوضع الليلي</span>
+                <i class="fas fa-moon"></i> <span data-key="darkMode">الوضع الليلي</span>
             </button>
             <button class="language-toggle" id="languageToggle">
-                <i class="fas fa-language"></i> <span>English</span>
+                <i class="fas fa-language"></i> <span data-key="english">English</span>
             </button>
         </div>
 
@@ -566,8 +565,8 @@
                 'en': {
                     darkMode: 'Dark Mode',
                     lightMode: 'Light Mode',
-                    english: 'English',
-                    arabic: 'العربية',
+                    english: 'العربية', // هذا يجب أن يكون "Arabic" إذا كنت تريد عرض اسم اللغة التي سيتم التبديل إليها
+                    arabic: 'English', // هذا يجب أن يكون "English"
                     searchPlaceholder: 'Search for a channel...',
                     favoriteChannels: 'Favorite Channels',
                     newsChannels: 'News Channels',
@@ -598,13 +597,13 @@
                     themeToggle.innerHTML = `<i class="fas fa-moon"></i> <span>${translations[lang].darkMode}</span>`;
                 }
                 
-                languageToggle.innerHTML = `<i class="fas fa-language"></i> <span>${translations[lang][lang === 'ar' ? 'english' : 'arabic']}</span>`;
+                // هنا نعدل نص زر اللغة ليعرض اللغة التي سيتم التبديل إليها
+                languageToggle.innerHTML = `<i class="fas fa-language"></i> <span>${lang === 'ar' ? translations['en'].english : translations['ar'].arabic}</span>`;
                 document.title = lang === 'ar' ? "بث مباشر - قنوات إخبارية ومسلسلات" : "Live Streaming - News & Series";
             }
             
             // تشغيل القناة
             function setActiveChannel(channel) {
-                // نستخدم allChannels للعثور على جميع القنوات وتحديث الفئة active
                 allChannels.forEach(c => c.classList.remove("active"));
                 channel.classList.add("active");
                 
@@ -612,16 +611,13 @@
                 const channelName = channel.querySelector(".channel-name").textContent;
                 const channelLogo = channel.querySelector(".channel-logo").src;
                 
-                // إضافة إلى السجل التاريخي
                 addToHistory(channelName, channelLogo);
                 
-                // تغيير مصدر الفيديو
                 player.src({
                     src: streamUrl,
                     type: 'application/x-mpegURL'
                 });
                 
-                // تشغيل الفيديو
                 player.play()
                     .then(() => {
                         console.log("بدأ التشغيل بنجاح");
@@ -636,7 +632,7 @@
             }
             
             // إضافة إلى المفضلة
-            function toggleFavorite(channelElement) { // تغيير الاسم لتجنب تضارب
+            function toggleFavorite(channelElement) {
                 const channelId = channelElement.getAttribute("data-id");
                 const isFavorite = favorites.includes(channelId);
                 
@@ -664,7 +660,6 @@
                 favoritesTitle.style.display = 'block';
                 
                 favorites.forEach(favId => {
-                    // البحث عن القناة الأصلية من بين allChannels
                     const originalChannel = allChannels.find(c => c.getAttribute("data-id") === favId);
                     
                     if (originalChannel) {
@@ -672,16 +667,14 @@
                         clone.classList.remove("active");
                         favoritesGrid.appendChild(clone);
                         
-                        // إضافة حدث النقر للقنوات المنسوخة
                         clone.addEventListener("click", function() {
-                            setActiveChannel(originalChannel); // يجب أن يشغل الأصلية
+                            setActiveChannel(originalChannel);
                         });
                         
-                        // إضافة حدث النقر للنجمة على النسخة
                         const starIcon = clone.querySelector(".favorite-icon");
                         starIcon.addEventListener("click", (e) => {
                             e.stopPropagation();
-                            toggleFavorite(originalChannel); // يجب أن يؤثر على الأصلية
+                            toggleFavorite(originalChannel);
                         });
                     }
                 });
@@ -701,7 +694,7 @@
             // البحث عن القنوات
             searchInput.addEventListener("input", () => {
                 const searchTerm = searchInput.value.toLowerCase();
-                allChannels.forEach(channel => { // استخدام allChannels للبحث الشامل
+                allChannels.forEach(channel => {
                     const name = channel.querySelector(".channel-name").textContent.toLowerCase();
                     channel.style.display = name.includes(searchTerm) ? "block" : "none";
                 });
@@ -710,7 +703,7 @@
             // تغيير الثيم
             themeToggle.addEventListener("click", () => {
                 document.body.classList.toggle("light-mode");
-                updateTexts(document.documentElement.lang); // تحديث نص الزر
+                updateTexts(document.documentElement.lang);
             });
             
             // تغيير اللغة
@@ -719,19 +712,18 @@
                 let newLang = isArabic ? "en" : "ar";
                 document.documentElement.lang = newLang;
                 document.documentElement.dir = isArabic ? "ltr" : "rtl";
-                updateTexts(newLang); // تحديث جميع النصوص
+                updateTexts(newLang);
             });
             
             // دالة لبناء القنوات من بيانات JSON
             function renderJosonChannels(channelsData) {
-                josonGrid.innerHTML = ''; // مسح أي محتوى سابق
+                josonGrid.innerHTML = ''; 
                 channelsData.forEach((channel, index) => {
                     const channelCard = document.createElement('div');
                     channelCard.classList.add('channel-card');
-                    channelCard.setAttribute('data-src', channel.url_channel); // استخدام url_channel من JSON
-                    channelCard.setAttribute('data-id', channel.id);
+                    channelCard.setAttribute('data-src', channel.url); // *** تم التعديل: استخدام 'channel.url' ***
+                    channelCard.setAttribute('data-id', channel.id || channel.name); // استخدم الاسم كـ ID إذا لم يكن هناك ID
                     
-                    // استخدام شعار افتراضي إذا لم يكن موجودًا في JSON
                     const channelLogoSrc = channel.logo || "https://via.placeholder.com/80?text=Logo"; 
                     
                     channelCard.innerHTML = `
@@ -744,38 +736,25 @@
                     josonGrid.appendChild(channelCard);
                     allChannels.push(channelCard); // إضافة القناة المجلوبة إلى قائمة allChannels
 
-                    // تفعيل النقر على القنوات
                     channelCard.addEventListener("click", function() {
                         setActiveChannel(channelCard);
                     });
                     
-                    // أحداث النجمة
                     const starIcon = channelCard.querySelector(".favorite-icon");
                     starIcon.addEventListener("click", (e) => {
                         e.stopPropagation();
                         toggleFavorite(channelCard);
                     });
                     
-                    // تظليل القنوات المفضلة
-                    if (favorites.includes(channel.id)) {
+                    if (favorites.includes(channel.id || channel.name)) { // استخدم نفس المنطق للـ ID هنا
                         channelCard.classList.add("favorite");
                     }
                     
-                    // تأثير الظهور التدريجي
                     setTimeout(() => {
                         channelCard.style.opacity = '1';
                         channelCard.style.transform = 'translateY(0)';
                     }, index * 50);
                 });
-
-                // بعد إضافة القنوات من JSON، ندمجها مع القنوات الموجودة مسبقًا
-                // ونقوم بتشغيل القناة الأولى إذا لم تكن هناك قناة نشطة
-                if (!document.querySelector(".channel-card.active")) {
-                    const firstChannel = allChannels[0];
-                    if (firstChannel) {
-                        setActiveChannel(firstChannel);
-                    }
-                }
             }
 
             // جلب قنوات جوسون من ملف JSON
@@ -787,36 +766,45 @@
                     return response.json();
                 })
                 .then(data => {
-                    renderJosonChannels(data);
-                    updateFavoritesDisplay(); // تحديث المفضلة بعد تحميل كل القنوات
+                    // *** تم التعديل: الوصول إلى مصفوفة القنوات داخل مفتاح "channels" ***
+                    if (data && data.channels && Array.isArray(data.channels)) {
+                        renderJosonChannels(data.channels);
+                        // بعد تحميل قنوات جوسون، نتحقق من تشغيل القناة الأولى
+                        // إذا لم تكن هناك قناة نشطة بالفعل
+                        if (!document.querySelector(".channel-card.active")) {
+                            const firstChannel = allChannels[0];
+                            if (firstChannel) {
+                                setActiveChannel(firstChannel);
+                            }
+                        }
+                        updateFavoritesDisplay(); // تحديث المفضلة بعد تحميل كل القنوات
+                    } else {
+                        console.error('JSON structure is not as expected: "channels" array not found.', data);
+                    }
                 })
                 .catch(error => {
                     console.error('There has been a problem with fetching Joson channels:', error);
-                    // يمكنك عرض رسالة خطأ للمستخدم هنا إذا فشل التحميل
                 });
 
-            // جمع القنوات المكتوبة يدويا عند التحميل الأولي
+            // جمع القنوات المكتوبة يدويا عند التحميل الأولي وإضافة المستمعين
             document.querySelectorAll("#newsGrid .channel-card, #seriesGrid .channel-card, #sportsGrid .channel-card").forEach((channel, index) => {
                 allChannels.push(channel);
-                // تفعيل النقر على القنوات المكتوبة يدويا
+                
                 channel.addEventListener("click", function() {
                     setActiveChannel(channel);
                 });
                 
-                // أحداث النجمة
                 const starIcon = channel.querySelector(".favorite-icon");
                 starIcon.addEventListener("click", (e) => {
                     e.stopPropagation();
                     toggleFavorite(channel);
                 });
                 
-                // تظليل القنوات المفضلة
                 const channelId = channel.getAttribute("data-id");
                 if (favorites.includes(channelId)) {
                     channel.classList.add("favorite");
                 }
                 
-                // تأثير الظهور التدريجي
                 setTimeout(() => {
                     channel.style.opacity = '1';
                     channel.style.transform = 'translateY(0)';
@@ -826,8 +814,13 @@
             // تحديث عناصر التحكم الأولية (اللغة والثيم)
             let currentLang = document.documentElement.lang;
             updateTexts(currentLang);
-            updateFavoritesDisplay(); // تحديث عرض المفضلة للقنوات المحملة يدوياً أيضاً
+            updateFavoritesDisplay();
 
+            // تشغيل القناة الأولى تلقائياً عند تحميل الصفحة إذا لم تكن أي قناة نشطة بعد تحميل الأقسام الثابتة
+            // (هذا الجزء قد يحتاج لإعادة تقييم إذا كنت تريد قناة جوسون هي الافتراضية)
+            // إذا كان لديك تفضيل لأي قناة كافتراضية، يفضل تعيينها بعد اكتمال تحميل كل القنوات (الثابتة وديناميكية)
+            // لقد نقلت منطق تشغيل القناة الأولى إلى دالة `fetch.then()`
+            
             // معالجة أخطاء المشغل
             player.on('error', function() {
                 const error = player.error();
