@@ -48,7 +48,7 @@
             overflow-x: hidden;
 
             /* --- إضافة صورة الخلفية هنا --- */
-            background: url('https://i.pinimg.com/736x/cc/1c/ad/cc1cad6033ba851b7a8bd54076ab6a6b.jpg') no-repeat center center fixed;
+            background: url('https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D') no-repeat center center fixed;
             background-size: cover;
             /* ----------------------------- */
         }
@@ -752,27 +752,25 @@
                 updateTexts(newLang);
             });
             
-            // دالة لتحليل محتوى M3U
-            function parseM3U(m3uContent) {
+            // دالة لمعالجة بيانات قنوات جوسون من JSON
+            function processJosonChannelsData(jsonData) {
                 const channels = [];
-                const lines = m3uContent.split('\n');
-                let currentChannel = {};
-
-                for (const line of lines) {
-                    if (line.startsWith('#EXTINF:')) {
-                        const nameMatch = line.match(/,(.*?)$/);
-                        if (nameMatch && nameMatch[1]) {
-                            currentChannel.name = nameMatch[1].trim();
-                            // Generate a simple ID from the name for favorites
-                            currentChannel.id = currentChannel.name.replace(/[^a-zA-Z0-9]/g, '_');
+                // نفترض أن هيكل JSON هو مصفوفة من الكائنات
+                // كل كائن يجب أن يحتوي على properties مثل "name", "url", "logo"
+                // مثال: [{ "name": "Channel A", "url": "http://stream.a.com/live.m3u8", "logo": "http://logo.a.com/logo.png" }]
+                // إذا كان هيكل JSON مختلفًا، ستحتاج لتعديل هذا الجزء
+                if (Array.isArray(jsonData)) {
+                    jsonData.forEach(item => {
+                        if (item.name && item.url) { // تأكد من وجود الاسم والرابط
+                            channels.push({
+                                name: item.name,
+                                url: item.url,
+                                // استخدم اللوجو إذا كان موجودًا، وإلا استخدم لوجو افتراضي
+                                logo: item.logo || "https://jzu4.github.io/files/img/default_logo.png",
+                                id: item.id || item.name.replace(/[^a-zA-Z0-9]/g, '_') // استخدم ID موجود أو انشئ واحد
+                            });
                         }
-                        // Default logo as M3U files typically don't include logo URLs directly
-                        currentChannel.logo = "https://jzu4.github.io/files/img/default_logo.png"; 
-                    } else if (line.startsWith('http') && currentChannel.name) {
-                        currentChannel.url = line.trim();
-                        channels.push(currentChannel);
-                        currentChannel = {}; // Reset for next channel
-                    }
+                    });
                 }
                 return channels;
             }
@@ -802,26 +800,29 @@
                 }, index * 50);
             });
 
-            // جلب قنوات جوسون من ملف M3U
-            const m3uUrl = 'https://raw.githubusercontent.com/hemzaberkane/ARAB-IPTV/main/ARABIPTV.m3u';
-            const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(m3uUrl);
+            // جلب قنوات جوسون من ملف JSON
+            const josonJsonUrl = 'https://raw.githubusercontent.com/jzu4/jzu4.github.io/main/files/json/rives.json';
+            const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(josonJsonUrl);
 
             fetch(proxyUrl)
                 .then(response => {
                     if (!response.ok) {
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }
-                    return response.text();
+                    return response.json(); // تغيير هنا: تحليل الاستجابة كـ JSON
                 })
-                .then(m3uContent => {
-                    const josonChannelsData = parseM3U(m3uContent);
+                .then(jsonData => {
+                    const josonChannelsData = processJosonChannelsData(jsonData); // استخدام دالة معالجة JSON
                     josonChannelsData.forEach((channelData, index) => {
                         const channelElement = document.createElement("div");
                         channelElement.classList.add("channel-card");
-                        channelElement.classList.add("glass-effect"); // تطبيق فئة الزجاج هنا
+                        channelElement.classList.add("glass-effect");
                         channelElement.setAttribute("data-src", channelData.url);
                         channelElement.setAttribute("data-id", channelData.id);
 
+                        // تحقق من وجود 'is_live' property أو أي property تشير إلى حالة البث
+                        // واعرض شارة "مباشر" بناءً عليها (إذا كان ملف JSON يوفر هذه المعلومات)
+                        // في ملف json الذي قدمته، لا يوجد "is_live" صريح، لذلك سأفترض أنها كلها مباشرة
                         channelElement.innerHTML = `
                             <i class="fas fa-star favorite-icon"></i>
                             <span class="live-badge">مباشر</span>
@@ -830,9 +831,8 @@
                         `;
                         
                         josonGrid.appendChild(channelElement);
-                        allChannels.push(channelElement); // Add to the main allChannels array
+                        allChannels.push(channelElement);
 
-                        // Attach event listeners to the newly created card
                         channelElement.addEventListener("click", function() {
                             setActiveChannel(channelElement);
                         });
@@ -843,7 +843,6 @@
                             toggleFavorite(channelElement);
                         });
 
-                        // Set favorite status if it's already a favorite
                         if (favorites.includes(channelData.id)) {
                             channelElement.classList.add("favorite");
                         }
@@ -853,14 +852,13 @@
                             channelElement.style.transform = 'translateY(0)';
                         }, (allChannels.length - josonChannelsData.length + index) * 50); 
                     });
-                    updateFavoritesDisplay(); // تحديث المفضلة بعد تحميل جميع القنوات
-                    // تعيين القناة النشطة الأولية إذا لم تكن هناك قناة نشطة بعد
+                    updateFavoritesDisplay();
                     if (!player.currentSrc() && allChannels.length > 0) {
                         setActiveChannel(allChannels[0]);
                     }
                 })
                 .catch(error => {
-                    console.error("Error fetching or parsing M3U for Joson channels:", error);
+                    console.error("Error fetching or parsing JSON for Joson channels:", error);
                     const errorDiv = document.createElement("div");
                     errorDiv.textContent = `${translations[document.documentElement.lang].josonLoadError}: ${error.message}`;
                     errorDiv.style.color = 'var(--live-color)';
