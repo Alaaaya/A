@@ -536,8 +536,8 @@
             </div>
         </div>
 
-        <div class="section-title glass-effect" data-key="josonChannels">قنوات جوسون</div>
-        <div class="channel-grid" id="josonGrid">
+        <div class="section-title glass-effect" data-key="iptvChannels">قنوات IPTV</div>
+        <div class="channel-grid" id="iptvGrid">
             </div>
     </div>
 
@@ -570,13 +570,13 @@
             });
 
             // العناصر الرئيسية
-            let allChannels = []; // ستشمل كل القنوات (المكتوبة يدويا + المجلوبة تلقائيا)
+            let allChannels = []; 
             const searchInput = document.getElementById("searchInput");
             const themeToggle = document.getElementById("themeToggle");
             const languageToggle = document.getElementById("languageToggle");
             const favoritesGrid = document.getElementById("favoritesGrid");
             const favoritesTitle = document.getElementById("favoritesTitle");
-            const josonGrid = document.getElementById("josonGrid");
+            const iptvGrid = document.getElementById("iptvGrid"); // تم تغيير المعرف
             
             // تهيئة المفضلة
             let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
@@ -593,12 +593,12 @@
                     newsChannels: 'قنوات الأخبار',
                     seriesChannels: 'قنوات المسلسلات',
                     sportsChannels: 'القنوات الرياضية',
-                    josonChannels: 'قنوات جوسون', 
+                    iptvChannels: 'قنوات IPTV', // تم تغيير النص
                     playerError1: 'تعذر تشغيل القناة، يرجى المحاولة لاحقاً',
                     playerError2: 'تعذر الاتصال بالقناة، يرجى التحقق من اتصال الإنترنت',
                     playerError3: 'هذه القناة غير متاحة حاليًا',
                     noJsMessage: 'لرؤية البث المباشر، يرجى تمكين JavaScript أو استخدام متصفح يدعم HTML5 video',
-                    josonLoadError: 'فشل في تحميل قنوات جوسون'
+                    iptvLoadError: 'فشل في تحميل قنوات IPTV' // تم تغيير النص
                 },
                 'en': {
                     darkMode: 'Dark Mode',
@@ -610,12 +610,12 @@
                     newsChannels: 'News Channels',
                     seriesChannels: 'Series Channels',
                     sportsChannels: 'Sports Channels',
-                    josonChannels: 'Joson Channels', 
+                    iptvChannels: 'IPTV Channels', // تم تغيير النص
                     playerError1: 'Could not play channel, please try again later',
                     playerError2: 'Could not connect to channel, please check internet connection',
                     playerError3: 'This channel is currently unavailable',
                     noJsMessage: 'To view live stream, please enable JavaScript or use a browser that supports HTML5 video',
-                    josonLoadError: 'Failed to load Joson channels'
+                    iptvLoadError: 'Failed to load IPTV channels' // تم تغيير النص
                 }
             };
 
@@ -752,48 +752,50 @@
                 updateTexts(newLang);
             });
             
-            // دالة لمعالجة بيانات قنوات جوسون من JSON
-            function processJosonChannelsData(jsonData) {
+            // دالة لمعالجة بيانات قنوات M3U
+            function processM3UChannelsData(m3uContent) {
                 const channels = [];
-                // الوصول إلى مصفوفة القنوات داخل المفتاح "channels"
-                // هذا يفترض أن jsonData.channels موجود وهو مصفوفة
-                const jsonChannelsArray = jsonData.channels; 
+                const lines = m3uContent.split('\n');
+                let currentChannel = {};
 
-                if (Array.isArray(jsonChannelsArray)) { 
-                    jsonChannelsArray.forEach(item => {
-                        // استخدام `|| ""` للتأكد من أن القيمة ليست `null` أو `undefined`
-                        // استخدام فلتر بسيط للتحقق من أن الرابط يبدأ بـ http/https
-                        let logoUrl = item.logo || "https://jzu4.github.io/files/img/default_logo.png";
-                        if (!logoUrl.startsWith("http://") && !logoUrl.startsWith("https://") && logoUrl !== "https://jzu4.github.io/files/img/default_logo.png") {
-                            // إذا كان الرابط لا يبدأ بـ http/https وليس الافتراضي، استخدم الافتراضي
-                            logoUrl = "https://jzu4.github.io/files/img/default_logo.png";
-                        }
-                        
-                        // التحقق من صلاحية الرابط قبل إضافته
-                        let channelUrl = item.url || "";
-                        if (!channelUrl.startsWith("http://") && !channelUrl.startsWith("https://")) {
-                            console.warn(`Invalid URL for channel '${item.name}': ${item.url}. Skipping this channel.`);
-                            return; // تخطي هذه القناة إذا كان الرابط غير صالح
+                for (let i = 0; i < lines.length; i++) {
+                    const line = lines[i].trim();
+                    if (line.startsWith('#EXTINF:')) {
+                        // Extract attributes and name
+                        const attributesString = line.substring(line.indexOf(':') + 1, line.lastIndexOf(',')).trim();
+                        const channelName = line.substring(line.lastIndexOf(',') + 1).trim();
+
+                        const attributes = {};
+                        const attributeRegex = /(\S+?)="([^"]*?)"/g;
+                        let match;
+                        while ((match = attributeRegex.exec(attributesString)) !== null) {
+                            attributes[match[1].toLowerCase()] = match[2];
                         }
 
-                        if (item.name && channelUrl) { // التأكد من وجود الاسم والرابط الصالح
-                            channels.push({
-                                name: item.name,
-                                url: channelUrl,
-                                logo: logoUrl,
-                                // إنشاء ID فريد أو استخدام ID موجود
-                                id: item.id || item.name.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase() + '_' + Math.random().toString(36).substr(2, 9)
-                            });
+                        currentChannel = {
+                            name: channelName,
+                            logo: attributes['tvg-logo'] || 'https://jzu4.github.io/files/img/default_logo.png', // Fallback logo
+                            id: attributes['tvg-id'] || channelName.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase() + '_' + Math.random().toString(36).substr(2, 9)
+                        };
+                    } else if (line.startsWith('http') || line.startsWith('https')) {
+                        // This line is the URL for the previous EXTINF entry
+                        if (currentChannel.name) { // Ensure there's a name associated
+                            currentChannel.url = line;
+                            // Basic URL validation
+                            if (currentChannel.url.startsWith("http://") || currentChannel.url.startsWith("https://")) {
+                                channels.push(currentChannel);
+                            } else {
+                                console.warn(`Invalid URL for channel '${currentChannel.name}': ${currentChannel.url}. Skipping this channel.`);
+                            }
                         }
-                    });
-                } else {
-                    console.error("Expected 'channels' to be an array in JSON data, but it was not or was missing.");
+                        currentChannel = {}; // Reset for the next channel
+                    }
                 }
                 return channels;
             }
 
             // جمع كل القنوات المكتوبة يدوياً عند التحميل الأولي وإضافة المستمعين
-            document.querySelectorAll(".channel-grid:not(#josonGrid) .channel-card").forEach((channel, index) => {
+            document.querySelectorAll(".channel-grid:not(#iptvGrid) .channel-card").forEach((channel, index) => {
                 allChannels.push(channel);
                 
                 channel.addEventListener("click", function() {
@@ -817,92 +819,86 @@
                 }, index * 50);
             });
 
-            // جلب قنوات جوسون من ملف JSON مباشرة
-            const josonJsonUrl = 'https://raw.githubusercontent.com/jzu4/jzu4.github.io/refs/heads/main/files/json/rives.json';
+            // جلب قنوات M3U من الرابط الجديد
+            const iptvM3uUrl = 'https://raw.githubusercontent.com/hemzaberkane/ARAB-IPTV/refs/heads/main/ARABIPTV.m3u';
 
-            fetch(josonJsonUrl)
+            fetch(iptvM3uUrl)
                 .then(response => {
                     if (!response.ok) {
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }
-                    return response.json();
+                    return response.text(); // جلب المحتوى كنص عادي
                 })
-                .then(jsonData => {
-                    // التأكد من أن jsonData هو كائن ويحتوي على الخاصية "channels"
-                    if (jsonData && typeof jsonData === 'object' && jsonData.channels) {
-                        const josonChannelsData = processJosonChannelsData(jsonData);
-                        
-                        if (josonChannelsData.length === 0 && Array.isArray(jsonData.channels) && jsonData.channels.length > 0) {
-                             // هذا يعني أن الملف تم تحميله، ولكنه يحتوي على روابط URL غير صالحة تم تخطيها
-                             const errorDiv = document.createElement("div");
-                             errorDiv.textContent = `${translations[document.documentElement.lang].josonLoadError}: No valid channels found after parsing. Check URLs in JSON.`;
-                             errorDiv.style.color = 'var(--live-color)';
-                             errorDiv.style.textAlign = 'center';
-                             errorDiv.style.marginTop = '20px';
-                             josonGrid.appendChild(errorDiv);
-                             console.warn("No valid Joson channels processed. Original JSON might contain invalid URLs or structure issues after 'channels' key.");
+                .then(m3uContent => {
+                    const iptvChannelsData = processM3UChannelsData(m3uContent);
+                    
+                    if (iptvChannelsData.length === 0) {
+                         const errorDiv = document.createElement("div");
+                         errorDiv.textContent = `${translations[document.documentElement.lang].iptvLoadError}: لم يتم العثور على قنوات صالحة في ملف M3U.`;
+                         errorDiv.style.color = 'var(--live-color)';
+                         errorDiv.style.textAlign = 'center';
+                         errorDiv.style.marginTop = '20px';
+                         iptvGrid.appendChild(errorDiv);
+                         console.warn("No valid IPTV channels processed. The M3U file might be empty or malformed.");
 
-                        } else {
-                            josonChannelsData.forEach((channelData, index) => {
-                                const channelElement = document.createElement("div");
-                                channelElement.classList.add("channel-card");
-                                channelElement.classList.add("glass-effect");
-                                channelElement.setAttribute("data-src", channelData.url);
-                                channelElement.setAttribute("data-id", channelData.id);
-
-                                channelElement.innerHTML = `
-                                    <i class="fas fa-star favorite-icon"></i>
-                                    <span class="live-badge">مباشر</span>
-                                    <img src="${channelData.logo}" class="channel-logo" alt="${channelData.name}">
-                                    <div class="channel-name">${channelData.name}</div>
-                                `;
-                                
-                                josonGrid.appendChild(channelElement);
-                                allChannels.push(channelElement);
-
-                                channelElement.addEventListener("click", function() {
-                                    setActiveChannel(channelElement);
-                                });
-                                
-                                const starIcon = channelElement.querySelector(".favorite-icon");
-                                starIcon.addEventListener("click", (e) => {
-                                    e.stopPropagation();
-                                    toggleFavorite(channelElement);
-                                });
-
-                                if (favorites.includes(channelData.id)) {
-                                    channelElement.classList.add("favorite");
-                                }
-                                
-                                setTimeout(() => {
-                                    channelElement.style.opacity = '1';
-                                    channelElement.style.transform = 'translateY(0)';
-                                }, (allChannels.length - josonChannelsData.length + index) * 50); 
-                            });
-                        }
-                        updateFavoritesDisplay();
-                        // قم بتشغيل القناة الأولى فقط إذا لم يتم تشغيل أي قناة بعد
-                        if (!player.currentSrc() && allChannels.length > 0) {
-                            setActiveChannel(allChannels[0]);
-                        }
                     } else {
-                        console.error("JSON data does not contain a 'channels' property or is not an object:", jsonData);
-                        const errorDiv = document.createElement("div");
-                        errorDiv.textContent = `${translations[document.documentElement.lang].josonLoadError}: Invalid JSON structure (missing 'channels' array).`;
-                        errorDiv.style.color = 'var(--live-color)';
-                        errorDiv.style.textAlign = 'center';
-                        errorDiv.style.marginTop = '20px';
-                        josonGrid.appendChild(errorDiv);
+                        iptvChannelsData.forEach((channelData, index) => {
+                            const channelElement = document.createElement("div");
+                            channelElement.classList.add("channel-card");
+                            channelElement.classList.add("glass-effect");
+                            channelElement.setAttribute("data-src", channelData.url);
+                            channelElement.setAttribute("data-id", channelData.id);
+
+                            // استخدام logo الافتراضي إذا لم يتم توفيره أو كان غير صالح
+                            let displayLogo = channelData.logo;
+                            if (!displayLogo || (!displayLogo.startsWith("http://") && !displayLogo.startsWith("https://"))) {
+                                displayLogo = 'https://jzu4.github.io/files/img/default_logo.png'; // لوجو افتراضي
+                            }
+
+                            channelElement.innerHTML = `
+                                <i class="fas fa-star favorite-icon"></i>
+                                <span class="live-badge">مباشر</span>
+                                <img src="${displayLogo}" class="channel-logo" alt="${channelData.name}">
+                                <div class="channel-name">${channelData.name}</div>
+                            `;
+                            
+                            iptvGrid.appendChild(channelElement);
+                            allChannels.push(channelElement);
+
+                            channelElement.addEventListener("click", function() {
+                                setActiveChannel(channelElement);
+                            });
+                            
+                            const starIcon = channelElement.querySelector(".favorite-icon");
+                            starIcon.addEventListener("click", (e) => {
+                                e.stopPropagation();
+                                toggleFavorite(channelElement);
+                            });
+
+                            if (favorites.includes(channelData.id)) {
+                                channelElement.classList.add("favorite");
+                            }
+                            
+                            setTimeout(() => {
+                                channelElement.style.opacity = '1';
+                                channelElement.style.transform = 'translateY(0)';
+                            }, (allChannels.length - iptvChannelsData.length + index) * 50); 
+                        });
+                    }
+                    updateFavoritesDisplay();
+                    // قم بتشغيل القناة الأولى فقط إذا لم يتم تشغيل أي قناة بعد
+                    if (!player.currentSrc() && allChannels.length > 0) {
+                        setActiveChannel(allChannels[0]);
                     }
                 })
                 .catch(error => {
-                    console.error("Error fetching or parsing JSON for Joson channels:", error);
+                    console.error("Error fetching or parsing M3U for IPTV channels:", error);
                     const errorDiv = document.createElement("div");
-                    errorDiv.textContent = `${translations[document.documentElement.lang].josonLoadError}: ${error.message}. Make sure your HTML is hosted on a web server (e.g., GitHub Pages) to avoid CORS issues.`;
+                    errorDiv.textContent = `${translations[document.documentElement.lang].iptvLoadError}: ${error.message}. تأكد من أن ملف M3U صالح وصفحتك مستضافة على خادم ويب (مثل GitHub Pages) لتجنب مشاكل CORS.`;
                     errorDiv.style.color = 'var(--live-color)';
                     errorDiv.style.textAlign = 'center';
                     errorDiv.style.marginTop = '20px';
-                    josonGrid.appendChild(errorDiv);
+                    iptvGrid.appendChild(errorDiv);
                 });
 
             // Initial setup for language and theme
