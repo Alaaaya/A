@@ -473,7 +473,7 @@
                 <div class="channel-name">Wael</div>
             </div>
             
-            <div class="channel-card glass-effect" data-src="https://scontent-dus1-1.xx.fbcdn.net/o1/v/t2/f2/m69/AQPKDytSP3eT9uhyY6WVRgfKrOovY8Hlvostt6zsYEsBjzL45wahiOp02_-mWJ1CdVzyFmCJAaqizz-OZj7-UJGZ.mp4?strext=1&_nc_cat=110&_nc_sid=8bf8fe&_nc_ht=scontent-dus1-1.xx.fbcdn.net&_nc_ohc=ulg8b8s68RgQ7kNvwEbywjL&efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5GQUNFQk9PSy4uQzMuNjQwLnN2ZV9zZCIsInhwdl9hc3NldF9pZCI6MTg3OTMwMTUzMjgyNjE0NiwidmlfdXNlY2FzZV9pZCI6MTAxMjIsImR1cmF0aW9uX3MiOjQ2LCJ1cmxnZW5fc291cmNlIjoid3d3In0%3D&ccb=17-1&_nc_zt=28&oh=00_AfPHzaK4-HgHbGmUDEZuMzlXeGUHzeAAmA2T-RaqHNndwA&oe=6856DA00" data-id="تل عرن">
+            <div class="channel-card glass-effect" data-src="https://scontent-dus1-1.xx.fbcdn.net/o1/v/t2/f2/m69/AQPKDytSP3eT9uhyY6WVRgfKrOovY8Hlvostt6zsYEsBjzL45wahiOp02_-mWJ1CdVzyFmCJAaqizz-OZj7-UJGZ.mp4?strext=1&_nc_cat=110&_nc_sid=8bf8fe&_nc_ht=scontent-dus1-1.xx.fbcdn.net&_nc_ohc=ulg8b8s68RgQ7kNvwEbywjL&efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5GQUNFQk9PSy4uQzMuNjQwLnN2ZV9zZCIsInhwdl9hc3Nld_idIjoMTg3OTMwMTUzMjgyNjE0NiwidmlfdXNlY2FzZV9pZCI6MTAxMjIsImR1cmF0aW9uX3MiOjQ2LCJ1cmxnZW5fc291cmNlIjoid3d3In0%3D&ccb=17-1&_nc_zt=28&oh=00_AfPHzaK4-HgHbGmUDEZuMzlXeGUHzeAAmA2T-RaqHNndwA&oe=6856DA00" data-id="تل عرن">
                 <i class="fas fa-star favorite-icon"></i>
                 <span class="live-badge">هربيجي</span>
                 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Flag_of_Kurdistan.svg/1200px-Flag_of_Kurdistan.svg.png" class="channel-logo" alt="قناة تل عرن">
@@ -755,19 +755,15 @@
             // دالة لمعالجة بيانات قنوات جوسون من JSON
             function processJosonChannelsData(jsonData) {
                 const channels = [];
-                // نفترض أن هيكل JSON هو مصفوفة من الكائنات
-                // كل كائن يجب أن يحتوي على properties مثل "name", "url", "logo"
-                // مثال: [{ "name": "Channel A", "url": "http://stream.a.com/live.m3u8", "logo": "http://logo.a.com/logo.png" }]
-                // إذا كان هيكل JSON مختلفًا، ستحتاج لتعديل هذا الجزء
                 if (Array.isArray(jsonData)) {
                     jsonData.forEach(item => {
-                        if (item.name && item.url) { // تأكد من وجود الاسم والرابط
+                        if (item.name && item.url) {
                             channels.push({
                                 name: item.name,
                                 url: item.url,
-                                // استخدم اللوجو إذا كان موجودًا، وإلا استخدم لوجو افتراضي
                                 logo: item.logo || "https://jzu4.github.io/files/img/default_logo.png",
-                                id: item.id || item.name.replace(/[^a-zA-Z0-9]/g, '_') // استخدم ID موجود أو انشئ واحد
+                                // قم بإنشاء ID فريد إذا لم يكن موجودًا بالفعل
+                                id: item.id || item.name.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase() + '_' + Math.random().toString(36).substr(2, 9)
                             });
                         }
                     });
@@ -800,19 +796,18 @@
                 }, index * 50);
             });
 
-            // جلب قنوات جوسون من ملف JSON
+            // جلب قنوات جوسون من ملف JSON مباشرة
             const josonJsonUrl = 'https://raw.githubusercontent.com/jzu4/jzu4.github.io/refs/heads/main/files/json/rives.json';
-            const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(josonJsonUrl);
 
-            fetch(proxyUrl)
+            fetch(josonJsonUrl) // استخدام الرابط المباشر بدون بروكسي
                 .then(response => {
                     if (!response.ok) {
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }
-                    return response.json(); // تغيير هنا: تحليل الاستجابة كـ JSON
+                    return response.json();
                 })
                 .then(jsonData => {
-                    const josonChannelsData = processJosonChannelsData(jsonData); // استخدام دالة معالجة JSON
+                    const josonChannelsData = processJosonChannelsData(jsonData);
                     josonChannelsData.forEach((channelData, index) => {
                         const channelElement = document.createElement("div");
                         channelElement.classList.add("channel-card");
@@ -820,9 +815,6 @@
                         channelElement.setAttribute("data-src", channelData.url);
                         channelElement.setAttribute("data-id", channelData.id);
 
-                        // تحقق من وجود 'is_live' property أو أي property تشير إلى حالة البث
-                        // واعرض شارة "مباشر" بناءً عليها (إذا كان ملف JSON يوفر هذه المعلومات)
-                        // في ملف json الذي قدمته، لا يوجد "is_live" صريح، لذلك سأفترض أنها كلها مباشرة
                         channelElement.innerHTML = `
                             <i class="fas fa-star favorite-icon"></i>
                             <span class="live-badge">مباشر</span>
@@ -854,6 +846,7 @@
                     });
                     updateFavoritesDisplay();
                     if (!player.currentSrc() && allChannels.length > 0) {
+                        // تعيين القناة النشطة الأولية لأول قناة في كل القنوات بعد تحميل جميع القنوات
                         setActiveChannel(allChannels[0]);
                     }
                 })
