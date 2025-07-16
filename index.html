@@ -10,11 +10,15 @@
         :root {
             --primary-color: rgba(46, 204, 113, 0.9); /* A vibrant green */
             --bg-gradient: linear-gradient(135deg, #1a2a3a, #2a3a4a); /* Darker blue-grey gradient */
-            --glass-bg: rgba(255, 255, 255, 0.1);
-            --glass-border: rgba(255, 255, 255, 0.15);
-            --glass-shadow: 0 8px 32px rgba(46, 204, 113, 0.2); /* Green shadow */
-            --glass-highlight: rgba(255, 255, 255, 0.05);
-            --glass-blur: 20px;
+            
+            /* --- متغيرات الزجاج السائل المحسنة --- */
+            --glass-bg: rgba(255, 255, 255, 0.15); /* خلفية زجاجية شفافة */
+            --glass-border: rgba(255, 255, 255, 0.2); /* حدود زجاجية أكثر وضوحًا */
+            --glass-shadow: 0 8px 32px rgba(46, 204, 113, 0.25); /* ظل أخضر واضح */
+            --glass-highlight: rgba(255, 255, 255, 0.1); /* لمعان داخلي */
+            --glass-blur: 25px; /* زيادة الضبابية قليلاً */
+            /* ------------------------------------- */
+
             --favorite-color: #ffd700; /* Gold */
             --live-color: #ff453a; /* Red */
         }
@@ -46,9 +50,10 @@
         }
 
         body.light-mode {
-            --glass-bg: rgba(255, 255, 255, 0.7);
+            /* --- متغيرات الوضع النهاري المحسنة --- */
+            --glass-bg: rgba(255, 255, 255, 0.75); /* أفتح قليلاً في الوضع النهاري */
             --glass-border: rgba(0, 0, 0, 0.08);
-            --glass-highlight: rgba(255, 255, 255, 0.3);
+            --glass-highlight: rgba(255, 255, 255, 0.4); /* توهج داخلي أكثر وضوحًا */
             --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
             color: rgba(0, 0, 0, 0.85);
             background: #f5f5f7 fixed;
@@ -62,7 +67,7 @@
             overflow-y: auto;
         }
 
-        /* تأثير الزجاج السائل */
+        /* --- تأثير الزجاج السائل (الثابت) المُحسّن --- */
         .glass-effect {
             background: var(--glass-bg);
             border: 1px solid var(--glass-border);
@@ -70,10 +75,11 @@
                         inset 0 0 15px var(--glass-highlight);
             backdrop-filter: blur(var(--glass-blur));
             -webkit-backdrop-filter: blur(var(--glass-blur));
-            border-radius: 14px;
+            border-radius: 18px; /* زيادة الحواف لتكون "سائلة" أكثر */
             position: relative;
             overflow: hidden;
             transition: all 0.4s cubic-bezier(0.2, 0.8, 0.4, 1);
+            z-index: 0; /* تأكد من أن العناصر الزائفة تظهر فوقه */
         }
 
         .glass-effect::before {
@@ -86,19 +92,38 @@
             background: linear-gradient(
                 45deg,
                 rgba(255, 255, 255, 0) 0%,
-                rgba(255, 255, 255, 0.1) 50%,
+                rgba(255, 255, 255, 0.15) 50%, /* زيادة الشفافية هنا */
                 rgba(255, 255, 255, 0) 100%
             );
             transform: rotate(30deg);
             pointer-events: none;
-            animation: glassShine 8s infinite;
-            opacity: 0.6;
+            animation: glassShine 8s infinite cubic-bezier(0.4, 0, 0.6, 1); /* تحسين التوقيت */
+            opacity: 0.7; /* زيادة خفيفة */
+            z-index: 1; /* تأكد من ترتيب الطبقات */
+        }
+
+        /* توهج ثابت جديد لإعطاء إحساس بالسيولة والانعكاس */
+        .glass-effect::after {
+            content: '';
+            position: absolute;
+            top: -60px; /* اضبط الموقع حسب ما تراه مناسبًا */
+            left: -60px; /* اضبط الموقع حسب ما تراه مناسبًا */
+            width: 180px; /* حجم التوهج */
+            height: 180px; /* حجم التوهج */
+            background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0) 70%); /* توهج أكثر إشراقًا */
+            border-radius: 50%;
+            filter: blur(25px); /* زيادة نعومة التوهج */
+            pointer-events: none;
+            transform: rotate(-40deg); /* تدوير لإعطاء إحساس بالتدفق */
+            opacity: 0.8;
+            z-index: 1;
         }
 
         @keyframes glassShine {
             0% { transform: translateX(-100%) rotate(30deg); }
             100% { transform: translateX(100%) rotate(30deg); }
         }
+        /* ------------------------------------------------ */
 
         /* مشغل الفيديو */
         .player-section {
@@ -402,13 +427,11 @@
             </button>
         </div>
 
-        <div class="search-bar">
-            <input type="text" id="searchInput" placeholder="ابحث عن قناة...">
+        <div class="search-bar glass-effect"> <input type="text" id="searchInput" placeholder="ابحث عن قناة...">
             <i class="fas fa-search"></i>
         </div>
 
-        <div class="player-section">
-            <video id="myVideoPlayer" class="video-js vjs-default-skin" controls preload="auto">
+        <div class="player-section glass-effect"> <video id="myVideoPlayer" class="video-js vjs-default-skin" controls preload="auto">
                 <source src="" type="application/x-mpegURL">
                 <p class="vjs-no-js">
                     لرؤية البث المباشر، يرجى تمكين JavaScript أو استخدام متصفح يدعم HTML5 video
@@ -416,69 +439,69 @@
             </video>
         </div>
 
-        <div class="section-title" id="favoritesTitle" data-key="favoriteChannels">القنوات المفضلة</div>
+        <div class="section-title glass-effect" id="favoritesTitle" data-key="favoriteChannels">القنوات المفضلة</div>
         <div class="channel-grid" id="favoritesGrid">
         </div>
 
-        <div class="section-title" data-key="newsChannels">قنوات الأخبار</div>
+        <div class="section-title glass-effect" data-key="newsChannels">قنوات الأخبار</div>
         <div class="channel-grid" id="newsGrid">
-            <div class="channel-card" data-src="https://live-hls-web-aja.getaj.net/AJA/index.m3u8" data-id="aljazeera">
+            <div class="channel-card glass-effect" data-src="https://live-hls-web-aja.getaj.net/AJA/index.m3u8" data-id="aljazeera">
                 <i class="fas fa-star favorite-icon"></i>
                 <span class="live-badge">مباشر</span>
                 <img src="https://iconape.com/wp-content/files/kt/20448/png/Aljazeera-01.png" class="channel-logo" alt="الجزيرة">
                 <div class="channel-name">الجزيرة</div>
             </div>
             
-            <div class="channel-card" data-src="https://av.alarabiya.net/alarabiapublish/alarabiya.smil/playlist.m3u8" data-id="alarabiya">
+            <div class="channel-card glass-effect" data-src="https://av.alarabiya.net/alarabiapublish/alarabiya.smil/playlist.m3u8" data-id="alarabiya">
                 <i class="fas fa-star favorite-icon"></i>
                 <span class="live-badge">مباشر</span>
                 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Al-Arabiya_new_logo.svg/2560px-Al-Arabiya_new_logo.svg.png" class="channel-logo" alt="العربية">
                 <div class="channel-name">العربية</div>
             </div>
 
-            <div class="channel-card" data-src="https://stream.mux.com/idCdT4qSXgYj4bBCMM25stW8sYpTVbTeVEjpgkp1pBk.m3u8" data-id="wael">
+            <div class="channel-card glass-effect" data-src="https://stream.mux.com/idCdT4qSXgYj4bBCMM25stW8sYpTVbTeVEjpgkp1pBk.m3u8" data-id="wael">
                 <i class="fas fa-star favorite-icon"></i>
                 <span class="live-badge">مباشر</span>
                 <img src="https://i.imgur.com/JqYeZ5T.png" class="channel-logo" alt="قناة وائل">
                 <div class="channel-name">Wael</div>
             </div>
             
-            <div class="channel-card" data-src="https://scontent-dus1-1.xx.fbcdn.net/o1/v/t2/f2/m69/AQPKDytSP3eT9uhyY6WVRgfKrOovY8Hlvostt6zsYEsBjzL45wahiOp02_-mWJ1CdVzyFmCJAaqizz-OZj7-UJGZ.mp4?strext=1&_nc_cat=110&_nc_sid=8bf8fe&_nc_ht=scontent-dus1-1.xx.fbcdn.net&_nc_ohc=ulg8b8s68RgQ7kNvwEbywjL&efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5GQUNFQk9PSy4uQzMuNjQwLnN2ZV9zZCIsInhwdl9hc3NldF9pZCI6MTg3OTMwMTUzMjgyNjE0NiwidmlfdXNlY2FzZV9pZCI6MTAxMjIsImR1cmF0aW9uX3MiOjQ2LCJ1cmxnZW5fc291cmNlIjoid3d3In0%3D&ccb=17-1&_nc_zt=28&oh=00_AfPHzaK4-HgHbGmUDEZuMzlXeGUHzeAAmA2T-RaqHNndwA&oe=6856DA00" data-id="تل عرن">
+            <div class="channel-card glass-effect" data-src="https://scontent-dus1-1.xx.fbcdn.net/o1/v/t2/f2/m69/AQPKDytSP3eT9uhyY6WVRgfKrOovY8Hlvostt6zsYEsBjzL45wahiOp02_-mWJ1CdVzyFmCJAaqizz-OZj7-UJGZ.mp4?strext=1&_nc_cat=110&_nc_sid=8bf8fe&_nc_ht=scontent-dus1-1.xx.fbcdn.net&_nc_ohc=ulg8b8s68RgQ7kNvwEbywjL&efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5GQUNFQk9PSy4uQzMuNjQwLnN2ZV9zZCIsInhwdl9hc3NldF9pZCI6MTg3OTMwMTUzMjgyNjE0NiwidmlfdXNlY2FzZV9pZCI6MTAxMjIsImR1cmF0aW9uX3MiOjQ2LCJ1cmxnZW5fc291cmNlIjoid3d3In0%3D&ccb=17-1&_nc_zt=28&oh=00_AfPHzaK4-HgHbGmUDEZuMzlXeGUHzeAAmA2T-RaqHNndwA&oe=6856DA00" data-id="تل عرن">
                 <i class="fas fa-star favorite-icon"></i>
                 <span class="live-badge">هربيجي</span>
                 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Flag_of_Kurdistan.svg/1200px-Flag_of_Kurdistan.svg.png" class="channel-logo" alt="قناة تل عرن">
                 <div class="channel-name">تل عرن</div>
             </div>
 
-            <div class="channel-card" data-src="https://svs.itworkscdn.net/syriatvlive/syriatv.smil/playlist_dvr.m3u8" data-id="syriatv">
+            <div class="channel-card glass-effect" data-src="https://svs.itworkscdn.net/syriatvlive/syriatv.smil/playlist_dvr.m3u8" data-id="syriatv">
                 <i class="fas fa-star favorite-icon"></i>
                 <span class="live-badge">مباشر</span>
                 <img src="https://play-lh.googleusercontent.com/ihmGKNbRH9VO9NwrYuLl9L3I-3TbP7VVxKFBqfKeSKqYexLzXFADU_c8lHakvtQdgOc2" class="channel-logo" alt="تلفزيون سوريا">
                 <div class="channel-name">تلفزيون سوريا</div>
             </div>
 
-            <div class="channel-card" data-src="https://live.alarabiya.net/alarabiapublish/alhadath.smil/playlist.m3u8" data-id="alhadath">
+            <div class="channel-card glass-effect" data-src="https://live.alarabiya.net/alarabiapublish/alhadath.smil/playlist.m3u8" data-id="alhadath">
                 <i class="fas fa-star favorite-icon"></i>
                 <span class="live-badge">مباشر</span>
                 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/Al_Hadath_TV_logo_2023.svg/1200px-Al_Hadath_TV_logo_2023.svg.png" class="channel-logo" alt="الحدث">
                 <div class="channel-name">الحدث</div>
             </div>
 
-            <div class="channel-card" data-src="https://iko-streamline-live1.akamaized.net/RonahiTV/master.m3u8" data-id="ronahi">
+            <div class="channel-card glass-effect" data-src="https://iko-streamline-live1.akamaized.net/RonahiTV/master.m3u8" data-id="ronahi">
                 <i class="fas fa-star favorite-icon"></i>
                 <span class="live-badge">مباشر</span>
                 <img src="https://play-lh.googleusercontent.com/ebDDyV2oDJPtR0s6arYpUbpQVEEHf4gcFa3hwiNJlpa5ckHSbILMe5B42ovk8BwdB8oN=w240-h480-rw" class="channel-logo" alt="روناهي">
                 <div class="channel-name">روناهي</div>
             </div>
 
-            <div class="channel-card" data-src="https://alarabyta.cdn.octivid.com/alaraby/smil:alaraby.stream.smil/chunklist.m3u8" data-id="alaraby">
+            <div class="channel-card glass-effect" data-src="https://alarabyta.cdn.octivid.com/alaraby/smil:alaraby.stream.smil/chunklist.m3u8" data-id="alaraby">
                 <i class="fas fa-star favorite-icon"></i>
                 <span class="live-badge">مباشر</span>
                 <img src="https://www.alaraby.com/themes/custom/arabytv/logo-print.png" class="channel-logo" alt="تلفزيون العربي">
                 <div class="channel-name">تلفزيون العربي</div>
             </div>
 
-            <div class="channel-card" data-src="https://stream.skynewsarabia.com/hls/sna.m3u8" data-id="skynews">
+            <div class="channel-card glass-effect" data-src="https://stream.skynewsarabia.com/hls/sna.m3u8" data-id="skynews">
                 <i class="fas fa-star favorite-icon"></i>
                 <span class="live-badge">مباشر</span>
                 <img src="https://news.elsob7.com/wp-content/uploads/2024/05/%D9%82%D9%86%D8%A7%D8%A9-%D8%B3%D9%83%D8%A7%D9%8A-%D9%86%D9%8A%D9%88%D8%B2-%D8%B9%D8%B1%D8%A8%D9%8A%D8%A9.webp" class="channel-logo" alt="سكاي نيوز عربية">
@@ -486,9 +509,9 @@
             </div>
         </div>
 
-        <div class="section-title" data-key="seriesChannels">قنوات المسلسلات</div>
+        <div class="section-title glass-effect" data-key="seriesChannels">قنوات المسلسلات</div>
         <div class="channel-grid" id="seriesGrid">
-            <div class="channel-card" data-src="https://shls-mbc1na-prod-dub.shahid.net/out/v1/84ab37e99d6e4b16b33c6600f94f6ccb/index_7.m3u8" data-id="mbc1">
+            <div class="channel-card glass-effect" data-src="https://shls-mbc1na-prod-dub.shahid.net/out/v1/84ab37e99d6e4b16b33c6600f94f6ccb/index_7.m3u8" data-id="mbc1">
                 <i class="fas fa-star favorite-icon"></i>
                 <span class="live-badge">مباشر</span>
                 <img src="https://upload.wikimedia.org/wikipedia/commons/8/81/Mbc1logo.png" class="channel-logo" alt="MBC 1">
@@ -496,9 +519,9 @@
             </div>
         </div>
         
-        <div class="section-title" data-key="sportsChannels">القنوات الرياضية</div>
+        <div class="section-title glass-effect" data-key="sportsChannels">القنوات الرياضية</div>
         <div class="channel-grid" id="sportsGrid">
-            <div class="channel-card" data-src="http://het102a.4rouwanda-shop.store/live/918454578001/index.m3u8?" data-id="beinsports">
+            <div class="channel-card glass-effect" data-src="http://het102a.4rouwanda-shop.store/live/918454578001/index.m3u8?" data-id="beinsports">
                 <i class="fas fa-star favorite-icon"></i>
                 <span class="live-badge">مباشر</span>
                 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Bein_sport_logo.png/960px-Bein_sport_logo.png" class="channel-logo" alt="بي إن سبورت">
@@ -506,7 +529,7 @@
             </div>
         </div>
 
-        <div class="section-title" data-key="josonChannels">قنوات جوسون</div>
+        <div class="section-title glass-effect" data-key="josonChannels">قنوات جوسون</div>
         <div class="channel-grid" id="josonGrid">
             </div>
     </div>
@@ -788,6 +811,7 @@
                     josonChannelsData.forEach((channelData, index) => {
                         const channelElement = document.createElement("div");
                         channelElement.classList.add("channel-card");
+                        channelElement.classList.add("glass-effect"); // تطبيق فئة الزجاج هنا
                         channelElement.setAttribute("data-src", channelData.url);
                         channelElement.setAttribute("data-id", channelData.id);
 
