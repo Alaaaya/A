@@ -570,13 +570,13 @@
             });
 
             // العناصر الرئيسية
-            let allChannels = []; 
+            let allChannels = []; // سيتم ملء هذا بعد تحميل كل القنوات
             const searchInput = document.getElementById("searchInput");
             const themeToggle = document.getElementById("themeToggle");
             const languageToggle = document.getElementById("languageToggle");
             const favoritesGrid = document.getElementById("favoritesGrid");
             const favoritesTitle = document.getElementById("favoritesTitle");
-            const iptvGrid = document.getElementById("iptvGrid"); // تم تغيير المعرف
+            const iptvGrid = document.getElementById("iptvGrid");
             
             // تهيئة المفضلة
             let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
@@ -593,12 +593,12 @@
                     newsChannels: 'قنوات الأخبار',
                     seriesChannels: 'قنوات المسلسلات',
                     sportsChannels: 'القنوات الرياضية',
-                    iptvChannels: 'قنوات IPTV', // تم تغيير النص
+                    iptvChannels: 'قنوات IPTV',
                     playerError1: 'تعذر تشغيل القناة، يرجى المحاولة لاحقاً',
                     playerError2: 'تعذر الاتصال بالقناة، يرجى التحقق من اتصال الإنترنت',
                     playerError3: 'هذه القناة غير متاحة حاليًا',
                     noJsMessage: 'لرؤية البث المباشر، يرجى تمكين JavaScript أو استخدام متصفح يدعم HTML5 video',
-                    iptvLoadError: 'فشل في تحميل قنوات IPTV' // تم تغيير النص
+                    iptvLoadError: 'فشل في تحميل قنوات IPTV'
                 },
                 'en': {
                     darkMode: 'Dark Mode',
@@ -610,12 +610,12 @@
                     newsChannels: 'News Channels',
                     seriesChannels: 'Series Channels',
                     sportsChannels: 'Sports Channels',
-                    iptvChannels: 'IPTV Channels', // تم تغيير النص
+                    iptvChannels: 'IPTV Channels',
                     playerError1: 'Could not play channel, please try again later',
                     playerError2: 'Could not connect to channel, please check internet connection',
                     playerError3: 'This channel is currently unavailable',
                     noJsMessage: 'To view live stream, please enable JavaScript or use a browser that supports HTML5 video',
-                    iptvLoadError: 'Failed to load IPTV channels' // تم تغيير النص
+                    iptvLoadError: 'Failed to load IPTV channels'
                 }
             };
 
@@ -641,13 +641,13 @@
             }
             
             // تشغيل القناة
-            function setActiveChannel(channel) {
+            function setActiveChannel(channelElement) {
                 allChannels.forEach(c => c.classList.remove("active"));
-                channel.classList.add("active");
+                channelElement.classList.add("active");
                 
-                const streamUrl = channel.getAttribute("data-src");
-                const channelName = channel.querySelector(".channel-name").textContent;
-                const channelLogo = channel.querySelector(".channel-logo").src;
+                const streamUrl = channelElement.getAttribute("data-src");
+                const channelName = channelElement.querySelector(".channel-name").textContent;
+                const channelLogo = channelElement.querySelector(".channel-logo").src;
                 
                 addToHistory(channelName, channelLogo);
                 
@@ -676,10 +676,18 @@
                 
                 if (isFavorite) {
                     favorites = favorites.filter(id => id !== channelId);
-                    channelElement.classList.remove("favorite");
+                    // إزالة فئة المفضلة من العنصر الأصلي
+                    const originalChannel = allChannels.find(c => c.getAttribute("data-id") === channelId);
+                    if (originalChannel) {
+                        originalChannel.classList.remove("favorite");
+                    }
                 } else {
                     favorites.push(channelId);
-                    channelElement.classList.add("favorite");
+                    // إضافة فئة المفضلة إلى العنصر الأصلي
+                    const originalChannel = allChannels.find(c => c.getAttribute("data-id") === channelId);
+                    if (originalChannel) {
+                        originalChannel.classList.add("favorite");
+                    }
                 }
                 
                 localStorage.setItem("favorites", JSON.stringify(favorites));
@@ -688,7 +696,7 @@
             
             // تحديث عرض القنوات المفضلة
             function updateFavoritesDisplay() {
-                favoritesGrid.innerHTML = '';
+                favoritesGrid.innerHTML = ''; // مسح المحتوى القديم
                 
                 if (favorites.length === 0) {
                     favoritesTitle.style.display = 'none';
@@ -697,22 +705,30 @@
                 }
                 
                 favorites.forEach(favId => {
+                    // البحث عن العنصر الأصلي للقناة في allChannels
                     const originalChannel = allChannels.find(c => c.getAttribute("data-id") === favId);
                     
                     if (originalChannel) {
                         const clone = originalChannel.cloneNode(true);
-                        clone.classList.remove("active");
+                        clone.classList.remove("active"); // تأكد من أن النسخة المستنسخة ليست نشطة
                         favoritesGrid.appendChild(clone);
                         
+                        // إضافة مستمعي الأحداث للنسخة المستنسخة
                         clone.addEventListener("click", function() {
-                            setActiveChannel(originalChannel);
+                            setActiveChannel(originalChannel); // تشغيل العنصر الأصلي
                         });
                         
                         const starIcon = clone.querySelector(".favorite-icon");
                         starIcon.addEventListener("click", (e) => {
                             e.stopPropagation();
-                            toggleFavorite(originalChannel);
+                            toggleFavorite(originalChannel); // تبديل المفضلة على العنصر الأصلي
                         });
+                        // تأكد أن أيقونة النجمة في النسخة المستنسخة تعكس الحالة الصحيحة
+                        if (favorites.includes(favId)) {
+                            clone.classList.add("favorite");
+                        } else {
+                            clone.classList.remove("favorite");
+                        }
                     }
                 });
             }
@@ -794,29 +810,37 @@
                 return channels;
             }
 
-            // جمع كل القنوات المكتوبة يدوياً عند التحميل الأولي وإضافة المستمعين
-            document.querySelectorAll(".channel-grid:not(#iptvGrid) .channel-card").forEach((channel, index) => {
-                allChannels.push(channel);
+            // وظيفة لتهيئة مستمعي الأحداث وتحديث حالة المفضلة لكل قناة
+            function initializeChannel(channelElement, indexOffset = 0) {
+                allChannels.push(channelElement);
                 
-                channel.addEventListener("click", function() {
-                    setActiveChannel(channel);
+                channelElement.addEventListener("click", function() {
+                    setActiveChannel(channelElement);
                 });
                 
-                const starIcon = channel.querySelector(".favorite-icon");
+                const starIcon = channelElement.querySelector(".favorite-icon");
                 starIcon.addEventListener("click", (e) => {
-                    e.stopPropagation();
-                    toggleFavorite(channel);
+                    e.stopPropagation(); // منع النقر على القناة من تشغيل الفيديو
+                    toggleFavorite(channelElement);
                 });
                 
-                const channelId = channel.getAttribute("data-id");
+                const channelId = channelElement.getAttribute("data-id");
                 if (favorites.includes(channelId)) {
-                    channel.classList.add("favorite");
+                    channelElement.classList.add("favorite");
+                } else {
+                    channelElement.classList.remove("favorite"); // تأكد من إزالة الفئة إذا لم تكن مفضلة
                 }
                 
+                // تأثير الظهور
                 setTimeout(() => {
-                    channel.style.opacity = '1';
-                    channel.style.transform = 'translateY(0)';
-                }, index * 50);
+                    channelElement.style.opacity = '1';
+                    channelElement.style.transform = 'translateY(0)';
+                }, (allChannels.length - 1) * 50); // استخدم طول allChannels لضمان الترتيب الصحيح
+            }
+
+            // جمع كل القنوات المكتوبة يدوياً عند التحميل الأولي وإضافة المستمعين
+            document.querySelectorAll(".channel-grid:not(#iptvGrid) .channel-card").forEach((channel) => {
+                initializeChannel(channel);
             });
 
             // جلب قنوات M3U من الرابط الجديد
@@ -842,7 +866,7 @@
                          console.warn("No valid IPTV channels processed. The M3U file might be empty or malformed.");
 
                     } else {
-                        iptvChannelsData.forEach((channelData, index) => {
+                        iptvChannelsData.forEach((channelData) => {
                             const channelElement = document.createElement("div");
                             channelElement.classList.add("channel-card");
                             channelElement.classList.add("glass-effect");
@@ -863,29 +887,10 @@
                             `;
                             
                             iptvGrid.appendChild(channelElement);
-                            allChannels.push(channelElement);
-
-                            channelElement.addEventListener("click", function() {
-                                setActiveChannel(channelElement);
-                            });
-                            
-                            const starIcon = channelElement.querySelector(".favorite-icon");
-                            starIcon.addEventListener("click", (e) => {
-                                e.stopPropagation();
-                                toggleFavorite(channelElement);
-                            });
-
-                            if (favorites.includes(channelData.id)) {
-                                channelElement.classList.add("favorite");
-                            }
-                            
-                            setTimeout(() => {
-                                channelElement.style.opacity = '1';
-                                channelElement.style.transform = 'translateY(0)';
-                            }, (allChannels.length - iptvChannelsData.length + index) * 50); 
+                            initializeChannel(channelElement); // تهيئة القناة المجلوبة
                         });
                     }
-                    updateFavoritesDisplay();
+                    updateFavoritesDisplay(); // تحديث عرض المفضلة بعد إضافة كل القنوات
                     // قم بتشغيل القناة الأولى فقط إذا لم يتم تشغيل أي قناة بعد
                     if (!player.currentSrc() && allChannels.length > 0) {
                         setActiveChannel(allChannels[0]);
@@ -904,7 +909,8 @@
             // Initial setup for language and theme
             let currentLang = document.documentElement.lang;
             updateTexts(currentLang);
-            updateFavoritesDisplay();
+            // لا تدعو updateFavoritesDisplay هنا، سيتم استدعاؤها بعد تحميل قنوات IPTV
+            // updateFavoritesDisplay();
 
             // Error handling for video player
             player.on('error', function() {
