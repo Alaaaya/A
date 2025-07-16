@@ -473,7 +473,7 @@
                 <div class="channel-name">Wael</div>
             </div>
             
-            <div class="channel-card glass-effect" data-src="https://scontent-dus1-1.xx.fbcdn.net/o1/v/t2/f2/m69/AQPKDytSP3eT9uhyY6WVRgfKrOovY8Hlvostt6zsYEsBjzL45wahiOp02_-mWJ1CdVzyFmCJAaqizz-OZj7-UJGZ.mp4?strext=1&_nc_cat=110&_nc_sid=8bf8fe&_nc_ht=scontent-dus1-1.xx.fbcdn.net&_nc_ohc=ulg8b8s68RgQ7kNvwEbywjL&efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5GQUNFQk9PSy4uQzMuNjQwLnN2ZV9zZCIsInhwdl9hc3Nld_idIjoMTg3OTMwMTUzMjgyNjE0NiwidmlfdXNlY2FzZV9pZCI6MTAxMjIsImR1cmF0aW9uX3MiOjQ2LCJ1cmxnZW5fc291cmNlIjoid3d3In0%3D&ccb=17-1&_nc_zt=28&oh=00_AfPHzaK4-HgHbGmUDEZuMzlXeGUHzeAAmA2T-RaqHNndwA&oe=6856DA00" data-id="تل عرن">
+            <div class="channel-card glass-effect" data-src="https://scontent-dus1-1.xx.fbcdn.net/o1/v/t2/f2/m69/AQPKDytSP3eT9uhyY6WVRgfKrOovY8Hlvostt6zsYEsBjzL45wahiOp02_-mWJ1CdVzyFmCJAaqizz-OZj7-UJGZ.mp4?strext=1&_nc_cat=110&_nc_sid=8bf8fe&_nc_ht=scontent-dus1-1.xx.fbcdn.net&_nc_ohc=ulg8b8s68RgQ7kNvwEbywjK&efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5GQUNFQk9PSy4uQzMuNjQwLnN2ZV9zZCIsInhwdl9hc3Nld_idIjoMTg3OTMwMTUzMjgyNjE0NiwidmlfdXNlY2FzZV_idCI6MTAxMjIsImR1cmF0aW9uX3MiOjQ2LCJ1cmxnZW5fc291cmNlIjoid3d3In0%3D&ccb=17-1&_nc_zt=28&oh=00_AfPHzaK4-HgHbGmUDEZuMzlXeGUHzeAAmA2T-RaqHNndwA&oe=6856DA00" data-id="تل عرن">
                 <i class="fas fa-star favorite-icon"></i>
                 <span class="live-badge">هربيجي</span>
                 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Flag_of_Kurdistan.svg/1200px-Flag_of_Kurdistan.svg.png" class="channel-logo" alt="قناة تل عرن">
@@ -755,18 +755,39 @@
             // دالة لمعالجة بيانات قنوات جوسون من JSON
             function processJosonChannelsData(jsonData) {
                 const channels = [];
-                if (Array.isArray(jsonData)) {
-                    jsonData.forEach(item => {
-                        if (item.name && item.url) {
+                // الوصول إلى مصفوفة القنوات داخل المفتاح "channels"
+                // هذا يفترض أن jsonData.channels موجود وهو مصفوفة
+                const jsonChannelsArray = jsonData.channels; 
+
+                if (Array.isArray(jsonChannelsArray)) { 
+                    jsonChannelsArray.forEach(item => {
+                        // استخدام `|| ""` للتأكد من أن القيمة ليست `null` أو `undefined`
+                        // استخدام فلتر بسيط للتحقق من أن الرابط يبدأ بـ http/https
+                        let logoUrl = item.logo || "https://jzu4.github.io/files/img/default_logo.png";
+                        if (!logoUrl.startsWith("http://") && !logoUrl.startsWith("https://") && logoUrl !== "https://jzu4.github.io/files/img/default_logo.png") {
+                            // إذا كان الرابط لا يبدأ بـ http/https وليس الافتراضي، استخدم الافتراضي
+                            logoUrl = "https://jzu4.github.io/files/img/default_logo.png";
+                        }
+                        
+                        // التحقق من صلاحية الرابط قبل إضافته
+                        let channelUrl = item.url || "";
+                        if (!channelUrl.startsWith("http://") && !channelUrl.startsWith("https://")) {
+                            console.warn(`Invalid URL for channel '${item.name}': ${item.url}. Skipping this channel.`);
+                            return; // تخطي هذه القناة إذا كان الرابط غير صالح
+                        }
+
+                        if (item.name && channelUrl) { // التأكد من وجود الاسم والرابط الصالح
                             channels.push({
                                 name: item.name,
-                                url: item.url,
-                                logo: item.logo || "https://jzu4.github.io/files/img/default_logo.png",
-                                // قم بإنشاء ID فريد إذا لم يكن موجودًا بالفعل
+                                url: channelUrl,
+                                logo: logoUrl,
+                                // إنشاء ID فريد أو استخدام ID موجود
                                 id: item.id || item.name.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase() + '_' + Math.random().toString(36).substr(2, 9)
                             });
                         }
                     });
+                } else {
+                    console.error("Expected 'channels' to be an array in JSON data, but it was not or was missing.");
                 }
                 return channels;
             }
@@ -799,7 +820,7 @@
             // جلب قنوات جوسون من ملف JSON مباشرة
             const josonJsonUrl = 'https://raw.githubusercontent.com/jzu4/jzu4.github.io/refs/heads/main/files/json/rives.json';
 
-            fetch(josonJsonUrl) // استخدام الرابط المباشر بدون بروكسي
+            fetch(josonJsonUrl)
                 .then(response => {
                     if (!response.ok) {
                         throw new Error(`HTTP error! status: ${response.status}`);
@@ -807,53 +828,77 @@
                     return response.json();
                 })
                 .then(jsonData => {
-                    const josonChannelsData = processJosonChannelsData(jsonData);
-                    josonChannelsData.forEach((channelData, index) => {
-                        const channelElement = document.createElement("div");
-                        channelElement.classList.add("channel-card");
-                        channelElement.classList.add("glass-effect");
-                        channelElement.setAttribute("data-src", channelData.url);
-                        channelElement.setAttribute("data-id", channelData.id);
-
-                        channelElement.innerHTML = `
-                            <i class="fas fa-star favorite-icon"></i>
-                            <span class="live-badge">مباشر</span>
-                            <img src="${channelData.logo}" class="channel-logo" alt="${channelData.name}">
-                            <div class="channel-name">${channelData.name}</div>
-                        `;
+                    // التأكد من أن jsonData هو كائن ويحتوي على الخاصية "channels"
+                    if (jsonData && typeof jsonData === 'object' && jsonData.channels) {
+                        const josonChannelsData = processJosonChannelsData(jsonData);
                         
-                        josonGrid.appendChild(channelElement);
-                        allChannels.push(channelElement);
+                        if (josonChannelsData.length === 0 && Array.isArray(jsonData.channels) && jsonData.channels.length > 0) {
+                             // هذا يعني أن الملف تم تحميله، ولكنه يحتوي على روابط URL غير صالحة تم تخطيها
+                             const errorDiv = document.createElement("div");
+                             errorDiv.textContent = `${translations[document.documentElement.lang].josonLoadError}: No valid channels found after parsing. Check URLs in JSON.`;
+                             errorDiv.style.color = 'var(--live-color)';
+                             errorDiv.style.textAlign = 'center';
+                             errorDiv.style.marginTop = '20px';
+                             josonGrid.appendChild(errorDiv);
+                             console.warn("No valid Joson channels processed. Original JSON might contain invalid URLs or structure issues after 'channels' key.");
 
-                        channelElement.addEventListener("click", function() {
-                            setActiveChannel(channelElement);
-                        });
-                        
-                        const starIcon = channelElement.querySelector(".favorite-icon");
-                        starIcon.addEventListener("click", (e) => {
-                            e.stopPropagation();
-                            toggleFavorite(channelElement);
-                        });
+                        } else {
+                            josonChannelsData.forEach((channelData, index) => {
+                                const channelElement = document.createElement("div");
+                                channelElement.classList.add("channel-card");
+                                channelElement.classList.add("glass-effect");
+                                channelElement.setAttribute("data-src", channelData.url);
+                                channelElement.setAttribute("data-id", channelData.id);
 
-                        if (favorites.includes(channelData.id)) {
-                            channelElement.classList.add("favorite");
+                                channelElement.innerHTML = `
+                                    <i class="fas fa-star favorite-icon"></i>
+                                    <span class="live-badge">مباشر</span>
+                                    <img src="${channelData.logo}" class="channel-logo" alt="${channelData.name}">
+                                    <div class="channel-name">${channelData.name}</div>
+                                `;
+                                
+                                josonGrid.appendChild(channelElement);
+                                allChannels.push(channelElement);
+
+                                channelElement.addEventListener("click", function() {
+                                    setActiveChannel(channelElement);
+                                });
+                                
+                                const starIcon = channelElement.querySelector(".favorite-icon");
+                                starIcon.addEventListener("click", (e) => {
+                                    e.stopPropagation();
+                                    toggleFavorite(channelElement);
+                                });
+
+                                if (favorites.includes(channelData.id)) {
+                                    channelElement.classList.add("favorite");
+                                }
+                                
+                                setTimeout(() => {
+                                    channelElement.style.opacity = '1';
+                                    channelElement.style.transform = 'translateY(0)';
+                                }, (allChannels.length - josonChannelsData.length + index) * 50); 
+                            });
                         }
-                        
-                        setTimeout(() => {
-                            channelElement.style.opacity = '1';
-                            channelElement.style.transform = 'translateY(0)';
-                        }, (allChannels.length - josonChannelsData.length + index) * 50); 
-                    });
-                    updateFavoritesDisplay();
-                    if (!player.currentSrc() && allChannels.length > 0) {
-                        // تعيين القناة النشطة الأولية لأول قناة في كل القنوات بعد تحميل جميع القنوات
-                        setActiveChannel(allChannels[0]);
+                        updateFavoritesDisplay();
+                        // قم بتشغيل القناة الأولى فقط إذا لم يتم تشغيل أي قناة بعد
+                        if (!player.currentSrc() && allChannels.length > 0) {
+                            setActiveChannel(allChannels[0]);
+                        }
+                    } else {
+                        console.error("JSON data does not contain a 'channels' property or is not an object:", jsonData);
+                        const errorDiv = document.createElement("div");
+                        errorDiv.textContent = `${translations[document.documentElement.lang].josonLoadError}: Invalid JSON structure (missing 'channels' array).`;
+                        errorDiv.style.color = 'var(--live-color)';
+                        errorDiv.style.textAlign = 'center';
+                        errorDiv.style.marginTop = '20px';
+                        josonGrid.appendChild(errorDiv);
                     }
                 })
                 .catch(error => {
                     console.error("Error fetching or parsing JSON for Joson channels:", error);
                     const errorDiv = document.createElement("div");
-                    errorDiv.textContent = `${translations[document.documentElement.lang].josonLoadError}: ${error.message}`;
+                    errorDiv.textContent = `${translations[document.documentElement.lang].josonLoadError}: ${error.message}. Make sure your HTML is hosted on a web server (e.g., GitHub Pages) to avoid CORS issues.`;
                     errorDiv.style.color = 'var(--live-color)';
                     errorDiv.style.textAlign = 'center';
                     errorDiv.style.marginTop = '20px';
